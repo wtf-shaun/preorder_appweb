@@ -156,9 +156,6 @@ def send_email():
     if not is_admin():
         return redirect(url_for('auth.login'))
 
-    if request.method == 'POST':
-        flash("Email Module is Currently Under Work")
-        return redirect(url_for('admin.index'))
-
-    return render_template('send_email.html')
+    flash("Email Module is Currently Under Work")
+    return redirect(url_for('admin.index'))
 

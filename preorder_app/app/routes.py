@@ -463,9 +463,6 @@ def order_progress(order_id):
 # ===============================
 # UPDATE ORDER STATUS
 # ===============================
-# ===============================
-# UPDATE ORDER STATUS
-# ===============================
 @bp.route('/update_order_status/<order_id>/<status>', methods=['POST'])
 def update_order_status(order_id, status):
 
