@@ -6239,3 +6239,106 @@ input::-webkit-outer-spin-button {
 .carousel-track .menu-card:hover {
     transform: perspective(900px) rotateY(var(--flip-angle)) translateY(-6px);
 }
+
+/* =========================================================
+   VISUAL REFRESH
+   ========================================================= */
+
+body {
+    background-color: #f4eee8;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.32) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.32) 1px, transparent 1px);
+    background-size: 28px 28px;
+}
+
+.navbar {
+    border-bottom: 3px solid var(--primary);
+    background: rgba(40, 44, 50, 0.97);
+    box-shadow: 0 8px 24px rgba(40, 44, 50, 0.18);
+}
+
+.nav-title {
+    letter-spacing: 0.4px;
+}
+
+.nav-links a {
+    color: #fff8f2;
+}
+
+.nav-links a:hover {
+    color: #ffb06f;
+}
+
+.page-header {
+    position: relative;
+    padding: 26px 30px 28px;
+    border-left: 6px solid var(--primary);
+    background: rgba(255, 253, 250, 0.8);
+    box-shadow: 12px 12px 0 rgba(252, 128, 25, 0.08);
+}
+
+.page-header h1 {
+    letter-spacing: 0.3px;
+}
+
+.menu-sidebar {
+    border-color: #383d43;
+    background: #282c32;
+    box-shadow: 8px 10px 0 rgba(252, 128, 25, 0.16);
+}
+
+.menu-sidebar-heading {
+    border-color: #4a4f55;
+}
+
+.menu-sidebar-heading h2,
+.menu-sidebar-section h3 {
+    color: #fff8f2;
+}
+
+.menu-sidebar-section + .menu-sidebar-section {
+    border-color: #4a4f55;
+}
+
+.menu-sidebar-item {
+    color: #d8d0ca;
+}
+
+.menu-sidebar-item:hover,
+.menu-sidebar-item:focus-visible {
+    background: var(--primary);
+    color: #fff;
+}
+
+.menu-category-section {
+    position: relative;
+    padding: 24px 0 18px;
+}
+
+.menu-category-heading {
+    padding-left: 14px;
+    border-left: 4px solid var(--primary);
+}
+
+.carousel-track .menu-card {
+    border: 1px solid #e8dcd2;
+    border-radius: 18px;
+    background: #fffdfa;
+    box-shadow: 8px 8px 0 rgba(40, 44, 50, 0.07);
+}
+
+.carousel-track .menu-card:hover {
+    box-shadow: 10px 12px 0 rgba(252, 128, 25, 0.14);
+}
+
+.menu-card.in-cart {
+    border-color: #2e8b57;
+    box-shadow: 8px 8px 0 rgba(46, 139, 87, 0.16);
+}
+
+@media (max-width: 760px) {
+    .page-header {
+        padding: 22px 20px;
+    }
+}
