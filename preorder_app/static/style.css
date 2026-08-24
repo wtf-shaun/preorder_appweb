@@ -5863,6 +5863,25 @@ input::-webkit-outer-spin-button {
     animation: quantityPop 0.2s ease;
 }
 
+.menu-card.in-cart {
+    border-color: #2e8b57;
+    box-shadow: 0 8px 24px rgba(46, 139, 87, 0.2);
+}
+
+.menu-card.in-cart .menu-card-content {
+    background: #effaf2;
+}
+
+.in-cart-label {
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: #2e8b57;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
 @keyframes quantityPop {
     50% {
         transform: scale(1.15);

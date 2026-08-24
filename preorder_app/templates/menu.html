@@ -36,7 +36,7 @@
 
             {% for it in items %}
 
-            <div class="card menu-card">
+            <div class="card menu-card{% if it.id in cart_item_ids %} in-cart{% endif %}">
 
                 <!-- IMAGE -->
                 <div class="menu-image-wrapper">
@@ -72,6 +72,10 @@
                     <div class="menu-card-title-row">
 
                         <h3>{{ it.name }}</h3>
+
+                        {% if it.id in cart_item_ids %}
+                            <span class="in-cart-label">In Cart</span>
+                        {% endif %}
 
                         <div class="price">
                                                     ₹{{ it.price }}

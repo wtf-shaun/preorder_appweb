@@ -102,7 +102,19 @@ def index():
 @bp.route('/menu')
 def menu():
     items = list(items_col.find({}, {'_id': 0}))
-    return render_template('menu.html', items=items, user=current_user())
+    user = current_user()
+    cart = carts_col.find_one({'user_id': user['id']}) if user else None
+    cart_item_ids = {
+        cart_item['item_id']
+        for cart_item in (cart or {}).get('items', [])
+    }
+
+    return render_template(
+        'menu.html',
+        items=items,
+        user=user,
+        cart_item_ids=cart_item_ids,
+    )
 
 
 # ===============================
