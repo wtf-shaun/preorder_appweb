@@ -6320,6 +6320,61 @@ body {
     box-shadow: 0 9px 24px rgba(46, 139, 87, 0.15);
 }
 
+/* Tall edge controls replace the browser scrollbar with a visible
+   arrow and stem for each category carousel. */
+.carousel-container > .carousel-arrow {
+    width: 58px;
+    height: 112px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    font-size: 30px;
+}
+
+.carousel-container > .carousel-arrow::before {
+    content: "";
+    position: absolute;
+    top: 38px;
+    left: 50%;
+    width: 3px;
+    height: 62px;
+    border-radius: 4px;
+    background: currentColor;
+    opacity: 0.65;
+    transform: translateX(-50%);
+}
+
+.carousel-container > .carousel-prev,
+.carousel-container > .carousel-next {
+    align-items: flex-start;
+    padding-top: 8px;
+}
+
+.carousel-container > .carousel-arrow:hover {
+    background: transparent;
+    color: var(--primary-dark);
+    box-shadow: none;
+}
+
+@keyframes categoryRollFocus {
+    0% {
+        transform: perspective(1200px) rotateX(0) translateY(0);
+    }
+    45% {
+        transform: perspective(1200px) rotateX(-2deg) translateY(-9px);
+    }
+    100% {
+        transform: perspective(1200px) rotateX(0) translateY(0);
+    }
+}
+
+.menu-category-section.is-focused {
+    animation: categoryRollFocus 0.65s cubic-bezier(.22, 1, .36, 1);
+}
+
 @keyframes backgroundRibbonDrift {
     0% {
         transform: translate3d(-8vw, 5vh, 0) rotate(-18deg);

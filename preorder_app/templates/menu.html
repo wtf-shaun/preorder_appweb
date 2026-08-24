@@ -281,6 +281,15 @@ function focusMenuItem(itemId) {
     const card = document.getElementById('menu-item-' + itemId);
 
     if (card) {
+        const section = card.closest('.menu-category-section');
+
+        if (section) {
+            section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            section.classList.remove('is-focused');
+            void section.offsetWidth;
+            section.classList.add('is-focused');
+        }
+
         card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     }
 }
