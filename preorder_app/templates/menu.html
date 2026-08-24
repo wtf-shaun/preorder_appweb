@@ -305,6 +305,48 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     const EDGE_ZONE = 130; // px from each side that triggers the arrow
+    const sections = Array.from(document.querySelectorAll('.menu-category-section'));
+    let wheelLocked = false;
+
+    function moveCategory(direction) {
+        if (wheelLocked || sections.length < 2) {
+            return false;
+        }
+
+        const currentPosition = window.scrollY + 120;
+        let currentIndex = sections.reduce(function (closestIndex, section, index) {
+            return section.offsetTop <= currentPosition ? index : closestIndex;
+        }, 0);
+        const targetIndex = Math.max(0, Math.min(sections.length - 1, currentIndex + direction));
+
+        if (targetIndex === currentIndex) {
+            return false;
+        }
+
+        wheelLocked = true;
+        sections[targetIndex].classList.remove('is-rolling');
+        void sections[targetIndex].offsetWidth;
+        sections[targetIndex].classList.add('is-rolling');
+        sections[targetIndex].scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        setTimeout(function () {
+            wheelLocked = false;
+        }, 700);
+
+        return true;
+    }
+
+    document.addEventListener('wheel', function (event) {
+        if (event.target.closest('.carousel-track')) {
+            return;
+        }
+
+        if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
+            if (moveCategory(event.deltaY > 0 ? 1 : -1)) {
+                event.preventDefault();
+            }
+        }
+    }, { passive: false });
 
     carousels.forEach(function (container) {
         const track = container.querySelector('.carousel-track');

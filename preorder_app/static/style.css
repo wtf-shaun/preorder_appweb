@@ -6256,51 +6256,6 @@ body::-webkit-scrollbar {
     display: none;
 }
 
-.page-scroll-rail {
-    position: fixed;
-    top: 50%;
-    right: 14px;
-    z-index: 1100;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 7px;
-    transform: translateY(-50%);
-}
-
-.page-scroll-arrow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 30px;
-    height: 30px;
-    padding: 0;
-    border: 1px solid rgba(252, 128, 25, 0.35);
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.92);
-    color: var(--primary);
-    font-size: 11px;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(40, 44, 63, 0.12);
-    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
-}
-
-.page-scroll-arrow:hover,
-.page-scroll-arrow:focus-visible {
-    background: var(--primary);
-    color: #fff;
-    outline: none;
-    transform: scale(1.1);
-}
-
-.page-scroll-stick {
-    width: 3px;
-    height: 82px;
-    border-radius: 3px;
-    background: linear-gradient(var(--primary), #58a875);
-    box-shadow: 0 0 0 4px rgba(252, 128, 25, 0.08);
-}
-
 body {
     scroll-snap-type: y proximity;
 }
@@ -6431,6 +6386,21 @@ body {
 
 .menu-category-section.is-focused {
     animation: categoryRollFocus 0.65s cubic-bezier(.22, 1, .36, 1);
+}
+
+.menu-category-section.is-rolling {
+    animation: categoryVerticalFlip 0.7s cubic-bezier(.22, 1, .36, 1);
+}
+
+@keyframes categoryVerticalFlip {
+    from {
+        opacity: 0.35;
+        transform: perspective(1200px) rotateX(72deg) translateY(35px);
+    }
+    to {
+        opacity: 1;
+        transform: perspective(1200px) rotateX(0) translateY(0);
+    }
 }
 
 @keyframes backgroundRibbonDrift {
