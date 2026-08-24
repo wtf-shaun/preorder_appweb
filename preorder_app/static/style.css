@@ -5949,13 +5949,17 @@ input::-webkit-outer-spin-button {
     opacity: 1;
 }
 
-/* Cards fade as they scroll toward/out of the visible edges of the
-   track. Opacity is set inline by an IntersectionObserver; the
-   transition here just smooths that change. */
+/* Cards turn toward the visible edges as they scroll. */
 .carousel-track .menu-card {
+    --flip-angle: 0deg;
+    transform: perspective(900px) rotateY(var(--flip-angle));
+    transform-style: preserve-3d;
     transition:
-        opacity 0.35s ease,
         transform 0.25s ease,
         box-shadow 0.25s ease;
+}
+
+.carousel-track .menu-card:hover {
+    transform: perspective(900px) rotateY(var(--flip-angle)) translateY(-6px);
 }
 ```[cite: 2]

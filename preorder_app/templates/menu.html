@@ -235,7 +235,7 @@ function scrollCarousel(direction) {
 }
 
 // Only reveal an arrow when the cursor is near that side of the
-// carousel, and fade cards out as they scroll past the visible edges.
+// carousel, and turn cards toward the edges as they scroll past.
 document.addEventListener('DOMContentLoaded', function () {
 
     const container = document.querySelector('.carousel-container');
@@ -269,30 +269,29 @@ document.addEventListener('DOMContentLoaded', function () {
         container.classList.toggle('near-right', (rect.right - x) <= EDGE_ZONE);
     }, { passive: true });
 
-    // Fade cards as they scroll out of the visible track area
+    // Rotate cards toward the edges without fading them out.
     const cards = track.querySelectorAll('.menu-card');
 
-    if ('IntersectionObserver' in window && cards.length) {
-
-        const thresholds = [];
-        for (let t = 0; t <= 1; t += 0.02) {
-            thresholds.push(t);
-        }
-
-        const observer = new IntersectionObserver(function (entries) {
-            entries.forEach(function (entry) {
-                const ratio = entry.intersectionRatio;
-                entry.target.style.opacity = Math.max(0.15, ratio).toFixed(2);
-            });
-        }, {
-            root: track,
-            threshold: thresholds
-        });
+    function updateCardFlip() {
+        const trackRect = track.getBoundingClientRect();
+        const trackCenter = trackRect.left + trackRect.width / 2;
+        const maxDistance = trackRect.width / 2 + 180;
 
         cards.forEach(function (card) {
-            observer.observe(card);
+            const cardRect = card.getBoundingClientRect();
+            const cardCenter = cardRect.left + cardRect.width / 2;
+            const distance = Math.max(-1, Math.min(1, (cardCenter - trackCenter) / maxDistance));
+            card.style.setProperty('--flip-angle', `${(distance * 32).toFixed(2)}deg`);
         });
     }
+
+    let flipFrame;
+    track.addEventListener('scroll', function () {
+        cancelAnimationFrame(flipFrame);
+        flipFrame = requestAnimationFrame(updateCardFlip);
+    }, { passive: true });
+
+    updateCardFlip();
 });
 </script>
 
