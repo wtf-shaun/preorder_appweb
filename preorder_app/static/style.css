@@ -6256,6 +6256,43 @@ body::-webkit-scrollbar {
     display: none;
 }
 
+.vertical-next-control {
+    position: fixed;
+    top: calc(50% - 50px);
+    right: 13px;
+    z-index: 1100;
+    width: 34px;
+    height: 42px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--primary);
+    font-size: 48px;
+    font-weight: 800;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.vertical-next-control:hover,
+.vertical-next-control:focus-visible {
+    color: var(--primary-dark);
+    outline: none;
+    transform: translateX(3px);
+}
+
+.vertical-next-stick {
+    position: fixed;
+    top: 50%;
+    right: 29px;
+    z-index: 1099;
+    width: 3px;
+    height: 82px;
+    border-radius: 3px;
+    background: var(--primary);
+    box-shadow: 0 0 0 4px rgba(252, 128, 25, 0.08);
+}
+
 body {
     scroll-snap-type: y proximity;
 }
