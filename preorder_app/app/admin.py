@@ -1,17 +1,11 @@
 from flask import (
     Blueprint, render_template, request, redirect,
-    url_for, flash, session, current_app
+    url_for, flash, session
 )
 from werkzeug.utils import secure_filename
 from .db import users_col, items_col, orders_col
-from .mail import (
-    EmailConfigurationError,
-    get_email_configuration_error,
-    send_bulk_email,
-)
 import uuid
 import os
-import threading
 
 bp = Blueprint('admin', __name__)
 UPLOAD_FOLDER = os.path.join('app', 'static', 'uploads')
@@ -163,58 +157,8 @@ def send_email():
         return redirect(url_for('auth.login'))
 
     if request.method == 'POST':
-        subject = request.form.get('subject', '').strip()
-        body = request.form.get('message', '').strip()
-
-        email_configuration_error = get_email_configuration_error()
-        if email_configuration_error:
-            flash(f"Email cannot be sent: {email_configuration_error}")
-            return redirect(url_for('admin.send_email'))
-
-        if not subject or not body:
-            flash("Subject and message are both required")
-            return redirect(url_for('admin.send_email'))
-
-        recipients = [
-            u['email']
-            for u in users_col.find({}, {'_id': 0, 'email': 1})
-            if u.get('email')
-        ]
-
-        if not recipients:
-            flash("No users with an email address were found")
-            return redirect(url_for('admin.send_email'))
-
-        # Do not make the browser wait for Gmail SMTP. Sending happens in a
-        # background thread, while the admin immediately receives confirmation
-        # that the request has been accepted.
-        app_obj = current_app._get_current_object()
-        threading.Thread(
-            target=_send_bulk_email,
-            args=(app_obj, subject, body, recipients),
-            daemon=True,
-        ).start()
-
-        flash(f"Email is being sent to {len(recipients)} user(s).")
-
+        flash("Email Module is Currently Under Work")
         return redirect(url_for('admin.index'))
 
     return render_template('send_email.html')
-
-
-def _send_bulk_email(app, subject, body, recipients):
-    with app.app_context():
-        try:
-            sent, failed = send_bulk_email(subject, body, recipients)
-        except EmailConfigurationError as error:
-            app.logger.error("Bulk email was not sent: %s", error)
-            return
-
-        if failed:
-            app.logger.error(
-                "Failed to send email to %s recipient(s); see the SMTP error above.",
-                len(failed),
-            )
-
-        app.logger.info("Email accepted by Gmail for %s user(s)", sent)
 
