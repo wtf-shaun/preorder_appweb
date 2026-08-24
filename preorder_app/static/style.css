@@ -6320,6 +6320,88 @@ body {
     box-shadow: 0 9px 24px rgba(46, 139, 87, 0.15);
 }
 
+@keyframes menuSectionEnter {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes menuCardEnter {
+    from {
+        opacity: 0;
+        filter: blur(4px);
+    }
+    to {
+        opacity: 1;
+        filter: blur(0);
+    }
+}
+
+.menu-category-section {
+    animation: menuSectionEnter 0.55s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+.menu-category-section:nth-child(2) {
+    animation-delay: 0.08s;
+}
+
+.menu-category-section:nth-child(3) {
+    animation-delay: 0.16s;
+}
+
+.menu-category-section:nth-child(n + 4) {
+    animation-delay: 0.24s;
+}
+
+.carousel-track .menu-card {
+    animation: menuCardEnter 0.5s ease-out both;
+}
+
+.carousel-track .menu-card:nth-child(2) {
+    animation-delay: 0.06s;
+}
+
+.carousel-track .menu-card:nth-child(3) {
+    animation-delay: 0.12s;
+}
+
+.carousel-track .menu-card:nth-child(n + 4) {
+    animation-delay: 0.18s;
+}
+
+.carousel-track .menu-image {
+    transition: transform 0.65s cubic-bezier(.22, 1, .36, 1), filter 0.65s ease;
+}
+
+.carousel-track .menu-card:hover .menu-image {
+    filter: saturate(1.08) contrast(1.02);
+}
+
+.menu-sidebar-item {
+    transform: translateX(0);
+}
+
+.menu-sidebar-item:hover,
+.menu-sidebar-item:focus-visible {
+    transform: translateX(4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
 @media (max-width: 760px) {
     .page-header {
         padding-bottom: 18px;
