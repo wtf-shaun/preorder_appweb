@@ -5927,26 +5927,32 @@ input::-webkit-outer-spin-button {
     right: 0;
 }
 
-/* Arrows stay hidden until the cursor nears that side of the
-   carousel; even then they sit at reduced opacity, and only reach
-   full opacity on direct hover. Container toggles .near-left /
-   .near-right via JS based on cursor position. */
+/* Arrows slide in from their matching screen edge when the cursor
+   nears that side of the carousel. */
 .carousel-arrow {
     opacity: 0;
     visibility: hidden;
-    transform: translateY(-50%) scale(0.92);
+}
+
+.carousel-prev {
+    transform: translateY(-50%) translateX(-80px) scale(0.92);
+}
+
+.carousel-next {
+    transform: translateY(-50%) translateX(80px) scale(0.92);
 }
 
 .carousel-container.near-left .carousel-prev,
 .carousel-container.near-right .carousel-next {
     opacity: 0.55;
     visibility: visible;
-    transform: translateY(-50%) scale(1);
+    transform: translateY(-50%) translateX(0) scale(1);
 }
 
 .carousel-container.near-left .carousel-prev:hover,
 .carousel-container.near-right .carousel-next:hover {
     opacity: 1;
+    transform: translateY(-50%) translateX(0) scale(1.08);
 }
 
 /* Cards turn toward the visible edges as they scroll. */
