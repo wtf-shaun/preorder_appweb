@@ -48,18 +48,26 @@
             {% endfor %}
         </aside>
 
-        <!-- MENU CAROUSEL CONTAINER -->
-        <div class="carousel-container">
+        <div class="menu-category-groups">
+        {% for category in categories %}
+            <section class="menu-category-section" id="menu-category-{{ category.slug }}">
+                <div class="menu-category-heading">
+                    <h2>{{ category.name }}</h2>
+                    <span>{{ items|selectattr('category', 'equalto', category.slug)|list|length }} items</span>
+                </div>
+
+                <!-- MENU CAROUSEL CONTAINER -->
+                <div class="carousel-container">
 
         <!-- Left Navigation Arrow -->
-        <button class="carousel-arrow carousel-prev" onclick="scrollCarousel(-1)" aria-label="Previous items">
+        <button class="carousel-arrow carousel-prev" onclick="scrollCarousel('{{ category.slug }}', -1)" aria-label="Previous {{ category.name }} items">
             &#10094;
         </button>
 
         <!-- MENU TRACK -->
-        <div class="carousel-track" id="menuCarousel">
+        <div class="carousel-track" id="menuCarousel-{{ category.slug }}">
 
-            {% for it in items %}
+            {% for it in items if it.get('category', 'food') == category.slug %}
 
             <div id="menu-item-{{ it.id }}" class="card menu-card{% if it.id in cart_item_ids %} in-cart{% endif %}">
 
@@ -187,10 +195,13 @@
         </div>
 
         <!-- Right Navigation Arrow -->
-        <button class="carousel-arrow carousel-next" onclick="scrollCarousel(1)" aria-label="Next items">
+        <button class="carousel-arrow carousel-next" onclick="scrollCarousel('{{ category.slug }}', 1)" aria-label="Next {{ category.name }} items">
             &#10095;
         </button>
 
+        </div>
+            </section>
+        {% endfor %}
         </div>
 
     </div>
@@ -252,8 +263,13 @@ function changeQuantity(button, amount) {
     input.classList.add("pop");
 }
 
-function scrollCarousel(direction) {
-    const track = document.getElementById('menuCarousel');
+function scrollCarousel(categorySlug, direction) {
+    const track = document.getElementById('menuCarousel-' + categorySlug);
+
+    if (!track) {
+        return;
+    }
+
     const scrollAmount = 280; // Approximate card width + gap
     track.scrollBy({
         left: direction * scrollAmount,
@@ -273,60 +289,66 @@ function focusMenuItem(itemId) {
 // carousel, and turn cards toward the edges as they scroll past.
 document.addEventListener('DOMContentLoaded', function () {
 
-    const container = document.querySelector('.carousel-container');
-    const track = document.getElementById('menuCarousel');
+    const carousels = document.querySelectorAll('.carousel-container');
 
-    if (!container || !track) {
+    if (!carousels.length) {
         return;
     }
 
     const EDGE_ZONE = 130; // px from each side that triggers the arrow
 
-    container.addEventListener('mousemove', function (e) {
-        const rect = container.getBoundingClientRect();
-        const distFromLeft = e.clientX - rect.left;
-        const distFromRight = rect.right - e.clientX;
+    carousels.forEach(function (container) {
+        const track = container.querySelector('.carousel-track');
+        const cards = track ? track.querySelectorAll('.menu-card') : [];
 
-        container.classList.toggle('near-left', distFromLeft <= EDGE_ZONE);
-        container.classList.toggle('near-right', distFromRight <= EDGE_ZONE);
-    });
+        container.addEventListener('mousemove', function (e) {
+            const rect = container.getBoundingClientRect();
+            const distFromLeft = e.clientX - rect.left;
+            const distFromRight = rect.right - e.clientX;
 
-    container.addEventListener('mouseleave', function () {
-        container.classList.remove('near-left', 'near-right');
-    });
-
-    // Also let touch users trigger it near the edges without hover
-    container.addEventListener('touchstart', function (e) {
-        const rect = container.getBoundingClientRect();
-        const x = e.touches[0].clientX;
-
-        container.classList.toggle('near-left', (x - rect.left) <= EDGE_ZONE);
-        container.classList.toggle('near-right', (rect.right - x) <= EDGE_ZONE);
-    }, { passive: true });
-
-    // Rotate cards toward the edges without fading them out.
-    const cards = track.querySelectorAll('.menu-card');
-
-    function updateCardFlip() {
-        const trackRect = track.getBoundingClientRect();
-        const trackCenter = trackRect.left + trackRect.width / 2;
-        const maxDistance = trackRect.width / 2 + 180;
-
-        cards.forEach(function (card) {
-            const cardRect = card.getBoundingClientRect();
-            const cardCenter = cardRect.left + cardRect.width / 2;
-            const distance = Math.max(-1, Math.min(1, (cardCenter - trackCenter) / maxDistance));
-            card.style.setProperty('--flip-angle', `${(distance * 32).toFixed(2)}deg`);
+            container.classList.toggle('near-left', distFromLeft <= EDGE_ZONE);
+            container.classList.toggle('near-right', distFromRight <= EDGE_ZONE);
         });
-    }
 
-    let flipFrame;
-    track.addEventListener('scroll', function () {
-        cancelAnimationFrame(flipFrame);
-        flipFrame = requestAnimationFrame(updateCardFlip);
-    }, { passive: true });
+        container.addEventListener('mouseleave', function () {
+            container.classList.remove('near-left', 'near-right');
+        });
 
-    updateCardFlip();
+        container.addEventListener('touchstart', function (e) {
+            const rect = container.getBoundingClientRect();
+            const x = e.touches[0].clientX;
+
+            container.classList.toggle('near-left', (x - rect.left) <= EDGE_ZONE);
+            container.classList.toggle('near-right', (rect.right - x) <= EDGE_ZONE);
+        }, { passive: true });
+
+        function updateCardFlip() {
+            if (!track) {
+                return;
+            }
+
+            const trackRect = track.getBoundingClientRect();
+            const trackCenter = trackRect.left + trackRect.width / 2;
+            const maxDistance = trackRect.width / 2 + 180;
+
+            cards.forEach(function (card) {
+                const cardRect = card.getBoundingClientRect();
+                const cardCenter = cardRect.left + cardRect.width / 2;
+                const distance = Math.max(-1, Math.min(1, (cardCenter - trackCenter) / maxDistance));
+                card.style.setProperty('--flip-angle', `${(distance * 32).toFixed(2)}deg`);
+            });
+        }
+
+        let flipFrame;
+        if (track) {
+            track.addEventListener('scroll', function () {
+                cancelAnimationFrame(flipFrame);
+                flipFrame = requestAnimationFrame(updateCardFlip);
+            }, { passive: true });
+        }
+
+        updateCardFlip();
+    });
 });
 </script>
 
