@@ -6245,37 +6245,25 @@ input::-webkit-outer-spin-button {
    ========================================================= */
 
 body {
-    background-color: #f4eee8;
+    background-color: #f7f3ef;
     background-image:
-        linear-gradient(rgba(255, 255, 255, 0.32) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.32) 1px, transparent 1px);
-    background-size: 28px 28px;
+        radial-gradient(circle at 8% 12%, rgba(252, 128, 25, 0.08), transparent 23%),
+        radial-gradient(circle at 92% 88%, rgba(46, 139, 87, 0.06), transparent 25%);
 }
 
 .navbar {
-    border-bottom: 3px solid var(--primary);
-    background: rgba(40, 44, 50, 0.97);
-    box-shadow: 0 8px 24px rgba(40, 44, 50, 0.18);
+    border-bottom: 2px solid rgba(252, 128, 25, 0.35);
+    background: rgba(255, 255, 255, 0.97);
+    box-shadow: 0 5px 18px rgba(40, 44, 63, 0.08);
 }
 
 .nav-title {
     letter-spacing: 0.4px;
 }
 
-.nav-links a {
-    color: #fff8f2;
-}
-
-.nav-links a:hover {
-    color: #ffb06f;
-}
-
 .page-header {
-    position: relative;
-    padding: 26px 30px 28px;
-    border-left: 6px solid var(--primary);
-    background: rgba(255, 253, 250, 0.8);
-    box-shadow: 12px 12px 0 rgba(252, 128, 25, 0.08);
+    padding-bottom: 22px;
+    border-bottom: 1px solid #eaded4;
 }
 
 .page-header h1 {
@@ -6283,36 +6271,31 @@ body {
 }
 
 .menu-sidebar {
-    border-color: #383d43;
-    background: #282c32;
-    box-shadow: 8px 10px 0 rgba(252, 128, 25, 0.16);
+    border-color: #eaded4;
+    border-top: 4px solid var(--primary);
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 10px 25px rgba(40, 44, 63, 0.08);
 }
 
 .menu-sidebar-heading {
-    border-color: #4a4f55;
-}
-
-.menu-sidebar-heading h2,
-.menu-sidebar-section h3 {
-    color: #fff8f2;
+    border-color: #eaded4;
 }
 
 .menu-sidebar-section + .menu-sidebar-section {
-    border-color: #4a4f55;
+    border-color: #eaded4;
 }
 
 .menu-sidebar-item {
-    color: #d8d0ca;
+    color: #555966;
 }
 
 .menu-sidebar-item:hover,
 .menu-sidebar-item:focus-visible {
-    background: var(--primary);
-    color: #fff;
+    background: #fff1e7;
+    color: var(--primary-dark);
 }
 
 .menu-category-section {
-    position: relative;
     padding: 24px 0 18px;
 }
 
@@ -6322,23 +6305,23 @@ body {
 }
 
 .carousel-track .menu-card {
-    border: 1px solid #e8dcd2;
+    border: 1px solid #eaded4;
     border-radius: 18px;
-    background: #fffdfa;
-    box-shadow: 8px 8px 0 rgba(40, 44, 50, 0.07);
+    background: #fff;
+    box-shadow: 0 8px 22px rgba(40, 44, 63, 0.08);
 }
 
 .carousel-track .menu-card:hover {
-    box-shadow: 10px 12px 0 rgba(252, 128, 25, 0.14);
+    box-shadow: 0 13px 28px rgba(252, 128, 25, 0.16);
 }
 
 .menu-card.in-cart {
-    border-color: #2e8b57;
-    box-shadow: 8px 8px 0 rgba(46, 139, 87, 0.16);
+    border-color: #58a875;
+    box-shadow: 0 9px 24px rgba(46, 139, 87, 0.15);
 }
 
 @media (max-width: 760px) {
     .page-header {
-        padding: 22px 20px;
+        padding-bottom: 18px;
     }
 }
