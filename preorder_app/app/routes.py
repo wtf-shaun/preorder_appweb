@@ -108,12 +108,17 @@ def menu():
         cart_item['item_id']
         for cart_item in (cart or {}).get('items', [])
     }
+    cart_quantities = {
+        cart_item['item_id']: cart_item.get('qty', 0)
+        for cart_item in (cart or {}).get('items', [])
+    }
 
     return render_template(
         'menu.html',
         items=items,
         user=user,
         cart_item_ids=cart_item_ids,
+        cart_quantities=cart_quantities,
     )
 
 

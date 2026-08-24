@@ -123,7 +123,7 @@
                                     class="quantity-value"
                                     id="quantity-{{ it.id }}"
                                     name="quantity"
-                                    value="1"
+                                    value="{{ cart_quantities.get(it.id, 1) }}"
                                     readonly
                                 >
 
