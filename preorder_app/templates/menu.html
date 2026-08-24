@@ -59,8 +59,18 @@
 
                     {% endif %}
 
-                    <div class="food-badge">
-                        CAFETERIA
+                    <div class="image-badges">
+                        <div class="food-badge">
+                            {% if it.id in cart_item_ids %}
+                                In Cart
+                            {% else %}
+                                CAFETERIA
+                            {% endif %}
+                        </div>
+
+                        <div class="image-availability">
+                            <span>●</span> Available
+                        </div>
                     </div>
 
                 </div>
@@ -73,10 +83,6 @@
 
                         <h3>{{ it.name }}</h3>
 
-                        {% if it.id in cart_item_ids %}
-                            <span class="in-cart-label">In Cart</span>
-                        {% endif %}
-
                         <div class="price">
                                                     ₹{{ it.price }}
                         </div>
@@ -86,9 +92,6 @@
 
                     <div class="menu-card-footer">
 
-                        <span class="menu-availability">
-                            <span>●</span> Available
-                        </span>
                                                     <form
                             method="POST"
                             action="{{ url_for('main.add_to_cart') }}"

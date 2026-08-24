@@ -5791,14 +5791,48 @@ input::-webkit-outer-spin-button {
     height: 170px;
 }
 
+.carousel-track .image-badges {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    right: 14px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    pointer-events: none;
+}
+
+.carousel-track .food-badge,
+.carousel-track .image-availability {
+    position: static;
+    min-width: 0;
+    padding: 7px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.carousel-track .food-badge {
+    color: #ff6b00;
+}
+
+.carousel-track .image-availability {
+    color: #299f50;
+}
+
+.carousel-track .image-availability span {
+    color: #35b85d;
+}
+
 .carousel-track .menu-card-footer {
     flex-direction: column;
     align-items: stretch;
     gap: 12px;
-}
-
-.carousel-track .menu-availability {
-    justify-content: flex-start;
 }
 
 .carousel-track .menu-add-form {
@@ -5870,16 +5904,6 @@ input::-webkit-outer-spin-button {
 
 .menu-card.in-cart .menu-card-content {
     background: #effaf2;
-}
-
-.in-cart-label {
-    padding: 3px 8px;
-    border-radius: 999px;
-    background: #2e8b57;
-    color: #ffffff;
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1.2;
 }
 
 @keyframes quantityPop {
