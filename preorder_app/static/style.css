@@ -6320,6 +6320,73 @@ body {
     box-shadow: 0 9px 24px rgba(46, 139, 87, 0.15);
 }
 
+@keyframes backgroundRibbonDrift {
+    0% {
+        transform: translate3d(-8vw, 5vh, 0) rotate(-18deg);
+    }
+    50% {
+        transform: translate3d(5vw, -3vh, 0) rotate(-12deg);
+    }
+    100% {
+        transform: translate3d(-8vw, 5vh, 0) rotate(-18deg);
+    }
+}
+
+@keyframes categoryCylinderIn {
+    from {
+        opacity: 0;
+        transform: rotateY(62deg) translateX(34px);
+    }
+    to {
+        opacity: 1;
+        transform: rotateY(0) translateX(0);
+    }
+}
+
+/* Broad ribbons replace the tiny particle field with a calmer,
+   more substantial layer of motion behind the interface. */
+#interactive-background::before,
+#interactive-background::after {
+    width: 125vw;
+    height: 20vh;
+    border: 1px solid rgba(252, 128, 25, 0.09);
+    border-radius: 50%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(252, 128, 25, 0.08) 32%,
+        rgba(252, 128, 25, 0.02) 70%,
+        transparent
+    );
+    box-shadow: none;
+    filter: blur(1px);
+    animation: backgroundRibbonDrift 18s ease-in-out infinite;
+}
+
+#interactive-background::before {
+    top: 18%;
+    left: -18%;
+}
+
+#interactive-background::after {
+    top: 68%;
+    left: 12%;
+    border-color: rgba(46, 139, 87, 0.09);
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(46, 139, 87, 0.07) 32%,
+        rgba(46, 139, 87, 0.02) 70%,
+        transparent
+    );
+    animation-duration: 24s;
+    animation-direction: reverse;
+}
+
+.menu-category-groups {
+    perspective: 1200px;
+}
+
 @keyframes menuSectionEnter {
     from {
         opacity: 0;
@@ -6343,14 +6410,17 @@ body {
 }
 
 .menu-category-section {
-    animation: menuSectionEnter 0.55s cubic-bezier(.22, 1, .36, 1) both;
+    transform-origin: left center;
+    animation: categoryCylinderIn 0.7s cubic-bezier(.22, 1, .36, 1) both;
 }
 
 .menu-category-section:nth-child(2) {
+    transform-origin: right center;
     animation-delay: 0.08s;
 }
 
 .menu-category-section:nth-child(3) {
+    transform-origin: left center;
     animation-delay: 0.16s;
 }
 
