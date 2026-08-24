@@ -6333,6 +6333,12 @@ body {
     box-shadow: 0 9px 24px rgba(46, 139, 87, 0.15);
 }
 
+/* Category navigation is vertical now, so the old side-mounted
+   horizontal carousel arrows should not resemble a second scrollbar. */
+.menu-category-section .carousel-arrow {
+    display: none;
+}
+
 /* Tall edge controls replace the browser scrollbar with a visible
    arrow and stem for each category carousel. */
 .carousel-container > .carousel-arrow {
