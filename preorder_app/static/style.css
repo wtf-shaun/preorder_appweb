@@ -5752,6 +5752,102 @@ input::-webkit-outer-spin-button {
    CAROUSEL & REDUCED CARD STYLING
    ========================================================= */
 
+.menu-browse-layout {
+    display: grid;
+    grid-template-columns: 205px minmax(0, 1fr);
+    gap: 20px;
+    align-items: stretch;
+}
+
+.menu-sidebar {
+    max-height: 510px;
+    overflow-y: auto;
+    padding: 20px 12px;
+    border: 1px solid rgba(255, 117, 24, 0.14);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.82);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
+    scrollbar-width: thin;
+    scrollbar-color: #ffb27d transparent;
+}
+
+.menu-sidebar-heading {
+    padding: 0 8px 16px;
+    border-bottom: 1px solid #f1e5dd;
+}
+
+.menu-sidebar-heading .page-eyebrow {
+    font-size: 10px;
+}
+
+.menu-sidebar-heading h2 {
+    margin: 4px 0 0;
+    color: #252832;
+    font-size: 24px;
+}
+
+.menu-sidebar-section {
+    padding: 16px 0 4px;
+}
+
+.menu-sidebar-section + .menu-sidebar-section {
+    border-top: 1px solid #f1e5dd;
+}
+
+.menu-sidebar-section h3 {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 8px 8px;
+    color: #252832;
+    font-size: 14px;
+}
+
+.menu-sidebar-section h3 span {
+    color: #ff7518;
+}
+
+.menu-sidebar-list {
+    display: grid;
+    gap: 4px;
+}
+
+.menu-sidebar-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    padding: 9px 8px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #555966;
+    font: inherit;
+    font-size: 13px;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.menu-sidebar-item span:first-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.menu-sidebar-item:hover,
+.menu-sidebar-item:focus-visible {
+    background: #fff1e7;
+    color: #e85f00;
+    outline: none;
+}
+
+.menu-sidebar-empty {
+    margin: 4px 8px;
+    color: #9a9ca4;
+    font-size: 12px;
+}
+
 .carousel-container {
     position: relative;
     display: flex;
@@ -5925,6 +6021,20 @@ input::-webkit-outer-spin-button {
 
 .carousel-next {
     right: 0;
+}
+
+@media (max-width: 760px) {
+    .menu-browse-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .menu-sidebar {
+        max-height: 190px;
+    }
+
+    .menu-sidebar-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 /* Arrows slide in from their matching screen edge when the cursor

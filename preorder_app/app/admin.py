@@ -46,6 +46,7 @@ def add_item():
 
     name = request.form.get('name')
     price = request.form.get('price')
+    category = request.form.get('category', 'food')
     image = request.files.get('image')
 
     image_filename = None
@@ -60,6 +61,7 @@ def add_item():
         'id': str(uuid.uuid4())[:8],
         'name': name,
         'price': int(price),
+        'category': category if category in {'food', 'beverage'} else 'food',
         'image': image_filename
     })
 
