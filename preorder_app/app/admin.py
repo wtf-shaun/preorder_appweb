@@ -3,12 +3,26 @@ from flask import (
     url_for, flash, session
 )
 from werkzeug.utils import secure_filename
-from .db import users_col, items_col, orders_col
+from .db import users_col, items_col, orders_col, categories_col
 import uuid
 import os
 
 bp = Blueprint('admin', __name__)
 UPLOAD_FOLDER = os.path.join('app', 'static', 'uploads')
+DEFAULT_CATEGORIES = [
+    {'slug': 'food', 'name': 'Food'},
+    {'slug': 'beverage', 'name': 'Beverages'}
+]
+
+
+def get_categories():
+    for category in DEFAULT_CATEGORIES:
+        categories_col.update_one(
+            {'slug': category['slug']},
+            {'$setOnInsert': category},
+            upsert=True
+        )
+    return list(categories_col.find({}, {'_id': 0}).sort('name', 1))
 
 def is_admin():
     uid = session.get('user_id')
@@ -30,9 +44,31 @@ def index():
 
     users = list(users_col.find({}, {'_id': 0}))
     items = list(items_col.find({}, {'_id': 0}))
+    for item in items:
+        item.setdefault('category', 'food')
     orders = list(orders_col.find({}, {'_id': 0}))
+    categories = get_categories()
 
-    return render_template('admin.html', users=users, items=items, orders=orders)
+    return render_template('admin.html', users=users, items=items, orders=orders, categories=categories)
+
+
+@bp.route('/add_category', methods=['POST'])
+def add_category():
+    if not is_admin():
+        return redirect(url_for('auth.login'))
+
+    name = request.form.get('name', '').strip()
+    slug = '-'.join(name.lower().split())
+
+    if not name or not slug:
+        flash('Enter a category name')
+    elif categories_col.find_one({'slug': slug}):
+        flash('Category already exists')
+    else:
+        categories_col.insert_one({'slug': slug, 'name': name})
+        flash('Category added')
+
+    return redirect(url_for('admin.index'))
 
 
 # ===============================
@@ -61,11 +97,23 @@ def add_item():
         'id': str(uuid.uuid4())[:8],
         'name': name,
         'price': int(price),
-        'category': category if category in {'food', 'beverage'} else 'food',
+        'category': category if categories_col.find_one({'slug': category}) else 'food',
         'image': image_filename
     })
 
     flash("Item added")
+    return redirect(url_for('admin.index'))
+
+
+@bp.route('/item/<item_id>/category', methods=['POST'])
+def update_item_category(item_id):
+    if not is_admin():
+        return redirect(url_for('auth.login'))
+
+    category = request.form.get('category', 'food')
+    if categories_col.find_one({'slug': category}):
+        items_col.update_one({'id': item_id}, {'$set': {'category': category}})
+
     return redirect(url_for('admin.index'))
 
 

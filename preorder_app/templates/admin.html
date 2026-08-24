@@ -355,6 +355,35 @@
 
         </div>
 
+        <div class="category-toolbar">
+            <div>
+                <h3>Categories</h3>
+                <p>Add categories, then drag menu items between the groups.</p>
+            </div>
+            <form method="POST" action="{{ url_for('admin.add_category') }}" class="category-add-form">
+                <input type="text" name="name" placeholder="New category" required>
+                <button type="submit" class="btn">＋ Add Category</button>
+            </form>
+        </div>
+
+        <div class="category-board">
+            {% for category in categories %}
+                <section class="category-column" data-category="{{ category.slug }}">
+                    <h3>{{ category.name }}</h3>
+                    <div class="category-drop-zone" data-category="{{ category.slug }}">
+                        {% for it in items if it.get('category', 'food') == category.slug %}
+                            <div class="category-item" draggable="true" data-item-id="{{ it.id }}">
+                                <span class="category-drag-handle" aria-hidden="true">&#8942;&#8942;</span>
+                                <span>{{ it.name }}</span>
+                            </div>
+                        {% else %}
+                            <p class="category-empty">Drop items here</p>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endfor %}
+        </div>
+
 
         <!-- =================================================
              ADD ITEM
@@ -631,6 +660,46 @@ if (imageInput && fileName) {
     });
 
 }
+
+document.querySelectorAll('.category-item').forEach(function (item) {
+    item.addEventListener('dragstart', function (event) {
+        event.dataTransfer.setData('text/plain', item.dataset.itemId);
+        item.classList.add('is-dragging');
+    });
+
+    item.addEventListener('dragend', function () {
+        item.classList.remove('is-dragging');
+    });
+});
+
+document.querySelectorAll('.category-drop-zone').forEach(function (zone) {
+    zone.addEventListener('dragover', function (event) {
+        event.preventDefault();
+        zone.classList.add('is-drag-over');
+    });
+
+    zone.addEventListener('dragleave', function () {
+        zone.classList.remove('is-drag-over');
+    });
+
+    zone.addEventListener('drop', function (event) {
+        event.preventDefault();
+        zone.classList.remove('is-drag-over');
+
+        const itemId = event.dataTransfer.getData('text/plain');
+        const formData = new FormData();
+        formData.append('category', zone.dataset.category);
+
+        fetch('/admin/item/' + encodeURIComponent(itemId) + '/category', {
+            method: 'POST',
+            body: formData
+        }).then(function (response) {
+            if (response.ok) {
+                window.location.reload();
+            }
+        });
+    });
+});
 
 </script>
 

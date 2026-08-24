@@ -31,33 +31,21 @@
                 <h2>Menu</h2>
             </div>
 
-            <div class="menu-sidebar-section">
-                <h3>Food <span>{{ items|selectattr('category', 'undefined')|list|length + items|selectattr('category', 'equalto', 'food')|list|length }}</span></h3>
-                <div class="menu-sidebar-list">
-                    {% for it in items if it.get('category', 'food') == 'food' %}
-                        <button type="button" class="menu-sidebar-item" onclick="focusMenuItem('{{ it.id }}')">
-                            <span>{{ it.name }}</span>
-                            <span aria-hidden="true">&#8250;</span>
-                        </button>
-                    {% else %}
-                        <p class="menu-sidebar-empty">No food items</p>
-                    {% endfor %}
+            {% for category in categories %}
+                <div class="menu-sidebar-section">
+                    <h3>{{ category.name }} <span>{{ items|selectattr('category', 'equalto', category.slug)|list|length }}</span></h3>
+                    <div class="menu-sidebar-list">
+                        {% for it in items if it.get('category', 'food') == category.slug %}
+                            <button type="button" class="menu-sidebar-item" onclick="focusMenuItem('{{ it.id }}')">
+                                <span>{{ it.name }}</span>
+                                <span aria-hidden="true">&#8250;</span>
+                            </button>
+                        {% else %}
+                            <p class="menu-sidebar-empty">No items</p>
+                        {% endfor %}
+                    </div>
                 </div>
-            </div>
-
-            <div class="menu-sidebar-section">
-                <h3>Beverages <span>{{ items|selectattr('category', 'equalto', 'beverage')|list|length }}</span></h3>
-                <div class="menu-sidebar-list">
-                    {% for it in items if it.get('category', 'food') == 'beverage' %}
-                        <button type="button" class="menu-sidebar-item" onclick="focusMenuItem('{{ it.id }}')">
-                            <span>{{ it.name }}</span>
-                            <span aria-hidden="true">&#8250;</span>
-                        </button>
-                    {% else %}
-                        <p class="menu-sidebar-empty">No beverages</p>
-                    {% endfor %}
-                </div>
-            </div>
+            {% endfor %}
         </aside>
 
         <!-- MENU CAROUSEL CONTAINER -->

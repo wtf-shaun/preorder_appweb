@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, send_file
-from .db import users_col, items_col, carts_col, orders_col
+from .db import users_col, items_col, carts_col, orders_col, categories_col
 import uuid
 from datetime import datetime
 import threading
@@ -102,8 +102,21 @@ def index():
 @bp.route('/menu')
 def menu():
     items = list(items_col.find({}, {'_id': 0}))
+    for item in items:
+        item.setdefault('category', 'food')
     user = current_user()
     cart = carts_col.find_one({'user_id': user['id']}) if user else None
+    defaults = [
+        {'slug': 'food', 'name': 'Food'},
+        {'slug': 'beverage', 'name': 'Beverages'}
+    ]
+    for category in defaults:
+        categories_col.update_one(
+            {'slug': category['slug']},
+            {'$setOnInsert': category},
+            upsert=True
+        )
+    categories = list(categories_col.find({}, {'_id': 0}).sort('name', 1))
     cart_item_ids = {
         cart_item['item_id']
         for cart_item in (cart or {}).get('items', [])
@@ -119,6 +132,7 @@ def menu():
         user=user,
         cart_item_ids=cart_item_ids,
         cart_quantities=cart_quantities,
+        categories=categories,
     )
 
 
