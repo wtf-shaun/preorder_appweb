@@ -104,7 +104,7 @@
                                 <button
                                     type="button"
                                     class="quantity-btn minus"
-                                    onclick="changeQuantity({{ it.id }}, -1)"
+                                    onclick="changeQuantity({{ it.id|tojson }}, -1)"
                                     aria-label="Decrease quantity"
                                 >
                                     −
@@ -124,7 +124,7 @@
                                 <button
                                     type="button"
                                     class="quantity-btn plus"
-                                    onclick="changeQuantity({{ it.id }}, 1)"
+                                    onclick="changeQuantity({{ it.id|tojson }}, 1)"
                                     aria-label="Increase quantity"
                                 >
                                     +
