@@ -7,6 +7,7 @@ from .db import (
     get_user_by_id, get_all_users, get_all_items_for_menu,
     get_all_orders_for_admin, get_monthly_item_popularity,
     get_monthly_revenue,
+    get_item_revenue_rankings,
     seed_demo_statistics, clear_demo_statistics,
     ensure_categories, get_category_by_slug,
     create_category, create_item, update_item, delete_item,
@@ -67,7 +68,8 @@ def statistics():
     return render_template(
         'statistics.html',
         popularity=get_monthly_item_popularity(),
-        revenue=get_monthly_revenue()
+        revenue=get_monthly_revenue(),
+        rankings=get_item_revenue_rankings()
     )
 
 

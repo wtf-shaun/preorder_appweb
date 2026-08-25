@@ -49,6 +49,47 @@
     <section class="admin-section">
         <div class="admin-section-header">
             <div class="admin-section-title">
+                <div class="admin-section-icon">Rank</div>
+                <div>
+                    <h2>Item Revenue Rankings</h2>
+                    <p>All menu items ranked by their contribution to total revenue.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-wrapper admin-table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Item</th>
+                        <th>Units Ordered</th>
+                        <th>Revenue</th>
+                        <th>Revenue Share</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in rankings %}
+                    <tr>
+                        <td><strong>#{{ item.rank }}</strong></td>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.quantity|round(0)|int }}</td>
+                        <td><strong class="admin-price">₹{{ item.revenue|round(2) }}</strong></td>
+                        <td>{{ item.percentage|round(1) }}%</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="analytics-empty">No menu items are available yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="admin-section">
+        <div class="admin-section-header">
+            <div class="admin-section-title">
                 <div class="admin-section-icon">#</div>
                 <div>
                     <h2>Monthly Orders</h2>

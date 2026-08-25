@@ -17,4 +17,4 @@ Default admin: admin@example.com / adminpass (created on first run)
 To run:
 1. pip install -r requirements.txt
 2. python run.py
-3. Open http://127.0.0.1:5000
+3. Open http://127..0.1:5000

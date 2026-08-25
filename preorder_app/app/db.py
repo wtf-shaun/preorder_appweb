@@ -357,6 +357,97 @@ def get_monthly_revenue():
         return []
 
 
+def get_item_revenue_rankings():
+    """Rank every menu item by its contribution to total order revenue."""
+    pipeline = [
+        {'$unwind': '$items'},
+        {
+            '$set': {
+                'item_revenue': {
+                    '$ifNull': [
+                        '$items.subtotal',
+                        {
+                            '$multiply': [
+                                {'$convert': {
+                                    'input': '$items.price',
+                                    'to': 'double',
+                                    'onError': 0,
+                                    'onNull': 0
+                                }},
+                                {'$convert': {
+                                    'input': '$items.qty',
+                                    'to': 'double',
+                                    'onError': 0,
+                                    'onNull': 0
+                                }}
+                            ]
+                        }
+                    ]
+                },
+                'item_quantity': {'$convert': {
+                    'input': '$items.qty',
+                    'to': 'double',
+                    'onError': 0,
+                    'onNull': 0
+                }}
+            }
+        },
+        {
+            '$group': {
+                '_id': {
+                    'item_id': {'$ifNull': ['$items.item_id', '$items.name']},
+                    'item_name': '$items.name'
+                },
+                'revenue': {'$sum': '$item_revenue'},
+                'quantity': {'$sum': '$item_quantity'}
+            }
+        },
+        {'$sort': {'revenue': -1, '_id.item_name': 1}}
+    ]
+
+    try:
+        totals = list(orders_col.aggregate(pipeline))
+        menu_items = list(items_col.find({}, {'_id': 0, 'id': 1, 'name': 1}))
+    except PyMongoError:
+        logging.getLogger(__name__).exception('Item revenue ranking failed')
+        return []
+
+    ranked = {}
+    for row in totals:
+        item_id = row['_id'].get('item_id') or row['_id'].get('item_name')
+        ranked[item_id] = {
+            'name': row['_id'].get('item_name') or 'Unknown item',
+            'revenue': row['revenue'],
+            'quantity': row['quantity']
+        }
+
+    for item in menu_items:
+        ranked.setdefault(item['id'], {
+            'name': item['name'],
+            'revenue': 0,
+            'quantity': 0
+        })
+
+    total_revenue = sum(item['revenue'] for item in ranked.values())
+    result = sorted(
+        ranked.values(),
+        key=lambda item: (-item['revenue'], item['name'].lower())
+    )
+    return [
+        {
+            'rank': index,
+            'name': item['name'],
+            'quantity': item['quantity'],
+            'revenue': item['revenue'],
+            'percentage': (
+                item['revenue'] / total_revenue * 100
+                if total_revenue else 0
+            )
+        }
+        for index, item in enumerate(result, start=1)
+    ]
+
+
 def seed_demo_statistics(order_count=300):
     """Create clearly marked demo orders for testing the statistics charts."""
     menu_items = list(items_col.find({}, {'_id': 0}))
