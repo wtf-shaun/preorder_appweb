@@ -5,7 +5,7 @@ import logging
 import random
 import uuid
 from datetime import datetime, timedelta, timezone
-from pymongo import MongoClient, ReturnDocument
+from pymongo import MongoClient, ReturnDocument, UpdateOne
 from pymongo.errors import PyMongoError
 
 MONGO_URI = os.environ.get("MONGO_URI")
@@ -24,6 +24,7 @@ carts_col = db["carts"]
 orders_col = db["orders"]
 categories_col = db["categories"]
 counters_col = db["counters"]
+item_order_events_col = db["item_order_events"]
 
 
 # ===============================
@@ -156,6 +157,33 @@ def create_order(order_data):
     return orders_col.insert_one(order_data)
 
 
+def record_item_order_events(order_id, order_items, ordered_at, demo_data=False):
+    """Persist item order history independently from deletable orders."""
+    events = [
+        {
+            'event_id': f'{order_id}:{index}',
+            'order_id': order_id,
+            'item_id': item.get('item_id') or item.get('name'),
+            'item_name': item.get('name') or 'Unknown item',
+            'quantity': item.get('qty', 0),
+            'unit_price': item.get('price', 0),
+            'revenue': item.get('subtotal', 0),
+            'ordered_at': ordered_at,
+            'demo_data': demo_data
+        }
+        for index, item in enumerate(order_items)
+    ]
+    if events:
+        item_order_events_col.bulk_write([
+            UpdateOne(
+                {'event_id': event['event_id']},
+                {'$setOnInsert': event},
+                upsert=True
+            )
+            for event in events
+        ])
+
+
 def update_order_status(order_id, status):
     """Update order status."""
     return orders_col.update_one(
@@ -213,51 +241,21 @@ def get_all_orders_for_admin():
 def get_monthly_item_popularity():
     """Aggregate ordered quantities by month and item in MongoDB."""
     pipeline = [
-        {
-            '$match': {
-                '$or': [
-                    {'ordered_at': {'$type': 'date'}},
-                    {'created_at': {'$type': 'string'}}
-                ]
-            }
-        },
-        {
-            '$set': {
-                'analytics_date': {
-                    '$cond': [
-                        {'$eq': [{'$type': '$ordered_at'}, 'date']},
-                        '$ordered_at',
-                        {
-                            '$dateFromString': {
-                                'dateString': '$created_at',
-                                'format': '%Y-%m-%d %H:%M:%S',
-                                'timezone': 'UTC',
-                                'onError': None,
-                                'onNull': None
-                            }
-                        }
-                    ]
-                }
-            }
-        },
-        {'$match': {'analytics_date': {'$type': 'date'}}},
-        {'$unwind': '$items'},
+        {'$match': {'ordered_at': {'$type': 'date'}}},
         {
             '$group': {
                 '_id': {
                     'month': {
                         '$dateToString': {
                             'format': '%Y-%m',
-                            'date': '$analytics_date',
+                            'date': '$ordered_at',
                             'timezone': 'UTC'
                         }
                     },
-                    'item_id': {
-                        '$ifNull': ['$items.item_id', '$items.name']
-                    },
-                    'item_name': '$items.name'
+                    'item_id': '$item_id',
+                    'item_name': '$item_name'
                 },
-                'quantity': {'$sum': '$items.qty'}
+                'quantity': {'$sum': '$quantity'}
             }
         },
         {'$sort': {'_id.month': 1, '_id.item_name': 1}},
@@ -266,7 +264,7 @@ def get_monthly_item_popularity():
     monthly = {}
     item_names = {}
     try:
-        rows = orders_col.aggregate(pipeline)
+        rows = item_order_events_col.aggregate(pipeline)
         for row in rows:
             month = row['_id']['month']
             item_name = row['_id'].get('item_name') or 'Unknown item'
@@ -296,57 +294,30 @@ def get_monthly_item_popularity():
 def get_monthly_revenue():
     """Aggregate revenue and order count by month in MongoDB."""
     pipeline = [
-        {
-            '$match': {
-                '$or': [
-                    {'ordered_at': {'$type': 'date'}},
-                    {'created_at': {'$type': 'string'}}
-                ]
-            }
-        },
-        {
-            '$set': {
-                'analytics_date': {
-                    '$cond': [
-                        {'$eq': [{'$type': '$ordered_at'}, 'date']},
-                        '$ordered_at',
-                        {
-                            '$dateFromString': {
-                                'dateString': '$created_at',
-                                'format': '%Y-%m-%d %H:%M:%S',
-                                'timezone': 'UTC',
-                                'onError': None,
-                                'onNull': None
-                            }
-                        }
-                    ]
-                }
-            }
-        },
-        {'$match': {'analytics_date': {'$type': 'date'}}},
+        {'$match': {'ordered_at': {'$type': 'date'}}},
         {
             '$group': {
                 '_id': {
                     '$dateToString': {
                         'format': '%Y-%m',
-                        'date': '$analytics_date',
+                        'date': '$ordered_at',
                         'timezone': 'UTC'
                     }
                 },
-                'revenue': {'$sum': {'$ifNull': ['$total', 0]}},
-                'orders': {'$sum': 1}
+                'revenue': {'$sum': '$revenue'},
+                'orders': {'$addToSet': '$order_id'}
             }
         },
         {'$sort': {'_id': 1}}
     ]
 
     try:
-        rows = orders_col.aggregate(pipeline)
+        rows = item_order_events_col.aggregate(pipeline)
         return [
             {
                 'month': row['_id'],
                 'revenue': row['revenue'],
-                'orders': row['orders']
+                'orders': len(row['orders'])
             }
             for row in rows
         ]
@@ -360,53 +331,23 @@ def get_monthly_revenue():
 def get_item_revenue_rankings():
     """Rank every menu item by its contribution to total order revenue."""
     pipeline = [
-        {'$unwind': '$items'},
-        {
-            '$set': {
-                'item_revenue': {
-                    '$ifNull': [
-                        '$items.subtotal',
-                        {
-                            '$multiply': [
-                                {'$convert': {
-                                    'input': '$items.price',
-                                    'to': 'double',
-                                    'onError': 0,
-                                    'onNull': 0
-                                }},
-                                {'$convert': {
-                                    'input': '$items.qty',
-                                    'to': 'double',
-                                    'onError': 0,
-                                    'onNull': 0
-                                }}
-                            ]
-                        }
-                    ]
-                },
-                'item_quantity': {'$convert': {
-                    'input': '$items.qty',
-                    'to': 'double',
-                    'onError': 0,
-                    'onNull': 0
-                }}
-            }
-        },
+        {'$match': {'ordered_at': {'$type': 'date'}}},
         {
             '$group': {
                 '_id': {
-                    'item_id': {'$ifNull': ['$items.item_id', '$items.name']},
-                    'item_name': '$items.name'
+                    'item_id': '$item_id',
+                    'item_name': '$item_name'
                 },
-                'revenue': {'$sum': '$item_revenue'},
-                'quantity': {'$sum': '$item_quantity'}
+                'revenue': {'$sum': '$revenue'},
+                'quantity': {'$sum': '$quantity'},
+                'orders': {'$addToSet': '$order_id'}
             }
         },
         {'$sort': {'revenue': -1, '_id.item_name': 1}}
     ]
 
     try:
-        totals = list(orders_col.aggregate(pipeline))
+        totals = list(item_order_events_col.aggregate(pipeline))
         menu_items = list(items_col.find({}, {'_id': 0, 'id': 1, 'name': 1}))
     except PyMongoError:
         logging.getLogger(__name__).exception('Item revenue ranking failed')
@@ -418,14 +359,16 @@ def get_item_revenue_rankings():
         ranked[item_id] = {
             'name': row['_id'].get('item_name') or 'Unknown item',
             'revenue': row['revenue'],
-            'quantity': row['quantity']
+            'quantity': row['quantity'],
+            'orders': len(row['orders'])
         }
 
     for item in menu_items:
         ranked.setdefault(item['id'], {
             'name': item['name'],
             'revenue': 0,
-            'quantity': 0
+            'quantity': 0,
+            'orders': 0
         })
 
     total_revenue = sum(item['revenue'] for item in ranked.values())
@@ -438,6 +381,7 @@ def get_item_revenue_rankings():
             'rank': index,
             'name': item['name'],
             'quantity': item['quantity'],
+            'orders': item['orders'],
             'revenue': item['revenue'],
             'percentage': (
                 item['revenue'] / total_revenue * 100
@@ -492,12 +436,40 @@ def seed_demo_statistics(order_count=300):
 
     if demo_orders:
         orders_col.insert_many(demo_orders)
+        for order in demo_orders:
+            record_item_order_events(
+                order['id'],
+                order['items'],
+                order['ordered_at'],
+                demo_data=True
+            )
     return len(demo_orders)
 
 
 def clear_demo_statistics():
     """Delete only orders created by the demo statistics action."""
+    item_order_events_col.delete_many({'demo_data': True})
     return orders_col.delete_many({'demo_data': True})
+
+
+def backfill_item_order_events():
+    """Copy existing orders into the ledger without creating duplicates."""
+    for order in orders_col.find({}):
+        ordered_at = order.get('ordered_at')
+        if not ordered_at and order.get('created_at'):
+            try:
+                ordered_at = datetime.strptime(
+                    order['created_at'], '%Y-%m-%d %H:%M:%S'
+                ).replace(tzinfo=timezone.utc)
+            except (TypeError, ValueError):
+                continue
+        if ordered_at:
+            record_item_order_events(
+                order['id'],
+                order.get('items', []),
+                ordered_at,
+                demo_data=order.get('demo_data', False)
+            )
 
 
 def next_order_token():

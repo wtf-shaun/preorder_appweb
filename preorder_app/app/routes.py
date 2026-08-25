@@ -5,7 +5,8 @@ from .db import (
     get_all_categories, ensure_categories, get_item_by_id,
     create_cart, update_cart, clear_cart, get_order_by_id,
     get_order_by_id_and_user, get_all_orders,
-    next_order_token, create_order, update_order_status as save_order_status,
+    next_order_token, create_order, record_item_order_events,
+    update_order_status as save_order_status,
     delete_order
 )
 import uuid
@@ -375,6 +376,7 @@ def pay_now():
     order_id = str(uuid.uuid4())[:8].upper()
 
     token = next_order_token()
+    ordered_at = datetime.now(timezone.utc)
 
     create_order({
         "id": order_id,
@@ -385,10 +387,11 @@ def pay_now():
         "total": total,
         "status": "Preparing",
         "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "ordered_at": datetime.now(timezone.utc)
+        "ordered_at": ordered_at
 
 
     })
+    record_item_order_events(order_id, order_items, ordered_at)
 
     # Empty cart
     clear_cart(user['id'])

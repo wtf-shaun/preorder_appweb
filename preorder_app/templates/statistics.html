@@ -63,6 +63,7 @@
                     <tr>
                         <th>Rank</th>
                         <th>Item</th>
+                        <th>Times Ordered</th>
                         <th>Units Ordered</th>
                         <th>Revenue</th>
                         <th>Revenue Share</th>
@@ -73,13 +74,14 @@
                     <tr>
                         <td><strong>#{{ item.rank }}</strong></td>
                         <td>{{ item.name }}</td>
+                        <td>{{ item.orders }}</td>
                         <td>{{ item.quantity|round(0)|int }}</td>
                         <td><strong class="admin-price">₹{{ item.revenue|round(2) }}</strong></td>
                         <td>{{ item.percentage|round(1) }}%</td>
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="5" class="analytics-empty">No menu items are available yet.</td>
+                        <td colspan="6" class="analytics-empty">No menu items are available yet.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
