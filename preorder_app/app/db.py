@@ -1,7 +1,7 @@
 # app/db.py
 
 import os
-from pymongo import MongoClient
+from pymongo import MongoClient, ReturnDocument
 
 MONGO_URI = os.environ.get("MONGO_URI")
 DB_NAME = os.environ.get("DB_NAME", "cafeteria_app")
@@ -18,6 +18,7 @@ items_col = db["items"]
 carts_col = db["carts"]
 orders_col = db["orders"]
 categories_col = db["categories"]
+counters_col = db["counters"]
 
 
 # ===============================
@@ -179,6 +180,124 @@ def get_category_by_slug(slug):
 def get_all_categories():
     """Get all categories sorted by name."""
     return list(categories_col.find({}, {'_id': 0}).sort('name', 1))
+
+
+def ensure_categories(categories):
+    """Insert default categories without replacing existing values."""
+    for category in categories:
+        categories_col.update_one(
+            {'slug': category['slug']},
+            {'$setOnInsert': category},
+            upsert=True
+        )
+
+
+def get_all_items_for_menu():
+    """Get menu items with a category fallback for older records."""
+    items = list(items_col.find({}, {'_id': 0}))
+    for item in items:
+        item.setdefault('category', 'food')
+    return items
+
+
+def get_all_orders_for_admin():
+    """Get all orders without MongoDB's internal identifier."""
+    return list(orders_col.find({}, {'_id': 0}))
+
+
+def get_monthly_item_popularity():
+    """Aggregate ordered quantities by month and item in MongoDB."""
+    pipeline = [
+        {
+            '$match': {
+                '$or': [
+                    {'ordered_at': {'$type': 'date'}},
+                    {'created_at': {'$type': 'string'}}
+                ]
+            }
+        },
+        {
+            '$set': {
+                'analytics_date': {
+                    '$cond': [
+                        {'$eq': [{'$type': '$ordered_at'}, 'date']},
+                        '$ordered_at',
+                        {
+                            '$dateFromString': {
+                                'dateString': '$created_at',
+                                'format': '%Y-%m-%d %H:%M:%S',
+                                'timezone': 'UTC'
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {'$unwind': '$items'},
+        {
+            '$group': {
+                '_id': {
+                    'month': {
+                        '$dateToString': {
+                            'format': '%Y-%m',
+                            'date': '$analytics_date',
+                            'timezone': 'UTC'
+                        }
+                    },
+                    'item_id': {
+                        '$ifNull': ['$items.item_id', '$items.name']
+                    },
+                    'item_name': '$items.name'
+                },
+                'quantity': {'$sum': '$items.qty'}
+            }
+        },
+        {'$sort': {'_id.month': 1, '_id.item_name': 1}},
+    ]
+
+    monthly = {}
+    item_names = {}
+    for row in orders_col.aggregate(pipeline):
+        month = row['_id']['month']
+        item_id = row['_id']['item_id']
+        monthly.setdefault(month, {})[item_id] = row['quantity']
+        item_names[item_id] = row['_id']['item_name']
+
+    months = sorted(monthly)
+    items = sorted(item_names, key=lambda item_id: item_names[item_id].lower())
+    return {
+        'months': months,
+        'datasets': [
+            {
+                'label': item_names[item_id],
+                'data': [monthly[month].get(item_id, 0) for month in months]
+            }
+            for item_id in items
+        ]
+    }
+
+
+def next_order_token():
+    """Atomically allocate the next order token in MongoDB."""
+    counter = counters_col.find_one_and_update(
+        {'_id': 'order_token'},
+        {'$inc': {'value': 1}},
+        upsert=True,
+        return_document=ReturnDocument.AFTER,
+        projection={'value': 1}
+    )
+    return counter['value']
+
+
+def initialize_order_token_counter():
+    """Seed the counter from existing orders without lowering its value."""
+    last_order = orders_col.find_one(sort=[('token', -1)])
+    current_value = last_order.get('token', 0) if last_order else 0
+    counters_col.update_one(
+        {'_id': 'order_token'},
+        {'$max': {'value': current_value}},
+        upsert=True
+    )
 
 
 def create_category(category_data):

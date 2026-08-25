@@ -1,6 +1,6 @@
 from flask import Flask
 import os
-from .db import db
+from .db import db, initialize_order_token_counter
 
 
 def create_app():
@@ -29,6 +29,7 @@ def create_app():
 
     # Attach DB to app
     app.db = db
+    initialize_order_token_counter()
 
     # ===============================
     # CREATE DEFAULT ADMIN (ONLY ONCE)

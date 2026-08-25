@@ -32,6 +32,36 @@
 
 
     <!-- =====================================================
+         ITEM POPULARITY
+         ===================================================== -->
+
+    <section class="admin-section analytics-section">
+
+        <div class="admin-section-header">
+            <div class="admin-section-title">
+                <div class="admin-section-icon">📈</div>
+                <div>
+                    <h2>Item Popularity</h2>
+                    <p>Monthly quantities ordered for each menu item.</p>
+                </div>
+            </div>
+            <span class="section-label">MONTHLY ANALYTICS</span>
+        </div>
+
+        {% if popularity.months %}
+            <div class="analytics-chart-wrapper">
+                <canvas id="itemPopularityChart" aria-label="Monthly item popularity line graph"></canvas>
+            </div>
+        {% else %}
+            <div class="analytics-empty">
+                Monthly item data will appear after the first tracked order.
+            </div>
+        {% endif %}
+
+    </section>
+
+
+    <!-- =====================================================
          USERS
          ===================================================== -->
 
@@ -560,6 +590,7 @@
                     <tr>
                         <th>Order ID</th>
                         <th>User</th>
+                        <th>Date</th>
                         <th>Items</th>
                         <th>Total</th>
                         <th>Status</th>
@@ -585,6 +616,16 @@
                             <strong>
                                 {{ o["user_name"] }}
                             </strong>
+                        </td>
+
+                        <td>
+                            <span class="muted-text">
+                                {% if o.get('ordered_at') %}
+                                    {{ o['ordered_at'].strftime('%Y-%m-%d %H:%M UTC') }}
+                                {% else %}
+                                    {{ o.get('created_at', 'N/A') }}
+                                {% endif %}
+                            </span>
                         </td>
 
                         <td>
@@ -634,7 +675,55 @@
 </div>
 
 
+{% if popularity.months %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script>
+
+const popularity = {{ popularity|tojson }};
+const chartColors = [
+    '#fc8019', '#2f80ed', '#27ae60', '#9b51e0', '#eb5757',
+    '#00a6a6', '#f2c94c', '#6c5ce7', '#56ccf2', '#828282'
+];
+
+new Chart(document.getElementById('itemPopularityChart'), {
+    type: 'line',
+    data: {
+        labels: popularity.months,
+        datasets: popularity.datasets.map(function (dataset, index) {
+            const color = chartColors[index % chartColors.length];
+            return {
+                label: dataset.label,
+                data: dataset.data,
+                borderColor: color,
+                backgroundColor: color,
+                borderWidth: 2,
+                pointRadius: 3,
+                pointHoverRadius: 5,
+                tension: 0.25,
+                fill: false
+            };
+        })
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+            legend: { position: 'bottom' }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: { precision: 0 },
+                title: { display: true, text: 'Quantity ordered' }
+            },
+            x: {
+                title: { display: true, text: 'Month' }
+            }
+        }
+    }
+});
+
 
 /* =========================================================
    FILE NAME DISPLAY

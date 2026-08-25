@@ -6,6 +6,23 @@
     flex: 1; 
 }
 
+.analytics-chart-wrapper {
+    height: 360px;
+    padding: 20px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+}
+
+.analytics-empty {
+    padding: 32px 20px;
+    color: var(--text-muted);
+    text-align: center;
+    background: var(--card-bg);
+    border: 1px dashed var(--border-soft);
+    border-radius: 8px;
+}
+
 /* =========================================================
    VARIABLES
    ========================================================= */

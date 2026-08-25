@@ -1,7 +1,15 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, send_file
-from .db import users_col, items_col, carts_col, orders_col, categories_col
+from .db import (
+    users_col, items_col, carts_col, orders_col, categories_col,
+    get_user_by_id, get_all_items_for_menu, get_cart_by_user,
+    get_all_categories, ensure_categories, get_item_by_id,
+    create_cart, update_cart, clear_cart, get_order_by_id,
+    get_order_by_id_and_user, get_all_orders,
+    next_order_token, create_order, update_order_status as save_order_status,
+    delete_order
+)
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 import threading
 import os
 
@@ -15,7 +23,7 @@ bp = Blueprint('main', __name__)
 @bp.route('/cafeteria')
 def cafeteria():
     user = current_user()
-    orders = list(orders_col.find({}, {'_id': 0}))
+    orders = get_all_orders()
 
     return render_template('cafeteria.html', orders=orders, user=user)
 
@@ -60,14 +68,14 @@ def current_user():
         }
 
     # If it's a real user, look them up in the database normally
-    return users_col.find_one({'id': uid})
+    return get_user_by_id(uid)
 def get_cart_count():
     user = current_user()
 
     if not user:
         return 0
 
-    cart = carts_col.find_one({'user_id': user['id']})
+    cart = get_cart_by_user(user['id'])
 
     if not cart or not cart.get('items'):
         return 0
@@ -87,7 +95,7 @@ def inject_cart_count():
 def delete_order_after_delay(order_id, delay=60):
     import time
     time.sleep(delay)
-    orders_col.delete_one({'id': order_id})
+    delete_order(order_id)
 # ===============================
 # HOME
 # ===============================
@@ -101,22 +109,15 @@ def index():
 # ===============================
 @bp.route('/menu')
 def menu():
-    items = list(items_col.find({}, {'_id': 0}))
-    for item in items:
-        item.setdefault('category', 'food')
+    items = get_all_items_for_menu()
     user = current_user()
-    cart = carts_col.find_one({'user_id': user['id']}) if user else None
+    cart = get_cart_by_user(user['id']) if user else None
     defaults = [
         {'slug': 'food', 'name': 'Food'},
         {'slug': 'beverage', 'name': 'Beverages'}
     ]
-    for category in defaults:
-        categories_col.update_one(
-            {'slug': category['slug']},
-            {'$setOnInsert': category},
-            upsert=True
-        )
-    categories = list(categories_col.find({}, {'_id': 0}).sort('name', 1))
+    ensure_categories(defaults)
+    categories = get_all_categories()
     cart_item_ids = {
         cart_item['item_id']
         for cart_item in (cart or {}).get('items', [])
@@ -147,7 +148,7 @@ def view_cart():
         flash('Login first')
         return redirect(url_for('auth.login'))
 
-    cart = carts_col.find_one({'user_id': user['id']})
+    cart = get_cart_by_user(user['id'])
 
     if not cart or not cart.get('items'):
         return render_template('cart.html', cart_details=[], total=0, user=user)
@@ -156,7 +157,7 @@ def view_cart():
     total = 0
 
     for c in cart['items']:
-        item = items_col.find_one({'id': c['item_id']})
+        item = get_item_by_id(c['item_id'])
 
         if not item:
             continue
@@ -199,24 +200,16 @@ def add_to_cart():
     user_id = user['id']
 
     # Make sure the item actually exists
-    item = items_col.find_one({'id': item_id})
+    item = get_item_by_id(item_id)
 
     if not item:
         flash('Item not found')
         return redirect(url_for('main.menu'))
 
-    cart = carts_col.find_one({'user_id': user_id})
+    cart = get_cart_by_user(user_id)
 
     if not cart:
-        carts_col.insert_one({
-            'user_id': user_id,
-            'items': [
-                {
-                    'item_id': item_id,
-                    'qty': quantity
-                }
-            ]
-        })
+        create_cart(user_id, [{'item_id': item_id, 'qty': quantity}])
 
     else:
         found = False
@@ -238,10 +231,7 @@ def add_to_cart():
                 'qty': quantity
             })
 
-        carts_col.update_one(
-            {'user_id': user_id},
-            {'$set': {'items': cart['items']}}
-        )
+        update_cart(user_id, cart['items'])
 
     if quantity == 1:
         flash(f'{item["name"]} added to cart')
@@ -260,7 +250,7 @@ def cart_increase():
 
     item_id = request.form.get('item_id')
 
-    cart = carts_col.find_one({'user_id': user['id']})
+    cart = get_cart_by_user(user['id'])
 
     if not cart:
         return redirect(url_for('main.view_cart'))
@@ -269,10 +259,7 @@ def cart_increase():
         if item['item_id'] == item_id:
             item['qty'] += 1
 
-    carts_col.update_one(
-        {'user_id': user['id']},
-        {'$set': {'items': cart['items']}}
-    )
+    update_cart(user['id'], cart['items'])
 
     return redirect(url_for('main.view_cart'))
 
@@ -288,7 +275,7 @@ def cart_decrease():
 
     item_id = request.form.get('item_id')
 
-    cart = carts_col.find_one({'user_id': user['id']})
+    cart = get_cart_by_user(user['id'])
 
     if not cart:
         return redirect(url_for('main.view_cart'))
@@ -303,10 +290,7 @@ def cart_decrease():
         else:
             new_items.append(item)
 
-    carts_col.update_one(
-        {'user_id': user['id']},
-        {'$set': {'items': new_items}}
-    )
+    update_cart(user['id'], new_items)
 
     return redirect(url_for('main.view_cart'))
 
@@ -322,7 +306,7 @@ def checkout():
         flash('Login required')
         return redirect(url_for('auth.login'))
 
-    cart = carts_col.find_one({'user_id': user['id']})
+    cart = get_cart_by_user(user['id'])
 
     if not cart or not cart.get('items'):
         flash('Cart is empty')
@@ -332,7 +316,7 @@ def checkout():
     total = 0
 
     for c in cart['items']:
-        item = items_col.find_one({'id': c['item_id']})
+        item = get_item_by_id(c['item_id'])
         if not item:
             continue
 
@@ -362,7 +346,7 @@ def pay_now():
     if not user:
         return redirect(url_for('auth.login'))
 
-    cart = carts_col.find_one({'user_id': user['id']})
+    cart = get_cart_by_user(user['id'])
 
     if not cart or not cart.get('items'):
         flash("Cart empty")
@@ -372,7 +356,7 @@ def pay_now():
     total = 0
 
     for c in cart['items']:
-        item = items_col.find_one({'id': c['item_id']})
+        item = get_item_by_id(c['item_id'])
 
         if not item:
             continue
@@ -381,6 +365,7 @@ def pay_now():
         total += subtotal
 
         order_items.append({
+            "item_id": item['id'],
             "name": item['name'],
             "qty": c['qty'],
             "price": item['price'],
@@ -389,10 +374,9 @@ def pay_now():
 
     order_id = str(uuid.uuid4())[:8].upper()
 
-    last_order = orders_col.find_one(sort=[("token", -1)])
-    token = (last_order['token'] + 1) if last_order else 1
+    token = next_order_token()
 
-    orders_col.insert_one({
+    create_order({
         "id": order_id,
         "user_id": user['id'],
         "token": token,
@@ -400,16 +384,14 @@ def pay_now():
         "items": order_items,
         "total": total,
         "status": "Preparing",
-        "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "ordered_at": datetime.now(timezone.utc)
 
 
     })
 
     # Empty cart
-    carts_col.update_one(
-        {'user_id': user['id']},
-        {'$set': {'items': []}}
-    )
+    clear_cart(user['id'])
 
     # Generate invoice
     pdf_path = generate_invoice_pdf(
@@ -465,15 +447,7 @@ def order_progress(order_id):
         return redirect(url_for('auth.login'))
 
     # Find the order
-    order = orders_col.find_one(
-        {
-            'id': order_id,
-            'user_id': user['id']
-        },
-        {
-            '_id': 0
-        }
-    )
+    order = get_order_by_id_and_user(order_id, user['id'])
 
     if not order:
         flash("Order not found")
@@ -507,7 +481,7 @@ def update_order_status(order_id, status):
         flash("Invalid order status")
         return redirect(url_for('main.cafeteria'))
 
-    order = orders_col.find_one({'id': order_id})
+    order = get_order_by_id(order_id)
 
     if not order:
         flash("Order not found")
@@ -515,14 +489,11 @@ def update_order_status(order_id, status):
 
     # If the status is Delivered, delete the data instantly
     if status == "Delivered":
-        orders_col.delete_one({'id': order_id})
+        delete_order(order_id)
         flash("Order marked as delivered and successfully removed from the system.")
     else:
         # Otherwise, just update the status
-        orders_col.update_one(
-            {'id': order_id},
-            {'$set': {'status': status}}
-        )
+        save_order_status(order_id, status)
         flash(f"Order status updated to: {status}")
 
     return redirect(url_for('main.cafeteria'))

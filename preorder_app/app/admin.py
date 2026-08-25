@@ -3,7 +3,13 @@ from flask import (
     url_for, flash, session
 )
 from werkzeug.utils import secure_filename
-from .db import users_col, items_col, orders_col, categories_col
+from .db import (
+    get_user_by_id, get_all_users, get_all_items_for_menu,
+    get_all_orders_for_admin, get_monthly_item_popularity,
+    ensure_categories, get_category_by_slug,
+    create_category, create_item, update_item, delete_item,
+    update_user, delete_user as remove_user, get_all_categories
+)
 import uuid
 import os
 
@@ -16,19 +22,14 @@ DEFAULT_CATEGORIES = [
 
 
 def get_categories():
-    for category in DEFAULT_CATEGORIES:
-        categories_col.update_one(
-            {'slug': category['slug']},
-            {'$setOnInsert': category},
-            upsert=True
-        )
-    return list(categories_col.find({}, {'_id': 0}).sort('name', 1))
+    ensure_categories(DEFAULT_CATEGORIES)
+    return get_all_categories()
 
 def is_admin():
     uid = session.get('user_id')
     if not uid:
         return False
-    user = users_col.find_one({'id': uid})
+    user = get_user_by_id(uid)
     return user and user.get('is_admin') is True
 
 
@@ -42,14 +43,20 @@ def index():
     if not is_admin():
         return redirect(url_for('auth.login'))
 
-    users = list(users_col.find({}, {'_id': 0}))
-    items = list(items_col.find({}, {'_id': 0}))
-    for item in items:
-        item.setdefault('category', 'food')
-    orders = list(orders_col.find({}, {'_id': 0}))
+    users = get_all_users()
+    items = get_all_items_for_menu()
+    orders = get_all_orders_for_admin()
+    popularity = get_monthly_item_popularity()
     categories = get_categories()
 
-    return render_template('admin.html', users=users, items=items, orders=orders, categories=categories)
+    return render_template(
+        'admin.html',
+        users=users,
+        items=items,
+        orders=orders,
+        categories=categories,
+        popularity=popularity
+    )
 
 
 @bp.route('/add_category', methods=['POST'])
@@ -62,10 +69,10 @@ def add_category():
 
     if not name or not slug:
         flash('Enter a category name')
-    elif categories_col.find_one({'slug': slug}):
+    elif get_category_by_slug(slug):
         flash('Category already exists')
     else:
-        categories_col.insert_one({'slug': slug, 'name': name})
+        create_category({'slug': slug, 'name': name})
         flash('Category added')
 
     return redirect(url_for('admin.index'))
@@ -93,11 +100,11 @@ def add_item():
         image_filename = str(uuid.uuid4()) + "_" + filename
         image.save(os.path.join(UPLOAD_FOLDER, image_filename))
 
-    items_col.insert_one({
+    create_item({
         'id': str(uuid.uuid4())[:8],
         'name': name,
         'price': int(price),
-        'category': category if categories_col.find_one({'slug': category}) else 'food',
+        'category': category if get_category_by_slug(category) else 'food',
         'image': image_filename
     })
 
@@ -111,8 +118,8 @@ def update_item_category(item_id):
         return redirect(url_for('auth.login'))
 
     category = request.form.get('category', 'food')
-    if categories_col.find_one({'slug': category}):
-        items_col.update_one({'id': item_id}, {'$set': {'category': category}})
+    if get_category_by_slug(category):
+        update_item(item_id, {'category': category})
 
     return redirect(url_for('admin.index'))
 
@@ -122,7 +129,7 @@ def delete_item(item_id):
     if not is_admin():
         return redirect(url_for('auth.login'))
 
-    items_col.delete_one({'id': item_id})
+    delete_item(item_id)
     flash("Item deleted")
     return redirect(url_for('admin.index'))
 
@@ -134,7 +141,7 @@ def edit_user(user_id):
     if not is_admin():
         return redirect(url_for('auth.login'))
 
-    user = users_col.find_one({'id': user_id})
+    user = get_user_by_id(user_id)
 
     if not user:
         flash('User not found')
@@ -156,10 +163,7 @@ def edit_user(user_id):
         update_data['is_admin'] = True if request.form.get('is_admin') else False
 
         if update_data:
-            users_col.update_one(
-                {'id': user_id},
-                {'$set': update_data}
-            )
+            update_user(user_id, update_data)
             flash('User updated')
         else:
             flash('No changes made')
@@ -187,7 +191,7 @@ def delete_user():
         flash("You cannot delete your own account!")
         return redirect(url_for('admin.index'))
 
-    result = users_col.delete_one({'id': user_id})
+    result = remove_user(user_id)
 
     if result.deleted_count == 0:
         flash("User not found")
