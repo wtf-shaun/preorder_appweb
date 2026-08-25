@@ -1,7 +1,9 @@
 # app/db.py
 
 import os
+import logging
 from pymongo import MongoClient, ReturnDocument
+from pymongo.errors import PyMongoError
 
 MONGO_URI = os.environ.get("MONGO_URI")
 DB_NAME = os.environ.get("DB_NAME", "cafeteria_app")
@@ -260,11 +262,19 @@ def get_monthly_item_popularity():
 
     monthly = {}
     item_names = {}
-    for row in orders_col.aggregate(pipeline):
-        month = row['_id']['month']
-        item_id = row['_id']['item_id']
-        monthly.setdefault(month, {})[item_id] = row['quantity']
-        item_names[item_id] = row['_id']['item_name']
+    try:
+        rows = orders_col.aggregate(pipeline)
+        for row in rows:
+            month = row['_id']['month']
+            item_name = row['_id'].get('item_name') or 'Unknown item'
+            item_id = row['_id'].get('item_id') or item_name
+            monthly.setdefault(month, {})[item_id] = row['quantity']
+            item_names[item_id] = item_name
+    except PyMongoError:
+        logging.getLogger(__name__).exception(
+            'Monthly item popularity aggregation failed'
+        )
+        return {'months': [], 'datasets': []}
 
     months = sorted(monthly)
     items = sorted(item_names, key=lambda item_id: item_names[item_id].lower())
