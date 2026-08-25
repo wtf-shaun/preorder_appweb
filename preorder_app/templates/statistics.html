@@ -10,7 +10,7 @@
         </div>
         <div class="statistics-actions">
             <form method="POST" action="{{ url_for('admin.seed_statistics') }}">
-                <button type="submit" class="btn">Add Demo Data</button>
+                <button type="submit" class="btn admin-add-btn">Add Demo Data</button>
             </form>
             <form method="POST" action="{{ url_for('admin.clear_statistics_demo') }}">
                 <button type="submit" class="action-btn delete-btn" onclick="return confirm('Remove all demo statistics data?');">Clear Demo Data</button>
