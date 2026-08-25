@@ -677,9 +677,12 @@
 
 {% if popularity.months %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script id="item-popularity-data" type="application/json">{{ popularity|tojson }}</script>
 <script>
 
-const popularity = {{ popularity|tojson }};
+const popularity = JSON.parse(
+    document.getElementById('item-popularity-data').textContent
+);
 const chartColors = [
     '#fc8019', '#2f80ed', '#27ae60', '#9b51e0', '#eb5757',
     '#00a6a6', '#f2c94c', '#6c5ce7', '#56ccf2', '#828282'
@@ -792,4 +795,5 @@ document.querySelectorAll('.category-drop-zone').forEach(function (zone) {
 
 </script>
 
+{% endif %}
 {% endblock %}
