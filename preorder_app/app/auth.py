@@ -1,6 +1,10 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from werkzeug.security import generate_password_hash, check_password_hash
-from .db import users_col
+from .db import (
+    get_user_by_email,
+    get_user_by_id,
+    create_user
+)
 import uuid
 
 bp = Blueprint('auth', __name__)
@@ -12,7 +16,7 @@ def get_current_user():
     uid = session.get('user_id')
     if not uid:
         return None
-    return users_col.find_one({'id': uid})
+    return get_user_by_id(uid)
 
 
 # ===============================
@@ -24,7 +28,7 @@ def login():
         email = request.form.get('email')
         pwd = request.form.get('password')
 
-        user = users_col.find_one({'email': email})
+        user = get_user_by_email(email)
 
         if user and check_password_hash(user.get('password_hash', ''), pwd):
             session.clear()
@@ -50,11 +54,11 @@ def register():
         email = request.form.get('email')
         pwd = request.form.get('password')
 
-        if users_col.find_one({'email': email}):
+        if get_user_by_email(email):
             flash("Email already exists")
             return redirect(url_for('auth.register'))
 
-        users_col.insert_one({
+        create_user({
             'id': str(uuid.uuid4()),
             'name': name,
             'email': email,
