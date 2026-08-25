@@ -50,6 +50,7 @@
 
         {% if user and user.is_admin %}
             <a href="{{ url_for('admin.index') }}">Admin</a>
+            <a href="{{ url_for('admin.statistics') }}">Statistics</a>
         {% endif %}
 
         {% if user %}

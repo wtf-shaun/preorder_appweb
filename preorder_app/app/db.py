@@ -290,6 +290,70 @@ def get_monthly_item_popularity():
     }
 
 
+def get_monthly_revenue():
+    """Aggregate revenue and order count by month in MongoDB."""
+    pipeline = [
+        {
+            '$match': {
+                '$or': [
+                    {'ordered_at': {'$type': 'date'}},
+                    {'created_at': {'$type': 'string'}}
+                ]
+            }
+        },
+        {
+            '$set': {
+                'analytics_date': {
+                    '$cond': [
+                        {'$eq': [{'$type': '$ordered_at'}, 'date']},
+                        '$ordered_at',
+                        {
+                            '$dateFromString': {
+                                'dateString': '$created_at',
+                                'format': '%Y-%m-%d %H:%M:%S',
+                                'timezone': 'UTC',
+                                'onError': None,
+                                'onNull': None
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {'$match': {'analytics_date': {'$type': 'date'}}},
+        {
+            '$group': {
+                '_id': {
+                    '$dateToString': {
+                        'format': '%Y-%m',
+                        'date': '$analytics_date',
+                        'timezone': 'UTC'
+                    }
+                },
+                'revenue': {'$sum': {'$ifNull': ['$total', 0]}},
+                'orders': {'$sum': 1}
+            }
+        },
+        {'$sort': {'_id': 1}}
+    ]
+
+    try:
+        rows = orders_col.aggregate(pipeline)
+        return [
+            {
+                'month': row['_id'],
+                'revenue': row['revenue'],
+                'orders': row['orders']
+            }
+            for row in rows
+        ]
+    except PyMongoError:
+        logging.getLogger(__name__).exception(
+            'Monthly revenue aggregation failed'
+        )
+        return []
+
+
 def next_order_token():
     """Atomically allocate the next order token in MongoDB."""
     counter = counters_col.find_one_and_update(

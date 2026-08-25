@@ -23,6 +23,17 @@
     border-radius: 8px;
 }
 
+.statistics-page .analytics-chart-wrapper {
+    min-height: 320px;
+}
+
+@media (max-width: 700px) {
+    .statistics-page .analytics-chart-wrapper {
+        height: 280px;
+        padding: 12px;
+    }
+}
+
 /* =========================================================
    VARIABLES
    ========================================================= */

@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-shell admin-page statistics-page">
+    <div class="page-header">
+        <div>
+            <span class="page-eyebrow">MANAGEMENT SYSTEM</span>
+            <h1>Statistics</h1>
+            <p>Track revenue, orders, and item popularity by month.</p>
+        </div>
+        <div class="page-badge admin-badge">Admin analytics</div>
+    </div>
+
+    <section class="admin-section">
+        <div class="admin-section-header">
+            <div class="admin-section-title">
+                <div class="admin-section-icon">₹</div>
+                <div>
+                    <h2>Monthly Revenue</h2>
+                    <p>Total order value recorded for each month.</p>
+                </div>
+            </div>
+            <a href="{{ url_for('admin.index') }}" class="btn">Back to Admin</a>
+        </div>
+
+        {% if revenue %}
+            <div class="analytics-chart-wrapper">
+                <canvas id="revenueChart" aria-label="Monthly revenue line graph"></canvas>
+            </div>
+        {% else %}
+            <div class="analytics-empty">Monthly revenue data will appear after the first order.</div>
+        {% endif %}
+    </section>
+
+    <section class="admin-section">
+        <div class="admin-section-header">
+            <div class="admin-section-title">
+                <div class="admin-section-icon">#</div>
+                <div>
+                    <h2>Monthly Orders</h2>
+                    <p>Number of orders recorded for each month.</p>
+                </div>
+            </div>
+        </div>
+
+        {% if revenue %}
+            <div class="analytics-chart-wrapper">
+                <canvas id="ordersChart" aria-label="Monthly order count line graph"></canvas>
+            </div>
+        {% else %}
+            <div class="analytics-empty">No order data is available yet.</div>
+        {% endif %}
+    </section>
+
+    <section class="admin-section">
+        <div class="admin-section-header">
+            <div class="admin-section-title">
+                <div class="admin-section-icon">*</div>
+                <div>
+                    <h2>Item Popularity</h2>
+                    <p>Quantities ordered for each menu item by month.</p>
+                </div>
+            </div>
+        </div>
+
+        {% if popularity.months %}
+            <div class="analytics-chart-wrapper">
+                <canvas id="itemPopularityChart" aria-label="Monthly item popularity line graph"></canvas>
+            </div>
+        {% else %}
+            <div class="analytics-empty">Monthly item data will appear after the first order.</div>
+        {% endif %}
+    </section>
+
+    <section class="admin-section">
+        <div class="admin-section-header">
+            <div class="admin-section-title">
+                <div class="admin-section-icon">=</div>
+                <div>
+                    <h2>Monthly Summary</h2>
+                    <p>Revenue and order totals by month.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-wrapper admin-table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Orders</th>
+                        <th>Revenue</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in revenue %}
+                    <tr>
+                        <td><strong>{{ row.month }}</strong></td>
+                        <td>{{ row.orders }}</td>
+                        <td><strong class="admin-price">₹{{ row.revenue }}</strong></td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="3" class="analytics-empty">No monthly data available.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+
+{% if revenue or popularity.months %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script id="statistics-data" type="application/json">{{ {'revenue': revenue, 'popularity': popularity}|tojson }}</script>
+<script>
+const statistics = JSON.parse(
+    document.getElementById('statistics-data').textContent
+);
+const chartColors = [
+    '#fc8019', '#2f80ed', '#27ae60', '#9b51e0', '#eb5757',
+    '#00a6a6', '#f2c94c', '#6c5ce7', '#56ccf2', '#828282'
+];
+
+function createLineChart(elementId, labels, datasets, yTitle, currency) {
+    const element = document.getElementById(elementId);
+    if (!element) {
+        return;
+    }
+
+    new Chart(element, {
+        type: 'line',
+        data: { labels: labels, datasets: datasets },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: { legend: { position: 'bottom' } },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0,
+                        callback: function (value) {
+                            return currency ? '₹' + value : value;
+                        }
+                    },
+                    title: { display: true, text: yTitle }
+                }
+            }
+        }
+    });
+}
+
+const revenueLabels = statistics.revenue.map(function (row) { return row.month; });
+createLineChart(
+    'revenueChart',
+    revenueLabels,
+    [{
+        label: 'Revenue',
+        data: statistics.revenue.map(function (row) { return row.revenue; }),
+        borderColor: '#fc8019',
+        backgroundColor: '#fc8019',
+        borderWidth: 2,
+        pointRadius: 3,
+        tension: 0.25,
+        fill: false
+    }],
+    'Revenue',
+    true
+);
+
+createLineChart(
+    'ordersChart',
+    revenueLabels,
+    [{
+        label: 'Orders',
+        data: statistics.revenue.map(function (row) { return row.orders; }),
+        borderColor: '#2f80ed',
+        backgroundColor: '#2f80ed',
+        borderWidth: 2,
+        pointRadius: 3,
+        tension: 0.25,
+        fill: false
+    }],
+    'Orders',
+    false
+);
+
+createLineChart(
+    'itemPopularityChart',
+    statistics.popularity.months,
+    statistics.popularity.datasets.map(function (dataset, index) {
+        const color = chartColors[index % chartColors.length];
+        return {
+            label: dataset.label,
+            data: dataset.data,
+            borderColor: color,
+            backgroundColor: color,
+            borderWidth: 2,
+            pointRadius: 3,
+            tension: 0.25,
+            fill: false
+        };
+    }),
+    'Quantity ordered',
+    false
+);
+</script>
+{% endif %}
+{% endblock %}

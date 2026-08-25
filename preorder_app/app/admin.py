@@ -6,6 +6,7 @@ from werkzeug.utils import secure_filename
 from .db import (
     get_user_by_id, get_all_users, get_all_items_for_menu,
     get_all_orders_for_admin, get_monthly_item_popularity,
+    get_monthly_revenue,
     ensure_categories, get_category_by_slug,
     create_category, create_item, update_item, delete_item,
     update_user, delete_user as remove_user, get_all_categories
@@ -46,7 +47,6 @@ def index():
     users = get_all_users()
     items = get_all_items_for_menu()
     orders = get_all_orders_for_admin()
-    popularity = get_monthly_item_popularity()
     categories = get_categories()
 
     return render_template(
@@ -54,8 +54,19 @@ def index():
         users=users,
         items=items,
         orders=orders,
-        categories=categories,
-        popularity=popularity
+        categories=categories
+    )
+
+
+@bp.route('/statistics')
+def statistics():
+    if not is_admin():
+        return redirect(url_for('auth.login'))
+
+    return render_template(
+        'statistics.html',
+        popularity=get_monthly_item_popularity(),
+        revenue=get_monthly_revenue()
     )
 
 
