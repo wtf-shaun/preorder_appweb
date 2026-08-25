@@ -8,6 +8,13 @@
             <h1>Statistics</h1>
             <p>Track revenue, orders, and item popularity by month.</p>
         </div>
+    </div>
+
+    <section class="statistics-controls" aria-label="Demo statistics controls">
+        <div>
+            <strong>Chart preview data</strong>
+            <p>Add synthetic orders across the last 12 months to preview the reports.</p>
+        </div>
         <div class="statistics-actions">
             <form method="POST" action="{{ url_for('admin.seed_statistics') }}">
                 <button type="submit" class="btn admin-add-btn">Add Demo Data</button>
@@ -16,7 +23,7 @@
                 <button type="submit" class="action-btn delete-btn" onclick="return confirm('Remove all demo statistics data?');">Clear Demo Data</button>
             </form>
         </div>
-    </div>
+    </section>
 
     <section class="admin-section">
         <div class="admin-section-header">
