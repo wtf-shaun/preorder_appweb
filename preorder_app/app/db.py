@@ -226,13 +226,16 @@ def get_monthly_item_popularity():
                             '$dateFromString': {
                                 'dateString': '$created_at',
                                 'format': '%Y-%m-%d %H:%M:%S',
-                                'timezone': 'UTC'
+                                'timezone': 'UTC',
+                                'onError': None,
+                                'onNull': None
                             }
                         }
                     ]
                 }
             }
         },
+        {'$match': {'analytics_date': {'$type': 'date'}}},
         {'$unwind': '$items'},
         {
             '$group': {
