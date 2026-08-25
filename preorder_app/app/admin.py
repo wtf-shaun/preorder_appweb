@@ -7,6 +7,7 @@ from .db import (
     get_user_by_id, get_all_users, get_all_items_for_menu,
     get_all_orders_for_admin, get_monthly_item_popularity,
     get_monthly_revenue,
+    seed_demo_statistics, clear_demo_statistics,
     ensure_categories, get_category_by_slug,
     create_category, create_item, update_item, delete_item,
     update_user, delete_user as remove_user, get_all_categories
@@ -68,6 +69,26 @@ def statistics():
         popularity=get_monthly_item_popularity(),
         revenue=get_monthly_revenue()
     )
+
+
+@bp.route('/seed_statistics', methods=['POST'])
+def seed_statistics():
+    if not is_admin():
+        return redirect(url_for('auth.login'))
+
+    count = seed_demo_statistics()
+    flash(f'Added {count} demo orders to the statistics.')
+    return redirect(url_for('admin.statistics'))
+
+
+@bp.route('/clear_statistics_demo', methods=['POST'])
+def clear_statistics_demo():
+    if not is_admin():
+        return redirect(url_for('auth.login'))
+
+    result = clear_demo_statistics()
+    flash(f'Removed {result.deleted_count} demo orders from the statistics.')
+    return redirect(url_for('admin.statistics'))
 
 
 @bp.route('/add_category', methods=['POST'])

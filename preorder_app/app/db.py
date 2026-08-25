@@ -2,6 +2,9 @@
 
 import os
 import logging
+import random
+import uuid
+from datetime import datetime, timedelta, timezone
 from pymongo import MongoClient, ReturnDocument
 from pymongo.errors import PyMongoError
 
@@ -352,6 +355,58 @@ def get_monthly_revenue():
             'Monthly revenue aggregation failed'
         )
         return []
+
+
+def seed_demo_statistics(order_count=300):
+    """Create clearly marked demo orders for testing the statistics charts."""
+    menu_items = list(items_col.find({}, {'_id': 0}))
+    if not menu_items:
+        menu_items = [
+            {'id': 'demo-sandwich', 'name': 'Demo Sandwich', 'price': 80},
+            {'id': 'demo-coffee', 'name': 'Demo Coffee', 'price': 50},
+            {'id': 'demo-wrap', 'name': 'Demo Wrap', 'price': 100},
+        ]
+
+    now = datetime.now(timezone.utc)
+    demo_orders = []
+    for index in range(order_count):
+        ordered_at = now - timedelta(days=random.randint(0, 364))
+        order_items = []
+        total = 0
+        for item in random.sample(menu_items, min(random.randint(1, 3), len(menu_items))):
+            quantity = random.randint(1, 5)
+            price = item.get('price', 0)
+            subtotal = price * quantity
+            total += subtotal
+            order_items.append({
+                'item_id': item.get('id', item['name']),
+                'name': item['name'],
+                'qty': quantity,
+                'price': price,
+                'subtotal': subtotal
+            })
+
+        demo_orders.append({
+            'id': f'demo-{uuid.uuid4().hex[:10]}',
+            'user_id': 'demo-analytics',
+            'user_name': 'Demo Analytics',
+            'token': 900000 + index,
+            'items': order_items,
+            'total': total,
+            'status': 'Delivered',
+            'demo_data': True,
+            'created_at': ordered_at.strftime('%Y-%m-%d %H:%M:%S'),
+            'ordered_at': ordered_at
+        })
+
+    if demo_orders:
+        orders_col.insert_many(demo_orders)
+    return len(demo_orders)
+
+
+def clear_demo_statistics():
+    """Delete only orders created by the demo statistics action."""
+    return orders_col.delete_many({'demo_data': True})
 
 
 def next_order_token():

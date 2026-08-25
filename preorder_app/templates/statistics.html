@@ -8,7 +8,14 @@
             <h1>Statistics</h1>
             <p>Track revenue, orders, and item popularity by month.</p>
         </div>
-        <div class="page-badge admin-badge">Admin analytics</div>
+        <div class="statistics-actions">
+            <form method="POST" action="{{ url_for('admin.seed_statistics') }}">
+                <button type="submit" class="btn">Add Demo Data</button>
+            </form>
+            <form method="POST" action="{{ url_for('admin.clear_statistics_demo') }}">
+                <button type="submit" class="action-btn delete-btn" onclick="return confirm('Remove all demo statistics data?');">Clear Demo Data</button>
+            </form>
+        </div>
     </div>
 
     <section class="admin-section">

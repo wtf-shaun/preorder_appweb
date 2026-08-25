@@ -27,7 +27,22 @@
     min-height: 320px;
 }
 
+.statistics-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.statistics-actions form {
+    margin: 0;
+}
+
 @media (max-width: 700px) {
+    .statistics-actions {
+        justify-content: flex-start;
+    }
+
     .statistics-page .analytics-chart-wrapper {
         height: 280px;
         padding: 12px;
