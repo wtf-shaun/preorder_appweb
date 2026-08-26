@@ -423,11 +423,24 @@
             {% for category in categories %}
                 <section class="category-column" data-category="{{ category.slug }}">
                     <div class="category-header">
-                        <h3>{{ category.name }}</h3>
-                        <form method="POST" action="{{ url_for('admin.edit_category', slug=category.slug) }}" class="category-edit-form">
-                            <input type="text" name="name" value="{{ category.name }}" aria-label="Edit category name" required>
-                            <button type="submit" class="btn btn-small">Save</button>
-                        </form>
+                        <h3 class="category-title">{{ category.name }}</h3>
+
+                        <div class="category-menu-wrapper">
+                            <button type="button" class="category-menu-toggle" aria-label="Open category actions" aria-expanded="false">⋯</button>
+
+                            <div class="category-menu" role="menu">
+                                <form method="POST" action="{{ url_for('admin.edit_category', slug=category.slug) }}" class="category-edit-form">
+                                    <input type="text" name="name" value="{{ category.name }}" aria-label="Edit category name" required>
+                                    <button type="submit" class="action-btn edit-btn">Edit</button>
+                                </form>
+
+                                <form method="POST" action="{{ url_for('admin.delete_category_route', slug=category.slug) }}" class="category-delete-form">
+                                    <button type="submit" class="action-btn delete-btn" onclick="return confirm('Delete this category?');">
+                                        Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                     <div class="category-drop-zone" data-category="{{ category.slug }}">
                         {% for it in items if it.get('category', 'food') == category.slug %}
