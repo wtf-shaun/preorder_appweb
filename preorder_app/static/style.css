@@ -895,9 +895,24 @@ form:focus-within {
 }
 
 .user-edit-form input[type="text"],
-.user-edit-form input[type="email"] {
+.user-edit-form input[type="email"],
+.user-edit-form input[type="password"] {
     width: 100%;
     min-height: 48px;
+}
+
+.password-reset-box {
+    margin-top: 8px;
+    padding: 18px 16px;
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    background: #fffaf5;
+}
+
+.password-reset-box h3 {
+    margin: 0 0 12px;
+    color: var(--text-main);
+    font-size: 1rem;
 }
 
 .checkbox-row {

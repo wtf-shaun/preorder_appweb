@@ -2,6 +2,7 @@ from flask import (
     Blueprint, render_template, request, redirect,
     url_for, flash, session
 )
+from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
 from .db import (
     get_user_by_id, get_all_users, get_all_items_for_menu,
@@ -186,12 +187,25 @@ def edit_user(user_id):
 
         name = request.form.get('name')
         email = request.form.get('email')
+        password = request.form.get('password', '').strip()
+        confirm_password = request.form.get('confirm_password', '').strip()
 
         if name:
             update_data['name'] = name
 
         if email:
             update_data['email'] = email
+
+        if password or confirm_password:
+            if password != confirm_password:
+                flash('Passwords do not match')
+                return redirect(url_for('admin.edit_user', user_id=user_id))
+
+            if len(password) < 6:
+                flash('Password must be at least 6 characters long')
+                return redirect(url_for('admin.edit_user', user_id=user_id))
+
+            update_data['password_hash'] = generate_password_hash(password)
 
         # checkbox handling (important fix)
         update_data['is_admin'] = True if request.form.get('is_admin') else False

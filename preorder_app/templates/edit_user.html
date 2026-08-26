@@ -21,6 +21,19 @@
             <input id="userEmail" type="email" name="email" value="{{ user.email }}" required>
         </div>
 
+        <div class="password-reset-box">
+            <h3>Reset Password</h3>
+            <div class="form-field">
+                <label for="newPassword">New Password</label>
+                <input id="newPassword" type="password" name="password" placeholder="Leave blank to keep current password">
+            </div>
+
+            <div class="form-field">
+                <label for="confirmPassword">Confirm New Password</label>
+                <input id="confirmPassword" type="password" name="confirm_password" placeholder="Re-enter new password">
+            </div>
+        </div>
+
         <label class="checkbox-row">
             <input type="checkbox" name="is_admin" {% if user.is_admin %}checked{% endif %}>
             <span>Admin User</span>
