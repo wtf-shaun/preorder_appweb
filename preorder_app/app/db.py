@@ -509,6 +509,11 @@ def upsert_category(slug, category_data):
     )
 
 
+def update_category(slug, update_data):
+    """Update a category by slug."""
+    return categories_col.update_one({'slug': slug}, {'$set': update_data})
+
+
 def delete_category(slug):
     """Delete category by slug."""
     return categories_col.delete_one({'slug': slug})

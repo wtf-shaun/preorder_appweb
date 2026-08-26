@@ -12,7 +12,8 @@ from .db import (
     seed_demo_statistics, clear_demo_statistics,
     ensure_categories, get_category_by_slug,
     create_category, create_item, update_item, delete_item,
-    update_user, delete_user as remove_user, get_all_categories
+    update_user, delete_user as remove_user, get_all_categories,
+    update_category
 )
 import uuid
 import os
@@ -110,6 +111,42 @@ def add_category():
         create_category({'slug': slug, 'name': name})
         flash('Category added')
 
+    return redirect(url_for('admin.index'))
+
+
+@bp.route('/edit_category/<slug>', methods=['POST'])
+def edit_category(slug):
+    if not is_admin():
+        return redirect(url_for('auth.login'))
+
+    category = get_category_by_slug(slug)
+    if not category:
+        flash('Category not found')
+        return redirect(url_for('admin.index'))
+
+    new_name = request.form.get('name', '').strip()
+    if not new_name:
+        flash('Category name is required')
+        return redirect(url_for('admin.index'))
+
+    new_slug = '-'.join(new_name.lower().split())
+    if not new_slug:
+        flash('Category name is required')
+        return redirect(url_for('admin.index'))
+
+    conflicting_category = get_category_by_slug(new_slug)
+    if conflicting_category and conflicting_category.get('slug') != slug:
+        flash('A category with that name already exists')
+        return redirect(url_for('admin.index'))
+
+    update_category(slug, {'slug': new_slug, 'name': new_name})
+
+    if new_slug != slug:
+        for item in get_all_items_for_menu():
+            if item.get('category') == slug:
+                update_item(item['id'], {'category': new_slug})
+
+    flash('Category updated')
     return redirect(url_for('admin.index'))
 
 

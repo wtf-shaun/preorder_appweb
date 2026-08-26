@@ -422,7 +422,13 @@
         <div class="category-board">
             {% for category in categories %}
                 <section class="category-column" data-category="{{ category.slug }}">
-                    <h3>{{ category.name }}</h3>
+                    <div class="category-header">
+                        <h3>{{ category.name }}</h3>
+                        <form method="POST" action="{{ url_for('admin.edit_category', slug=category.slug) }}" class="category-edit-form">
+                            <input type="text" name="name" value="{{ category.name }}" aria-label="Edit category name" required>
+                            <button type="submit" class="btn btn-small">Save</button>
+                        </form>
+                    </div>
                     <div class="category-drop-zone" data-category="{{ category.slug }}">
                         {% for it in items if it.get('category', 'food') == category.slug %}
                             <div class="category-item" draggable="true" data-item-id="{{ it.id }}">

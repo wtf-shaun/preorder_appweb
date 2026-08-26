@@ -5064,6 +5064,37 @@ body::after {
     background: #fff;
 }
 
+.category-header {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.category-edit-form {
+    display: flex;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.category-edit-form input {
+    flex: 1;
+    min-height: 36px;
+    padding: 0 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fff;
+    box-sizing: border-box;
+}
+
+.btn-small {
+    min-height: 36px;
+    padding: 0 12px;
+    font-size: 12px;
+}
+
 .category-drop-zone {
     display: grid;
     gap: 8px;
