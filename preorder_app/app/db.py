@@ -216,13 +216,16 @@ def get_all_categories():
 
 
 def ensure_categories(categories):
-    """Insert default categories without replacing existing values."""
+    """Insert missing default categories without recreating deleted ones."""
+    existing_slugs = {
+        category['slug']
+        for category in categories_col.find({}, {'slug': 1, '_id': 0})
+    }
+
     for category in categories:
-        categories_col.update_one(
-            {'slug': category['slug']},
-            {'$setOnInsert': category},
-            upsert=True
-        )
+        if category['slug'] not in existing_slugs:
+            categories_col.insert_one(category)
+            existing_slugs.add(category['slug'])
 
 
 def get_all_items_for_menu():
