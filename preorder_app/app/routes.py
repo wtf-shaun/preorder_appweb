@@ -117,7 +117,8 @@ def menu():
         {'slug': 'food', 'name': 'Food'},
         {'slug': 'beverage', 'name': 'Beverages'}
     ]
-    ensure_categories(defaults)
+    if not get_all_categories():
+        ensure_categories(defaults)
     categories = get_all_categories()
     cart_item_ids = {
         cart_item['item_id']

@@ -28,7 +28,9 @@ DEFAULT_CATEGORIES = [
 
 
 def get_categories():
-    ensure_categories(DEFAULT_CATEGORIES)
+    existing = get_all_categories()
+    if not existing:
+        ensure_categories(DEFAULT_CATEGORIES)
     return get_all_categories()
 
 def is_admin():
