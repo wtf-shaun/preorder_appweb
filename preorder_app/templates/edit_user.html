@@ -41,7 +41,7 @@
 
         <div class="user-edit-actions">
             <button type="submit">Save Changes</button>
-            <button type="button" class="btn btn-secondary" onclick="window.location.href='{{ url_for('admin.index') }}'">Cancel</button>
+            <a href="{{ url_for('admin.index') }}" class="btn btn-secondary">Cancel</a>
         </div>
     </form>
 </section>
