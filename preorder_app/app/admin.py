@@ -13,7 +13,7 @@ from .db import (
     ensure_categories, get_category_by_slug,
     create_category, create_item, update_item, delete_item,
     update_user, delete_user as remove_user, get_all_categories,
-    update_category
+    update_category, delete_category
 )
 import uuid
 import os
@@ -203,6 +203,34 @@ def delete_item(item_id):
 
     delete_item(item_id)
     flash("Item deleted")
+    return redirect(url_for('admin.index'))
+
+
+@bp.route('/delete_category/<slug>', methods=['POST'])
+def delete_category_route(slug):
+    if not is_admin():
+        return redirect(url_for('auth.login'))
+
+    if not get_category_by_slug(slug):
+        flash('Category not found')
+        return redirect(url_for('admin.index'))
+
+    categories = get_all_categories()
+    if len(categories) <= 1:
+        flash('At least one category must remain')
+        return redirect(url_for('admin.index'))
+
+    fallback_category = next(
+        (category['slug'] for category in categories if category['slug'] != slug),
+        'food'
+    )
+
+    for item in get_all_items_for_menu():
+        if item.get('category') == slug:
+            update_item(item['id'], {'category': fallback_category})
+
+    delete_category(slug)
+    flash('Category deleted')
     return redirect(url_for('admin.index'))
 
 # ===============================
