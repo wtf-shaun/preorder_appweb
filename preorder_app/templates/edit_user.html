@@ -1,27 +1,35 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Edit User</h2>
+<section class="user-edit-card">
+    <div class="user-edit-header">
+        <div class="user-edit-icon">👤</div>
+        <div>
+            <h2>Edit User</h2>
+            <p>Update account information and access level.</p>
+        </div>
+    </div>
 
-<form method="POST">
-    <label>Username:</label><br>
-    <input type="text" name="username" value="{{ user.username }}" required>
-    <br><br>
+    <form method="POST" class="user-edit-form">
+        <div class="form-field">
+            <label for="userName">Name</label>
+            <input id="userName" type="text" name="name" value="{{ user.name or '' }}" required>
+        </div>
 
-    <label>Email:</label><br>
-    <input type="email" name="email" value="{{ user.email }}" required>
-    <br><br>
+        <div class="form-field">
+            <label for="userEmail">Email</label>
+            <input id="userEmail" type="email" name="email" value="{{ user.email }}" required>
+        </div>
 
-    <label>
-        <input type="checkbox" name="is_admin"
-               {% if user.is_admin %}checked{% endif %}>
-        Admin User
-    </label>
-    <br><br>
+        <label class="checkbox-row">
+            <input type="checkbox" name="is_admin" {% if user.is_admin %}checked{% endif %}>
+            <span>Admin User</span>
+        </label>
 
-    <button type="submit">Save Changes</button>
-    <a href="{{ url_for('admin.index') }}">
-        <button type="button">Cancel</button>
-    </a>
-</form>
+        <div class="user-edit-actions">
+            <button type="submit">Save Changes</button>
+            <button type="button" class="btn btn-secondary" onclick="window.location.href='{{ url_for('admin.index') }}'">Cancel</button>
+        </div>
+    </form>
+</section>
 {% endblock %}

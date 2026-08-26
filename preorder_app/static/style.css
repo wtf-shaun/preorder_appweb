@@ -813,6 +813,136 @@ form:focus-within {
         rgba(0,0,0,0.10);
 }
 
+.user-edit-card {
+    width: min(620px, calc(100% - 20px));
+
+    margin: 0 auto;
+    padding: 28px 24px;
+
+    background: rgba(255,255,255,0.96);
+
+    border: 1px solid rgba(255,255,255,0.8);
+    border-radius: 18px;
+
+    box-shadow: var(--shadow-soft);
+}
+
+.user-edit-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    margin-bottom: 22px;
+    padding-bottom: 18px;
+
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.user-edit-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 52px;
+    height: 52px;
+
+    border-radius: 14px;
+
+    background: linear-gradient(135deg, #fff3e7, #ffe1c3);
+
+    color: var(--primary);
+
+    font-size: 24px;
+}
+
+.user-edit-header h2 {
+    margin: 0;
+
+    color: var(--text-main);
+
+    font-size: clamp(1.6rem, 2vw, 2rem);
+}
+
+.user-edit-header p {
+    margin: 4px 0 0;
+
+    color: var(--text-muted);
+
+    font-size: 14px;
+}
+
+.user-edit-form {
+    margin: 0;
+    padding: 0;
+
+    background: transparent;
+
+    border-radius: 0;
+
+    box-shadow: none;
+}
+
+.user-edit-form .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.user-edit-form label {
+    color: var(--text-main);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.user-edit-form input[type="text"],
+.user-edit-form input[type="email"] {
+    width: 100%;
+    min-height: 48px;
+}
+
+.checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-top: 6px;
+
+    color: var(--text-main);
+
+    font-weight: 600;
+}
+
+.checkbox-row input {
+    width: 18px;
+    height: 18px;
+
+    accent-color: var(--primary);
+}
+
+.user-edit-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.user-edit-actions > * {
+    flex: 1;
+}
+
+.btn-secondary {
+    background: #f3f3f3;
+    color: var(--text-main);
+    border: 1px solid #e4e4e4;
+    box-shadow: none;
+}
+
+.btn-secondary:hover {
+    background: #eaeaea;
+    color: var(--text-main);
+    box-shadow: none;
+    transform: translateY(-1px);
+}
+
 form.inline {
     flex-direction: row;
 
