@@ -11,9 +11,10 @@ from .db import (
     get_item_revenue_rankings,
     seed_demo_statistics, clear_demo_statistics,
     ensure_categories, get_category_by_slug,
-    create_category, create_item, update_item, delete_item,
+    create_category, create_item, update_item,
+    delete_item as delete_item_record,
     update_user, delete_user as remove_user, get_all_categories,
-    update_category, delete_category
+    update_category, delete_category as delete_category_record
 )
 import uuid
 import os
@@ -201,7 +202,7 @@ def delete_item(item_id):
     if not is_admin():
         return redirect(url_for('auth.login'))
 
-    delete_item(item_id)
+    delete_item_record(item_id)
     flash("Item deleted")
     return redirect(url_for('admin.index'))
 
@@ -229,7 +230,7 @@ def delete_category_route(slug):
         if item.get('category') == slug:
             update_item(item['id'], {'category': fallback_category})
 
-    delete_category(slug)
+    delete_category_record(slug)
     flash('Category deleted')
     return redirect(url_for('admin.index'))
 
