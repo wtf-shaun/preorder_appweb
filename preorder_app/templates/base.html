@@ -3,32 +3,18 @@
 <head>
     <meta charset="utf-8">
     <title>Cafeteria Kiosk</title>
-
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Main CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
-    <!-- Responsive overrides -->
     <link rel="stylesheet" href="{{ url_for('static', filename='responsive.css') }}">
-
-    <!-- Final menu fixes -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='menu-fixes.css') }}">
-
-    <!-- Fluid layout: loaded last so legacy fixed sizes cannot override it -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='fluid-layout.css') }}">
-
-    <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
 </head>
 
 <body>
-
 <div id="interactive-background">
     <div class="cursor-glow"></div>
 </div>
 
-<!-- Flash Messages -->
 <div id="flash-messages">
     {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -39,7 +25,6 @@
     {% endwith %}
 </div>
 
-<!-- TOP NAVBAR -->
 <div class="navbar">
     <div class="nav-left">
         <img src="{{ url_for('static', filename='logo.png') }}" class="nav-logo" alt="Logo">
@@ -68,7 +53,6 @@
     </div>
 </div>
 
-<!-- Page Content -->
 <div class="container">
     {% block content %}{% endblock %}
 </div>
@@ -81,26 +65,20 @@
 setTimeout(() => {
     document.querySelectorAll('.auto-hide').forEach(msg => {
         msg.classList.add('hiding');
-
-        setTimeout(() => {
-            msg.remove();
-        }, 500);
+        setTimeout(() => msg.remove(), 500);
     });
 }, 5000);
 
 const categoryMenuButtons = document.querySelectorAll('.category-menu-toggle');
-
 categoryMenuButtons.forEach(button => {
-    button.addEventListener('click', (event) => {
+    button.addEventListener('click', event => {
         event.stopPropagation();
-
         const wrapper = button.closest('.category-menu-wrapper');
-        const menu = wrapper.querySelector('.category-menu');
+        const menu = wrapper?.querySelector('.category-menu');
+        if (!menu) return;
         const isOpen = menu.classList.contains('is-open');
-
         document.querySelectorAll('.category-menu').forEach(item => item.classList.remove('is-open'));
         document.querySelectorAll('.category-menu-toggle').forEach(item => item.setAttribute('aria-expanded', 'false'));
-
         if (!isOpen) {
             menu.classList.add('is-open');
             button.setAttribute('aria-expanded', 'true');
@@ -108,13 +86,12 @@ categoryMenuButtons.forEach(button => {
     });
 });
 
-document.addEventListener('click', (event) => {
+document.addEventListener('click', event => {
     if (!event.target.closest('.category-menu-wrapper')) {
         document.querySelectorAll('.category-menu').forEach(menu => menu.classList.remove('is-open'));
         document.querySelectorAll('.category-menu-toggle').forEach(button => button.setAttribute('aria-expanded', 'false'));
     }
 });
 </script>
-
 </body>
 </html>
