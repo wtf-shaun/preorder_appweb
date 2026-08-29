@@ -6623,6 +6623,14 @@ input::-webkit-outer-spin-button {
     transform: translateY(-50%) translateX(0) scale(1.08);
 }
 
+@media (hover: none), (pointer: coarse) {
+    .carousel-arrow {
+        opacity: 0.75;
+        visibility: visible;
+        transform: translateY(-50%) scale(1);
+    }
+}
+
 /* Cards turn toward the visible edges as they scroll. */
 .carousel-track .menu-card {
     --flip-angle: 0deg;
