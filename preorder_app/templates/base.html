@@ -8,6 +8,14 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='responsive.css') }}?v=3">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
+
+    <!-- The navbar remains in normal document flow and never covers content. -->
+    <style>
+        .navbar {
+            position: relative !important;
+            top: auto !important;
+        }
+    </style>
 </head>
 
 <body>
