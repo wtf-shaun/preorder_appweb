@@ -5,11 +5,8 @@
     <title>Cafeteria Kiosk</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- Main CSS -->
+    <!-- CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-
-    <!-- Responsive overrides -->
     <link rel="stylesheet" href="{{ url_for('static', filename='responsive.css') }}">
 
     <!-- Favicon -->
@@ -18,9 +15,9 @@
 
 <body>
 
-<div id="interactive-background">
+ <div id="interactive-background">
     <div class="cursor-glow"></div>
-</div>
+</div>   
 
 <!-- Flash Messages -->
 <div id="flash-messages">
@@ -33,18 +30,20 @@
     {% endwith %}
 </div>
 
-<!-- TOP NAVBAR -->
+<!-- TOP NAVBAR (WORKING VERSION) -->
 <div class="navbar">
     <div class="nav-left">
         <img src="{{ url_for('static', filename='logo.png') }}" class="nav-logo" alt="Logo">
-        <a href="{{ url_for('main.menu') if 'main.menu' in current_app.view_functions else '/' }}" class="nav-title">Cafeteria Pre-Order</a>
+        <a href="https://preorder-app-full.onrender.com/menu" class="nav-title">Cafeteria Pre-Order</a>
     </div>
 
     <div class="nav-links">
         <a href="{{ url_for('main.view_cart') }}" class="cart-link">
             My Cart
             {% if cart_count > 0 %}
-                <span id="cart-counter" class="cart-badge">{{ cart_count }}</span>
+                <span id="cart-counter" class="cart-badge">
+                    {{ cart_count }}
+                </span>
             {% endif %}
         </a>
 
