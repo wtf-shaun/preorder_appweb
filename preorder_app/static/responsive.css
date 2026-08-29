@@ -1,12 +1,16 @@
 /* =========================================================
-   CAFETERIA MENU — FLUID RESPONSIVE LAYER
-   No device-width breakpoints. Layout responds to available space.
+   CAFETERIA MENU — RESPONSIVE LAYOUT
+   Fluid sizing based on available space. No fixed viewport layout.
    ========================================================= */
 
 :root {
     --responsive-gutter: clamp(12px, 3vw, 48px);
-    --responsive-gap: clamp(12px, 1.8vw, 24px);
+    --responsive-gap: clamp(10px, 1.8vw, 24px);
     --control-height: 46px;
+}
+
+* {
+    min-width: 0;
 }
 
 html,
@@ -16,7 +20,10 @@ body {
     overflow-x: hidden;
 }
 
-/* ---------- Global page sizing ---------- */
+/* =========================================================
+   PAGE CONTAINER
+   ========================================================= */
+
 .container {
     width: 100% !important;
     max-width: none !important;
@@ -32,7 +39,7 @@ body {
 .carousel-track,
 .menu-card,
 .menu-card-content {
-    min-width: 0;
+    min-width: 0 !important;
 }
 
 .page-shell,
@@ -43,50 +50,78 @@ body {
     width: 100%;
 }
 
-/* ---------- Navbar ---------- */
+/* =========================================================
+   NAVBAR
+   The navbar must size itself from its contents. It must never
+   grow to fill the available viewport height.
+   ========================================================= */
+
 .navbar {
-    width: 100%;
-    min-width: 0;
-    padding: clamp(8px, 1.2vw, 16px) var(--responsive-gutter);
-    gap: var(--responsive-gap);
+    position: relative !important;
+    top: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    flex: 0 0 auto !important;
+
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    align-content: center !important;
+
+    gap: var(--responsive-gap) !important;
+    padding: clamp(8px, 1.2vw, 16px) var(--responsive-gutter) !important;
 }
 
 .nav-left {
-    min-width: 0;
-    flex: 1 1 240px;
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: clamp(7px, 1vw, 12px) !important;
 }
 
 .nav-logo {
-    width: auto;
-    height: clamp(40px, 4.5vw, 58px);
-    flex: 0 0 auto;
+    width: auto !important;
+    height: clamp(38px, 4.5vw, 56px) !important;
+    flex: 0 0 auto !important;
 }
 
 .nav-title {
-    min-width: 0;
-    max-width: 100%;
-    font-size: clamp(16px, 1.7vw, 23px);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    flex: 0 1 auto !important;
+    font-size: clamp(16px, 1.7vw, 23px) !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
 }
 
 .nav-links {
-    min-width: 0;
-    flex: 0 1 auto;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    flex-wrap: wrap;
-    gap: clamp(8px, 1.3vw, 18px);
+    min-width: 0 !important;
+    flex: 0 1 auto !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: clamp(7px, 1.3vw, 18px) !important;
+    white-space: nowrap !important;
 }
 
 .nav-links a {
-    font-size: clamp(14px, 1.3vw, 20px);
-    white-space: nowrap;
+    flex: 0 0 auto !important;
+    font-size: clamp(14px, 1.3vw, 20px) !important;
+    white-space: nowrap !important;
 }
 
-/* ---------- Header ---------- */
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+
 .page-header {
     width: 100%;
     min-width: 0;
@@ -119,7 +154,10 @@ body {
     font-size: clamp(14px, 1.2vw, 18px);
 }
 
-/* ---------- Sidebar ---------- */
+/* =========================================================
+   SIDEBAR / HAMBURGER
+   ========================================================= */
+
 .menu-browse-layout {
     display: block !important;
 }
@@ -134,25 +172,28 @@ body {
     inset: 0 auto 0 0 !important;
     width: min(86vw, 360px) !important;
     max-width: 100% !important;
+    height: 100dvh !important;
     z-index: 6000 !important;
     overflow-y: auto !important;
     transform: translateX(0) !important;
 }
 
-/* The hamburger stays in the page flow, so its position follows the header
-   naturally instead of being tied to a particular viewport height. */
 .menu-hamburger {
     position: relative !important;
-    left: auto !important;
-    top: auto !important;
+    inset: auto !important;
     transform: none !important;
     z-index: 6100 !important;
-    width: 44px !important;
-    height: 44px !important;
-    min-width: 44px !important;
-    min-height: 44px !important;
+
+    width: clamp(40px, 4vw, 44px) !important;
+    height: clamp(40px, 4vw, 44px) !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+    max-width: 44px !important;
+    max-height: 44px !important;
+
     margin: clamp(10px, 1.5vw, 18px) 0 clamp(8px, 1vw, 14px) !important;
     padding: 0 !important;
+
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -166,7 +207,10 @@ body {
     height: 2px !important;
 }
 
-/* ---------- Category sections ---------- */
+/* =========================================================
+   CATEGORY SECTIONS
+   ========================================================= */
+
 .menu-category-section {
     margin-block: clamp(28px, 4vw, 58px);
 }
@@ -192,7 +236,10 @@ body {
     font-size: clamp(14px, 1.2vw, 18px);
 }
 
-/* ---------- Carousel ---------- */
+/* =========================================================
+   CAROUSEL
+   ========================================================= */
+
 .carousel-container {
     position: relative;
     padding-inline: clamp(38px, 5vw, 64px) !important;
@@ -214,12 +261,10 @@ body {
     display: none;
 }
 
-/* Cards are fluid objects: they fill a small container, but never become
-   wider than a sensible food-card width. */
 .menu-card {
-    flex: 0 0 min(100%, 420px) !important;
-    width: min(100%, 420px) !important;
-    min-width: min(100%, 280px) !important;
+    flex: 0 1 min(420px, 100%) !important;
+    width: min(420px, 100%) !important;
+    min-width: min(280px, 100%) !important;
     max-width: 420px !important;
     height: auto !important;
     min-height: 0 !important;
@@ -269,7 +314,10 @@ body {
     flex: 0 0 auto !important;
 }
 
-/* ---------- Quantity / Add to Cart ---------- */
+/* =========================================================
+   QUANTITY / ADD TO CART
+   ========================================================= */
+
 .menu-card-footer,
 .menu-card-footer form,
 .menu-add-form {
@@ -346,7 +394,10 @@ body {
     line-height: 1 !important;
 }
 
-/* ---------- Arrows are always visible ---------- */
+/* =========================================================
+   CAROUSEL ARROWS
+   ========================================================= */
+
 .carousel-arrow,
 .carousel-container .carousel-arrow {
     position: absolute !important;
@@ -376,7 +427,10 @@ body {
     visibility: visible !important;
 }
 
-/* ---------- Container-based adaptation ---------- */
+/* =========================================================
+   FLUID COMPONENT ADAPTATION
+   ========================================================= */
+
 .page-shell,
 .menu-category-section,
 .carousel-container,
@@ -392,15 +446,6 @@ body {
 
     .page-badge {
         align-self: flex-start;
-    }
-
-    .menu-add-form {
-        align-items: center !important;
-    }
-
-    .quantity-wrapper {
-        width: min(100%, 180px) !important;
-        flex-basis: 180px !important;
     }
 }
 
