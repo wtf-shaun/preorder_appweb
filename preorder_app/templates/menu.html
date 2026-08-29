@@ -18,10 +18,15 @@
 
         <div class="page-badge">
             🍽️ Fresh & Ready
-                </div>
+        </div>
 
     </div>
 
+    <button type="button" class="menu-hamburger" id="menuToggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
 
     <div class="menu-browse-layout">
 
@@ -282,6 +287,24 @@ document.querySelectorAll('.menu-sidebar-dropdown').forEach(button => {
             list.style.maxHeight = isExpanded ? '0' : list.scrollHeight + 'px';
         }
     });
+});
+
+const menuToggle = document.getElementById('menuToggle');
+const menuSidebar = document.querySelector('.menu-sidebar');
+
+if (menuToggle) {
+    menuToggle.addEventListener('click', function() {
+        const isOpen = this.getAttribute('aria-expanded') === 'true';
+        this.setAttribute('aria-expanded', !isOpen);
+        menuSidebar.classList.toggle('is-open');
+    });
+}
+
+document.addEventListener('click', function(e) {
+    if (menuToggle && !e.target.closest('.menu-sidebar') && !e.target.closest('.menu-hamburger')) {
+        menuToggle.setAttribute('aria-expanded', 'false');
+        menuSidebar.classList.remove('is-open');
+    }
 });
 
 function scrollCarousel(categorySlug, direction) {

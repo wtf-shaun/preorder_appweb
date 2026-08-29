@@ -6638,25 +6638,145 @@ input::-webkit-outer-spin-button {
     right: 0;
 }
 
+/* =========================================================
+   HAMBURGER MENU BUTTON
+   ========================================================= */
+
+.menu-hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    position: fixed;
+    top: 90px;
+    right: 16px;
+    z-index: 30;
+    width: 40px;
+    height: 40px;
+    padding: 6px;
+    border: 1px solid rgba(255, 117, 24, 0.2);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.95);
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.menu-hamburger:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: scale(1.05);
+}
+
+.menu-hamburger:active {
+    transform: scale(0.95);
+}
+
+.menu-hamburger span {
+    width: 24px;
+    height: 2px;
+    background: #ff7518;
+    border-radius: 1px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    transform-origin: center;
+}
+
+.menu-hamburger[aria-expanded="true"] span:nth-child(1) {
+    transform: rotate(45deg) translateY(10px);
+}
+
+.menu-hamburger[aria-expanded="true"] span:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-hamburger[aria-expanded="true"] span:nth-child(3) {
+    transform: rotate(-45deg) translateY(-10px);
+}
+
 @media (max-width: 760px) {
+    .menu-hamburger {
+        display: flex;
+    }
+
     .menu-browse-layout {
         grid-template-columns: 1fr;
     }
 
     .menu-sidebar {
-        max-height: 190px;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        max-width: 280px;
+        height: 100vh;
+        background: rgba(255, 255, 255, 0.98);
+        border-right: 1px solid rgba(255, 117, 24, 0.14);
+        box-shadow: -4px 0 16px rgba(0, 0, 0, 0.08);
+        transform: translateX(-100%);
+        transition: transform 0.35s cubic-bezier(.22, 1, .36, 1);
+        z-index: 29;
+        overflow-y: auto;
+        padding-top: 80px;
+    }
+
+    .menu-sidebar.is-open {
+        transform: translateX(0);
+    }
+
+    .menu-sidebar-heading {
+        padding: 0 14px 16px;
+    }
+
+    .menu-sidebar-section {
+        padding: 0;
+    }
+
+    .menu-sidebar-section:first-child {
+        border-top: none;
     }
 
     .menu-sidebar-list {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: 1fr;
     }
 
     .menu-category-heading h2 {
         font-size: 19px;
     }
-}
 
-/* Arrows slide in from their matching screen edge when the cursor
+    .carousel-container {
+        padding: 0;
+        margin-top: 12px;
+    }
+
+    .carousel-arrow {
+        position: absolute;
+        top: 50%;
+        z-index: 25;
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+
+    .carousel-prev {
+        left: 6px;
+        transform: translateY(-50%) scale(1) !important;
+        opacity: 0.8 !important;
+        visibility: visible !important;
+    }
+
+    .carousel-next {
+        right: 6px;
+        transform: translateY(-50%) scale(1) !important;
+        opacity: 0.8 !important;
+        visibility: visible !important;
+    }
+
+    .carousel-arrow:hover {
+        transform: translateY(-50%) scale(1.12) !important;
+        opacity: 1 !important;
+    }
+
+    .carousel-arrow:active {
+        transform: translateY(-50%) scale(0.94) !important;
+    }
+}
    nears that side of the carousel. */
 .carousel-arrow {
     opacity: 0;
