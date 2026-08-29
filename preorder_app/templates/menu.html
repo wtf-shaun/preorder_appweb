@@ -32,13 +32,19 @@
             </div>
 
             {% for category in categories %}
-                <div class="menu-sidebar-section">
-                    <h3>{{ category.name }} <span>{{ items|selectattr('category', 'equalto', category.slug)|list|length }}</span></h3>
+                <div class="menu-sidebar-section" data-category="{{ category.slug }}">
+                    <button type="button" class="menu-sidebar-dropdown" aria-expanded="true">
+                        <span class="dropdown-label">{{ category.name }}</span>
+                        <span class="dropdown-meta">
+                            <span class="dropdown-count">{{ items|selectattr('category', 'equalto', category.slug)|list|length }}</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </span>
+                    </button>
                     <div class="menu-sidebar-list">
                         {% for it in items if it.get('category', 'food') == category.slug %}
                             <button type="button" class="menu-sidebar-item" onclick="focusMenuItem('{{ it.id }}')">
                                 <span>{{ it.name }}</span>
-                                <span aria-hidden="true">&#8250;</span>
+                                <span aria-hidden="true">›</span>
                             </button>
                         {% else %}
                             <p class="menu-sidebar-empty">No items</p>
@@ -262,6 +268,21 @@ function changeQuantity(button, amount) {
 
     input.classList.add("pop");
 }
+
+document.querySelectorAll('.menu-sidebar-dropdown').forEach(button => {
+    button.addEventListener('click', function() {
+        const section = this.closest('.menu-sidebar-section');
+        const list = section.querySelector('.menu-sidebar-list');
+        const isExpanded = this.getAttribute('aria-expanded') === 'true';
+        
+        this.setAttribute('aria-expanded', !isExpanded);
+        section.classList.toggle('is-collapsed');
+        
+        if (list) {
+            list.style.maxHeight = isExpanded ? '0' : list.scrollHeight + 'px';
+        }
+    });
+});
 
 function scrollCarousel(categorySlug, direction) {
     const track = document.getElementById('menuCarousel-' + categorySlug);
