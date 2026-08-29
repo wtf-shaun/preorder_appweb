@@ -5,8 +5,12 @@
     <title>Cafeteria Kiosk</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- CSS -->
+
+    <!-- Main CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <!-- Responsive overrides -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='responsive.css') }}">
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
@@ -14,9 +18,9 @@
 
 <body>
 
- <div id="interactive-background">
+<div id="interactive-background">
     <div class="cursor-glow"></div>
-</div>   
+</div>
 
 <!-- Flash Messages -->
 <div id="flash-messages">
@@ -29,24 +33,20 @@
     {% endwith %}
 </div>
 
-<!-- TOP NAVBAR (WORKING VERSION) -->
-<!-- Navbar -->
+<!-- TOP NAVBAR -->
 <div class="navbar">
     <div class="nav-left">
         <img src="{{ url_for('static', filename='logo.png') }}" class="nav-logo" alt="Logo">
-        <a href="https://preorder-app-full.onrender.com/menu" class="nav-title">Cafeteria Pre-Order</a>
+        <a href="{{ url_for('main.menu') if 'main.menu' in current_app.view_functions else '/' }}" class="nav-title">Cafeteria Pre-Order</a>
     </div>
 
     <div class="nav-links">
         <a href="{{ url_for('main.view_cart') }}" class="cart-link">
-    My Cart
-
-    {% if cart_count > 0 %}
-        <span id="cart-counter" class="cart-badge">
-            {{ cart_count }}
-        </span>
-    {% endif %}
-</a>
+            My Cart
+            {% if cart_count > 0 %}
+                <span id="cart-counter" class="cart-badge">{{ cart_count }}</span>
+            {% endif %}
+        </a>
 
         {% if user and user.is_admin %}
             <a href="{{ url_for('admin.index') }}">Admin</a>
@@ -60,7 +60,6 @@
             <a href="{{ url_for('auth.register') }}">Register</a>
         {% endif %}
     </div>
-
 </div>
 
 <!-- Page Content -->
