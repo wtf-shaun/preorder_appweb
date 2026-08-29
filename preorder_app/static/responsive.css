@@ -1,0 +1,408 @@
+/* =========================================================
+   RESPONSIVE MENU / LAYOUT OVERRIDES
+   Loaded after style.css so the existing theme is preserved.
+   ========================================================= */
+
+:root {
+    --content-max: 1500px;
+    --page-gutter: clamp(14px, 3vw, 42px);
+    --menu-gap: clamp(14px, 2vw, 28px);
+    --menu-card-width: clamp(235px, 28vw, 340px);
+}
+
+/* ---------- Responsive page shell ---------- */
+html,
+body {
+    width: 100%;
+    min-width: 0;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+.container {
+    width: min(100%, var(--content-max));
+    max-width: none;
+    margin-inline: auto;
+    padding-inline: var(--page-gutter);
+}
+
+.page-shell {
+    width: 100%;
+    min-width: 0;
+}
+
+/* ---------- Navbar ---------- */
+.navbar {
+    width: 100%;
+    min-height: 64px;
+    padding-inline: clamp(12px, 2.5vw, 32px);
+}
+
+.nav-left,
+.nav-links {
+    min-width: 0;
+}
+
+.nav-logo {
+    width: auto;
+    height: clamp(42px, 5vw, 56px);
+}
+
+.nav-title {
+    min-width: 0;
+    font-size: clamp(15px, 1.7vw, 20px);
+}
+
+/* ---------- Hide sidebar from the page layout ---------- */
+.menu-browse-layout {
+    display: block !important;
+    width: 100%;
+    min-width: 0;
+}
+
+.menu-sidebar {
+    display: none !important;
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: min(88vw, 360px);
+    max-width: 100%;
+    z-index: 3000;
+    overflow-y: auto;
+    margin: 0 !important;
+    padding: clamp(20px, 4vw, 32px);
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: 12px 0 40px rgba(0, 0, 0, 0.16);
+    transform: translateX(-105%);
+    transition: transform 0.28s ease;
+}
+
+.menu-sidebar.is-open {
+    display: block !important;
+    transform: translateX(0);
+}
+
+/* ---------- Hamburger: fixed to the LEFT side ---------- */
+.menu-hamburger {
+    position: fixed !important;
+    left: clamp(10px, 1.5vw, 24px);
+    top: clamp(76px, 9vh, 96px);
+    z-index: 3100;
+
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 5px;
+
+    width: clamp(42px, 4vw, 50px);
+    height: clamp(42px, 4vw, 50px);
+    padding: 0;
+
+    border: 1px solid rgba(252, 128, 25, 0.25);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.menu-hamburger span {
+    display: block;
+    width: 21px;
+    height: 2px;
+    border-radius: 10px;
+    background: var(--primary);
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.menu-hamburger[aria-expanded="true"] span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.menu-hamburger[aria-expanded="true"] span:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-hamburger[aria-expanded="true"] span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ---------- Menu content ---------- */
+.menu-category-groups {
+    width: 100%;
+    min-width: 0;
+}
+
+.menu-category-section {
+    width: 100%;
+    min-width: 0;
+    scroll-margin-top: 90px;
+}
+
+.menu-category-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* ---------- Carousel ---------- */
+.carousel-container {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+    padding-inline: clamp(38px, 5vw, 66px);
+}
+
+.carousel-track {
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    gap: var(--menu-gap);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x proximity;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    padding: 10px 4px 22px;
+}
+
+.carousel-track::-webkit-scrollbar {
+    display: none;
+}
+
+.menu-card {
+    flex: 0 0 var(--menu-card-width) !important;
+    width: var(--menu-card-width) !important;
+    min-width: 0;
+    scroll-snap-align: start;
+}
+
+/* Arrows are ALWAYS visible. They are no longer tied to image hover. */
+.carousel-arrow,
+.carousel-container .carousel-arrow,
+.menu-image-wrapper ~ .carousel-arrow {
+    position: absolute !important;
+    top: 50% !important;
+    bottom: auto !important;
+    z-index: 100 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: clamp(38px, 4vw, 50px) !important;
+    height: clamp(38px, 4vw, 50px) !important;
+    min-width: 38px;
+    min-height: 38px;
+    margin: 0 !important;
+    padding: 0 !important;
+
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+
+    transform: translateY(-50%) !important;
+    border: 1px solid rgba(252, 128, 25, 0.22) !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.96) !important;
+    color: var(--primary) !important;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.13) !important;
+    cursor: pointer;
+    line-height: 1 !important;
+    font-size: clamp(20px, 2.5vw, 28px) !important;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease !important;
+}
+
+.carousel-prev {
+    left: 2px !important;
+}
+
+.carousel-next {
+    right: 2px !important;
+}
+
+.carousel-arrow:hover,
+.carousel-container.near-left .carousel-prev:hover,
+.carousel-container.near-right .carousel-next:hover {
+    transform: translateY(-50%) scale(1.08) !important;
+    background: var(--primary) !important;
+    color: #fff !important;
+    box-shadow: 0 9px 24px rgba(0, 0, 0, 0.18) !important;
+}
+
+/* Never hide arrows just because the cursor leaves the image/container. */
+.carousel-container:not(:hover) .carousel-arrow,
+.carousel-container.near-left .carousel-next,
+.carousel-container.near-right .carousel-prev,
+.carousel-container .carousel-arrow {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* ---------- Images ---------- */
+.menu-image-wrapper {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.menu-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ---------- Forms / buttons ---------- */
+.menu-card-content,
+.menu-card-footer,
+.menu-add-form {
+    min-width: 0;
+}
+
+.menu-add-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.quantity-wrapper {
+    flex: 0 0 auto;
+}
+
+.menu-add-btn {
+    flex: 1 1 140px;
+    min-width: 0;
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 900px) {
+    .nav-links {
+        gap: 10px;
+    }
+
+    .nav-links a {
+        font-size: 14px;
+    }
+
+    .container {
+        padding-inline: clamp(14px, 3vw, 24px);
+    }
+
+    .carousel-container {
+        padding-inline: 44px;
+    }
+
+    .menu-card {
+        flex-basis: clamp(230px, 42vw, 310px) !important;
+        width: clamp(230px, 42vw, 310px) !important;
+    }
+}
+
+/* ---------- Phones ---------- */
+@media (max-width: 600px) {
+    .navbar {
+        padding: 8px 12px;
+    }
+
+    .nav-title {
+        max-width: 42vw;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .nav-links {
+        gap: 8px;
+    }
+
+    .nav-links a {
+        font-size: 12px;
+    }
+
+    .nav-logo {
+        height: 42px;
+    }
+
+    .container {
+        padding-inline: 12px;
+        margin-top: 22px;
+    }
+
+    .menu-hamburger {
+        top: 72px;
+        left: 10px;
+    }
+
+    .carousel-container {
+        padding-inline: 34px;
+    }
+
+    .carousel-prev {
+        left: -1px !important;
+    }
+
+    .carousel-next {
+        right: -1px !important;
+    }
+
+    .menu-card {
+        flex-basis: min(78vw, 300px) !important;
+        width: min(78vw, 300px) !important;
+    }
+
+    .menu-category-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .menu-add-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .quantity-wrapper {
+        align-self: flex-start;
+    }
+
+    .menu-add-btn {
+        width: 100%;
+    }
+}
+
+/* ---------- Very small screens ---------- */
+@media (max-width: 380px) {
+    .nav-links a:not(.cart-link) {
+        display: none;
+    }
+
+    .carousel-container {
+        padding-inline: 30px;
+    }
+
+    .menu-card {
+        flex-basis: 78vw !important;
+        width: 78vw !important;
+    }
+}
+
+/* ---------- Accessibility ---------- */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
