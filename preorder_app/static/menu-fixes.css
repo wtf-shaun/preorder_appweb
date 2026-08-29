@@ -1,0 +1,187 @@
+/* =========================================================
+   FINAL MENU FIXES
+   Hamburger + mobile add-to-cart layout
+   ========================================================= */
+
+/* Keep the hamburger completely out of the page content flow. */
+.page-shell {
+    position: relative;
+}
+
+.menu-hamburger {
+    position: fixed !important;
+    left: max(12px, env(safe-area-inset-left)) !important;
+    top: 82px !important;
+    z-index: 5000 !important;
+
+    width: 46px !important;
+    height: 46px !important;
+    min-width: 46px !important;
+    min-height: 46px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-direction: column !important;
+    gap: 5px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    border: 1px solid rgba(252, 128, 25, 0.22) !important;
+    border-radius: 12px !important;
+    background: rgba(255, 255, 255, 0.97) !important;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.14) !important;
+
+    transform: none !important;
+}
+
+.menu-hamburger span {
+    width: 22px !important;
+    height: 2px !important;
+    margin: 0 !important;
+    background: var(--primary) !important;
+    border-radius: 10px !important;
+}
+
+.menu-hamburger:hover {
+    transform: scale(1.04) !important;
+}
+
+.menu-hamburger[aria-expanded="true"] {
+    background: var(--primary) !important;
+}
+
+.menu-hamburger[aria-expanded="true"] span {
+    background: #fff !important;
+}
+
+/* ---------- Add-to-cart area ---------- */
+.menu-card-footer {
+    width: 100% !important;
+    min-width: 0 !important;
+}
+
+.menu-add-form {
+    width: 100% !important;
+    min-width: 0 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 10px !important;
+    align-items: stretch !important;
+}
+
+.quantity-wrapper {
+    width: 100% !important;
+    min-width: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.quantity-btn {
+    flex: 0 0 48px !important;
+    width: 48px !important;
+    min-width: 48px !important;
+    height: 48px !important;
+}
+
+.quantity-value {
+    flex: 1 1 auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+    height: 48px !important;
+    text-align: center !important;
+}
+
+.menu-add-btn {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 48px !important;
+    height: 48px !important;
+    margin: 0 !important;
+    padding: 0 18px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 7px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+}
+
+.menu-add-btn span {
+    flex: 0 0 auto;
+}
+
+/* ---------- Desktop: quantity + Add to Cart on one row ---------- */
+@media (min-width: 601px) {
+    .menu-add-form {
+        grid-template-columns: minmax(125px, 0.8fr) minmax(140px, 1.2fr) !important;
+        align-items: center !important;
+    }
+
+    .quantity-wrapper {
+        width: 100% !important;
+    }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 600px) {
+    /* The mobile navbar can wrap, so move the hamburger below it rather
+       than letting it float over the page heading. */
+    .menu-hamburger {
+        top: 122px !important;
+        left: max(12px, env(safe-area-inset-left)) !important;
+    }
+
+    .menu-card-content {
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    .menu-card-title-row {
+        width: 100% !important;
+        min-width: 0 !important;
+        gap: 8px !important;
+    }
+
+    .menu-card-title-row h3 {
+        min-width: 0 !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    .price {
+        flex: 0 0 auto !important;
+    }
+
+    .menu-add-form {
+        grid-template-columns: 1fr !important;
+    }
+
+    .quantity-wrapper {
+        width: 100% !important;
+    }
+
+    .menu-add-btn {
+        width: 100% !important;
+        height: 50px !important;
+        min-height: 50px !important;
+        font-size: 16px !important;
+    }
+}
+
+@media (max-width: 380px) {
+    .menu-hamburger {
+        top: 120px !important;
+        width: 44px !important;
+        height: 44px !important;
+        min-width: 44px !important;
+        min-height: 44px !important;
+    }
+
+    .quantity-btn {
+        flex-basis: 44px !important;
+        width: 44px !important;
+        min-width: 44px !important;
+    }
+}
