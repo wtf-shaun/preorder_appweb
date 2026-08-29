@@ -1,0 +1,453 @@
+/* =========================================================
+   FLUID LAYOUT
+   No device/resolution-specific sizing.
+   Everything scales from the available container width.
+   Loaded last so it intentionally overrides legacy rules.
+   ========================================================= */
+
+:root {
+    --fluid-gutter: clamp(12px, 3vw, 48px);
+    --fluid-gap: clamp(12px, 2vw, 28px);
+    --card-width: min(100%, 420px);
+    --control-height: clamp(42px, 4.2vw, 48px);
+}
+
+/* ---------- Global fluid sizing ---------- */
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+}
+
+body {
+    font-size: clamp(15px, 1.05vw, 18px);
+}
+
+/* The page uses the viewport/container width, not a 1100px layout. */
+.container {
+    width: 100% !important;
+    max-width: none !important;
+    margin: clamp(18px, 3vw, 42px) auto !important;
+    padding-inline: var(--fluid-gutter) !important;
+}
+
+.page-shell {
+    width: 100%;
+    min-width: 0;
+    position: relative;
+}
+
+/* ---------- Navbar ---------- */
+.navbar {
+    width: 100%;
+    min-width: 0;
+    min-height: clamp(64px, 7vw, 88px);
+    padding: clamp(8px, 1.2vw, 16px) var(--fluid-gutter);
+    gap: var(--fluid-gap);
+}
+
+.nav-left {
+    min-width: 0;
+    flex: 1 1 300px;
+}
+
+.nav-logo {
+    width: auto;
+    height: clamp(40px, 4.5vw, 58px);
+    flex: 0 0 auto;
+}
+
+.nav-title {
+    min-width: 0;
+    max-width: 100%;
+    font-size: clamp(16px, 1.7vw, 23px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.nav-links {
+    min-width: 0;
+    flex: 0 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: clamp(8px, 1.4vw, 20px);
+}
+
+.nav-links a {
+    font-size: clamp(14px, 1.35vw, 20px);
+    white-space: nowrap;
+}
+
+/* ---------- Page header ---------- */
+.page-header {
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(20px, 5vw, 80px);
+}
+
+.page-header > div:first-child {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.page-header h1 {
+    font-size: clamp(36px, 5vw, 72px);
+    line-height: 1.05;
+    margin: clamp(6px, 1vw, 12px) 0;
+    overflow-wrap: anywhere;
+}
+
+.page-header p {
+    max-width: 75ch;
+    font-size: clamp(16px, 1.4vw, 22px);
+}
+
+.page-badge {
+    flex: 0 1 auto;
+    white-space: nowrap;
+    font-size: clamp(14px, 1.25vw, 18px);
+}
+
+/* ---------- Sidebar stays out of document flow ---------- */
+.menu-browse-layout {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+}
+
+.menu-sidebar {
+    display: none !important;
+}
+
+.menu-sidebar.is-open {
+    display: block !important;
+    position: fixed !important;
+    inset: 0 auto 0 0 !important;
+    width: min(86vw, 360px) !important;
+    max-width: 100vw !important;
+    z-index: 6000 !important;
+    overflow-y: auto !important;
+    transform: translateX(0) !important;
+}
+
+/* ---------- Hamburger is fluid, but never resolution-dependent ---------- */
+.menu-hamburger {
+    position: absolute !important;
+    left: 0 !important;
+    top: clamp(118px, 13vw, 170px) !important;
+    z-index: 6100 !important;
+
+    width: clamp(40px, 4.2vw, 48px) !important;
+    height: clamp(40px, 4.2vw, 48px) !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-direction: column !important;
+    gap: clamp(4px, .45vw, 6px) !important;
+
+    border-radius: clamp(9px, 1vw, 12px) !important;
+    box-shadow: 0 5px 18px rgba(0,0,0,.12) !important;
+}
+
+.menu-hamburger span {
+    width: clamp(18px, 1.8vw, 22px) !important;
+    height: 2px !important;
+}
+
+/* ---------- Category sections ---------- */
+.menu-category-groups,
+.menu-category-section {
+    width: 100%;
+    min-width: 0;
+}
+
+.menu-category-section {
+    margin-block: clamp(28px, 4vw, 58px);
+}
+
+.menu-category-heading {
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.menu-category-heading h2 {
+    min-width: 0;
+    font-size: clamp(24px, 2.5vw, 38px);
+    overflow-wrap: anywhere;
+}
+
+.menu-category-heading > span {
+    flex: 0 0 auto;
+    font-size: clamp(14px, 1.2vw, 18px);
+}
+
+/* ---------- Carousel: fluid cards ---------- */
+.carousel-container {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+    padding-inline: clamp(38px, 5vw, 64px) !important;
+}
+
+.carousel-track {
+    width: 100%;
+    min-width: 0;
+    display: flex !important;
+    align-items: stretch;
+    gap: var(--fluid-gap) !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    padding: clamp(8px, 1vw, 14px) 4px clamp(18px, 2vw, 28px) !important;
+    scrollbar-width: none;
+}
+
+.carousel-track::-webkit-scrollbar {
+    display: none;
+}
+
+.menu-card {
+    flex: 0 1 var(--card-width) !important;
+    width: var(--card-width) !important;
+    min-width: min(100%, 280px) !important;
+    max-width: 420px !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    align-self: stretch;
+}
+
+/* On a narrow container, a card occupies the available width instead of
+   becoming a fixed 510px object. */
+.menu-carousel .menu-card,
+.carousel-track .menu-card {
+    flex-basis: min(100%, 420px) !important;
+}
+
+/* ---------- Images scale with the card ---------- */
+.menu-image-wrapper {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 16 / 10 !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: hidden !important;
+}
+
+.menu-image {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+
+/* ---------- Card content ---------- */
+.menu-card-content {
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: clamp(14px, 1.5vw, 22px) !important;
+}
+
+.menu-card-title-row {
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: clamp(8px, 1.2vw, 16px);
+}
+
+.menu-card h3,
+.menu-card .price {
+    font-size: clamp(18px, 1.7vw, 26px) !important;
+}
+
+.menu-card h3 {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.price {
+    flex: 0 0 auto !important;
+}
+
+/* ---------- Quantity + Add to Cart: no fixed oversized dimensions ---------- */
+.menu-card-footer,
+.menu-card-footer form,
+.menu-add-form {
+    width: 100% !important;
+    min-width: 0 !important;
+}
+
+.menu-card-footer {
+    display: block !important;
+}
+
+.menu-add-form {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    flex-wrap: wrap !important;
+    gap: clamp(8px, 1vw, 12px) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.quantity-wrapper {
+    box-sizing: border-box !important;
+    display: grid !important;
+    grid-template-columns: auto minmax(48px, 1fr) auto !important;
+    align-items: center !important;
+    flex: 1 1 150px !important;
+    width: min(100%, 190px) !important;
+    min-width: 130px !important;
+    max-width: 190px !important;
+    height: var(--control-height) !important;
+    min-height: var(--control-height) !important;
+    max-height: var(--control-height) !important;
+    overflow: hidden !important;
+}
+
+.quantity-btn {
+    width: clamp(38px, 4vw, 46px) !important;
+    min-width: clamp(38px, 4vw, 46px) !important;
+    height: var(--control-height) !important;
+    min-height: var(--control-height) !important;
+    max-height: var(--control-height) !important;
+}
+
+.quantity-value {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: calc(var(--control-height) - 4px) !important;
+    min-height: 0 !important;
+    max-height: calc(var(--control-height) - 4px) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: center !important;
+}
+
+.menu-add-btn,
+.menu-card .menu-add-btn,
+.menu-add-form .menu-add-btn {
+    box-sizing: border-box !important;
+    flex: 0 1 auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: var(--control-height) !important;
+    min-height: var(--control-height) !important;
+    max-height: var(--control-height) !important;
+    margin: 0 !important;
+    padding-inline: clamp(14px, 1.5vw, 22px) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    white-space: nowrap !important;
+    font-size: clamp(14px, 1.25vw, 18px) !important;
+    line-height: 1 !important;
+}
+
+/* The button never grows just because a previous rule said width:100%. */
+.menu-add-form .menu-add-btn {
+    width: fit-content !important;
+    min-width: min(150px, 100%) !important;
+}
+
+/* ---------- Carousel arrows ---------- */
+.carousel-arrow,
+.carousel-container .carousel-arrow {
+    width: clamp(38px, 4vw, 52px) !important;
+    height: clamp(38px, 4vw, 52px) !important;
+    min-width: 38px !important;
+    min-height: 38px !important;
+    max-width: 52px !important;
+    max-height: 52px !important;
+    top: 50% !important;
+    padding: 0 !important;
+    font-size: clamp(20px, 2.2vw, 30px) !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(-50%) !important;
+}
+
+.carousel-prev { left: 0 !important; }
+.carousel-next { right: 0 !important; }
+
+.carousel-container:not(:hover) .carousel-arrow {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* ---------- Fluid wrapping instead of device breakpoints ---------- */
+@container (max-width: 760px) {
+    .page-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .page-badge {
+        align-self: flex-start;
+    }
+
+    .nav-links {
+        justify-content: flex-start;
+    }
+
+    .menu-add-form {
+        align-items: stretch !important;
+    }
+
+    .quantity-wrapper {
+        flex: 1 1 100% !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .menu-add-form .menu-add-btn {
+        flex: 0 1 auto !important;
+        align-self: center;
+    }
+}
+
+/* Make container queries work without depending on screen resolution. */
+.page-shell,
+.navbar,
+.container {
+    container-type: inline-size;
+}
+
+/* If the browser does not support container queries, the base fluid rules
+   still work; there is intentionally no fixed device-width breakpoint. */
+@supports not (container-type: inline-size) {
+    .menu-add-form {
+        flex-wrap: wrap !important;
+    }
+}
+
+/* ---------- Accessibility ---------- */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
