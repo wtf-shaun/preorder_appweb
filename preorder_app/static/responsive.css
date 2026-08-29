@@ -1,408 +1,387 @@
 /* =========================================================
-   RESPONSIVE MENU / LAYOUT OVERRIDES
-   Loaded after style.css so the existing theme is preserved.
+   CAFETERIA MENU — FLUID RESPONSIVE LAYOUT
+   One responsive stylesheet. No device-width breakpoints.
    ========================================================= */
 
 :root {
-    --content-max: 1500px;
-    --page-gutter: clamp(14px, 3vw, 42px);
-    --menu-gap: clamp(14px, 2vw, 28px);
-    --menu-card-width: clamp(235px, 28vw, 340px);
+    --page-gutter: clamp(12px, 3vw, 48px);
+    --layout-gap: clamp(12px, 2vw, 28px);
+    --control-height: 46px;
 }
 
-/* ---------- Responsive page shell ---------- */
 html,
 body {
     width: 100%;
     min-width: 0;
-}
-
-body {
     overflow-x: hidden;
 }
 
 .container {
-    width: min(100%, var(--content-max));
-    max-width: none;
-    margin-inline: auto;
-    padding-inline: var(--page-gutter);
+    width: 100% !important;
+    max-width: none !important;
+    margin: clamp(18px, 3vw, 42px) auto !important;
+    padding-inline: var(--page-gutter) !important;
 }
 
-.page-shell {
+.page-shell,
+.menu-browse-layout,
+.menu-category-groups,
+.menu-category-section,
+.carousel-container,
+.carousel-track {
     width: 100%;
     min-width: 0;
 }
 
-/* ---------- Navbar ---------- */
+.page-shell,
+.menu-browse-layout,
+.carousel-container,
+.menu-card-content {
+    container-type: inline-size;
+}
+
 .navbar {
     width: 100%;
-    min-height: 64px;
-    padding-inline: clamp(12px, 2.5vw, 32px);
+    min-width: 0;
+    min-height: clamp(64px, 7vw, 88px);
+    padding: clamp(8px, 1.2vw, 16px) var(--page-gutter);
+    gap: var(--layout-gap);
+    flex-wrap: wrap;
 }
 
-.nav-left,
-.nav-links {
+.nav-left {
     min-width: 0;
+    flex: 1 1 260px;
 }
 
 .nav-logo {
     width: auto;
-    height: clamp(42px, 5vw, 56px);
+    height: clamp(40px, 4.5vw, 58px);
+    flex: 0 0 auto;
 }
 
 .nav-title {
     min-width: 0;
-    font-size: clamp(15px, 1.7vw, 20px);
+    max-width: 100%;
+    font-size: clamp(16px, 1.7vw, 23px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* ---------- Hide sidebar from the page layout ---------- */
-.menu-browse-layout {
-    display: block !important;
+.nav-links {
+    min-width: 0;
+    flex: 0 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: clamp(8px, 1.4vw, 20px);
+}
+
+.nav-links a {
+    font-size: clamp(14px, 1.35vw, 20px);
+    white-space: nowrap;
+}
+
+.page-header {
     width: 100%;
     min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(18px, 5vw, 72px);
+}
+
+.page-header > div:first-child {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.page-header h1 {
+    margin: clamp(6px, 1vw, 12px) 0;
+    font-size: clamp(36px, 5vw, 72px);
+    line-height: 1.05;
+    overflow-wrap: anywhere;
+}
+
+.page-header p {
+    max-width: 75ch;
+    font-size: clamp(16px, 1.4vw, 22px);
+}
+
+.page-badge {
+    flex: 0 1 auto;
+    white-space: nowrap;
+    font-size: clamp(14px, 1.25vw, 18px);
+}
+
+.menu-browse-layout {
+    display: block !important;
 }
 
 .menu-sidebar {
     display: none !important;
-    position: fixed !important;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: min(88vw, 360px);
-    max-width: 100%;
-    z-index: 3000;
-    overflow-y: auto;
-    margin: 0 !important;
-    padding: clamp(20px, 4vw, 32px);
-    background: rgba(255, 255, 255, 0.98);
-    box-shadow: 12px 0 40px rgba(0, 0, 0, 0.16);
-    transform: translateX(-105%);
-    transition: transform 0.28s ease;
 }
 
 .menu-sidebar.is-open {
     display: block !important;
-    transform: translateX(0);
+    position: fixed !important;
+    inset: 0 auto 0 0 !important;
+    width: min(86vw, 360px) !important;
+    max-width: 100vw !important;
+    z-index: 6000 !important;
+    overflow-y: auto !important;
+    transform: translateX(0) !important;
 }
 
-/* ---------- Hamburger: fixed to the LEFT side ---------- */
 .menu-hamburger {
-    position: fixed !important;
-    left: clamp(10px, 1.5vw, 24px);
-    top: clamp(76px, 9vh, 96px);
-    z-index: 3100;
-
-    display: inline-flex !important;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 5px;
-
-    width: clamp(42px, 4vw, 50px);
-    height: clamp(42px, 4vw, 50px);
-    padding: 0;
-
-    border: 1px solid rgba(252, 128, 25, 0.25);
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.95);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
-    cursor: pointer;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    position: absolute !important;
+    left: 0 !important;
+    top: 100% !important;
+    transform: translateY(clamp(8px, 1.2vw, 16px)) !important;
+    z-index: 6100 !important;
+    width: clamp(40px, 4vw, 48px) !important;
+    height: clamp(40px, 4vw, 48px) !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-direction: column !important;
+    gap: 5px !important;
+    border-radius: 11px !important;
 }
 
 .menu-hamburger span {
-    display: block;
-    width: 21px;
-    height: 2px;
-    border-radius: 10px;
-    background: var(--primary);
-    transition: transform 0.2s ease, opacity 0.2s ease;
-}
-
-.menu-hamburger[aria-expanded="true"] span:nth-child(1) {
-    transform: translateY(7px) rotate(45deg);
-}
-
-.menu-hamburger[aria-expanded="true"] span:nth-child(2) {
-    opacity: 0;
-}
-
-.menu-hamburger[aria-expanded="true"] span:nth-child(3) {
-    transform: translateY(-7px) rotate(-45deg);
-}
-
-/* ---------- Menu content ---------- */
-.menu-category-groups {
-    width: 100%;
-    min-width: 0;
+    width: clamp(18px, 1.8vw, 22px) !important;
+    height: 2px !important;
 }
 
 .menu-category-section {
-    width: 100%;
-    min-width: 0;
-    scroll-margin-top: 90px;
+    margin-block: clamp(28px, 4vw, 58px);
 }
 
 .menu-category-heading {
+    width: 100%;
+    min-width: 0;
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
+    gap: 16px;
 }
 
-/* ---------- Carousel ---------- */
+.menu-category-heading h2 {
+    min-width: 0;
+    font-size: clamp(24px, 2.5vw, 38px);
+    overflow-wrap: anywhere;
+}
+
+.menu-category-heading > span {
+    flex: 0 0 auto;
+    font-size: clamp(14px, 1.2vw, 18px);
+}
+
 .carousel-container {
     position: relative;
-    width: 100%;
-    min-width: 0;
-    padding-inline: clamp(38px, 5vw, 66px);
+    padding-inline: clamp(38px, 5vw, 64px) !important;
 }
 
 .carousel-track {
-    width: 100%;
-    min-width: 0;
-    display: flex;
-    gap: var(--menu-gap);
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x proximity;
-    scroll-behavior: smooth;
+    display: flex !important;
+    align-items: stretch;
+    gap: var(--layout-gap) !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    padding: clamp(8px, 1vw, 14px) 4px clamp(18px, 2vw, 28px) !important;
     scrollbar-width: none;
-    padding: 10px 4px 22px;
+    scroll-snap-type: x proximity;
 }
 
 .carousel-track::-webkit-scrollbar {
     display: none;
 }
 
-.menu-card {
-    flex: 0 0 var(--menu-card-width) !important;
-    width: var(--menu-card-width) !important;
-    min-width: 0;
+.menu-card,
+.menu-carousel .menu-card {
+    flex: 0 0 clamp(260px, 32cqw, 420px) !important;
+    width: clamp(260px, 32cqw, 420px) !important;
+    min-width: 260px !important;
+    max-width: 420px !important;
+    height: auto !important;
+    padding: 0 !important;
     scroll-snap-align: start;
 }
 
-/* Arrows are ALWAYS visible. They are no longer tied to image hover. */
-.carousel-arrow,
-.carousel-container .carousel-arrow,
-.menu-image-wrapper ~ .carousel-arrow {
-    position: absolute !important;
-    top: 50% !important;
-    bottom: auto !important;
-    z-index: 100 !important;
-
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-
-    width: clamp(38px, 4vw, 50px) !important;
-    height: clamp(38px, 4vw, 50px) !important;
-    min-width: 38px;
-    min-height: 38px;
-    margin: 0 !important;
-    padding: 0 !important;
-
-    opacity: 1 !important;
-    visibility: visible !important;
-    pointer-events: auto !important;
-
-    transform: translateY(-50%) !important;
-    border: 1px solid rgba(252, 128, 25, 0.22) !important;
-    border-radius: 50% !important;
-    background: rgba(255, 255, 255, 0.96) !important;
-    color: var(--primary) !important;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.13) !important;
-    cursor: pointer;
-    line-height: 1 !important;
-    font-size: clamp(20px, 2.5vw, 28px) !important;
-    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease !important;
-}
-
-.carousel-prev {
-    left: 2px !important;
-}
-
-.carousel-next {
-    right: 2px !important;
-}
-
-.carousel-arrow:hover,
-.carousel-container.near-left .carousel-prev:hover,
-.carousel-container.near-right .carousel-next:hover {
-    transform: translateY(-50%) scale(1.08) !important;
-    background: var(--primary) !important;
-    color: #fff !important;
-    box-shadow: 0 9px 24px rgba(0, 0, 0, 0.18) !important;
-}
-
-/* Never hide arrows just because the cursor leaves the image/container. */
-.carousel-container:not(:hover) .carousel-arrow,
-.carousel-container.near-left .carousel-next,
-.carousel-container.near-right .carousel-prev,
-.carousel-container .carousel-arrow {
-    opacity: 1 !important;
-    visibility: visible !important;
-}
-
-/* ---------- Images ---------- */
 .menu-image-wrapper {
-    width: 100%;
-    aspect-ratio: 16 / 10;
-    min-height: 0;
-    overflow: hidden;
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 16 / 10 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
 }
 
 .menu-image {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+
+.menu-card-content {
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: clamp(14px, 1.5vw, 22px) !important;
+}
+
+.menu-card-title-row {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-/* ---------- Forms / buttons ---------- */
-.menu-card-content,
-.menu-card-footer,
-.menu-add-form {
     min-width: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: clamp(8px, 1.2vw, 16px);
+}
+
+.menu-card h3,
+.menu-card .price {
+    font-size: clamp(18px, 1.7vw, 26px) !important;
+}
+
+.menu-card h3 {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.price {
+    flex: 0 0 auto !important;
+}
+
+.menu-card-footer,
+.menu-card-footer form,
+.menu-add-form {
+    width: 100% !important;
+    min-width: 0 !important;
+}
+
+.menu-card-footer {
+    display: block !important;
 }
 
 .menu-add-form {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 10px;
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 .quantity-wrapper {
-    flex: 0 0 auto;
+    box-sizing: border-box !important;
+    display: grid !important;
+    grid-template-columns: 44px minmax(48px, 1fr) 44px !important;
+    flex: 1 1 150px !important;
+    width: min(100%, 190px) !important;
+    min-width: 130px !important;
+    max-width: 190px !important;
+    height: var(--control-height) !important;
+    min-height: var(--control-height) !important;
+    max-height: var(--control-height) !important;
+    overflow: hidden !important;
 }
 
-.menu-add-btn {
-    flex: 1 1 140px;
-    min-width: 0;
+.quantity-btn {
+    width: 44px !important;
+    min-width: 44px !important;
+    height: var(--control-height) !important;
+    min-height: var(--control-height) !important;
 }
 
-/* ---------- Tablet ---------- */
-@media (max-width: 900px) {
-    .nav-links {
-        gap: 10px;
-    }
-
-    .nav-links a {
-        font-size: 14px;
-    }
-
-    .container {
-        padding-inline: clamp(14px, 3vw, 24px);
-    }
-
-    .carousel-container {
-        padding-inline: 44px;
-    }
-
-    .menu-card {
-        flex-basis: clamp(230px, 42vw, 310px) !important;
-        width: clamp(230px, 42vw, 310px) !important;
-    }
+.quantity-value {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: calc(var(--control-height) - 4px) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: center !important;
 }
 
-/* ---------- Phones ---------- */
-@media (max-width: 600px) {
-    .navbar {
-        padding: 8px 12px;
-    }
+.menu-add-btn,
+.menu-card .menu-add-btn,
+.menu-add-form .menu-add-btn {
+    box-sizing: border-box !important;
+    flex: 0 1 auto !important;
+    width: fit-content !important;
+    min-width: min(150px, 100%) !important;
+    max-width: 100% !important;
+    height: var(--control-height) !important;
+    min-height: var(--control-height) !important;
+    max-height: var(--control-height) !important;
+    margin: 0 !important;
+    padding: 0 16px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    white-space: nowrap !important;
+    font-size: clamp(14px, 1.2vw, 17px) !important;
+    line-height: 1 !important;
+}
 
-    .nav-title {
-        max-width: 42vw;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
+.carousel-arrow,
+.carousel-container .carousel-arrow {
+    position: absolute !important;
+    top: 50% !important;
+    width: clamp(38px, 4vw, 52px) !important;
+    height: clamp(38px, 4vw, 52px) !important;
+    min-width: 38px !important;
+    min-height: 38px !important;
+    max-width: 52px !important;
+    max-height: 52px !important;
+    padding: 0 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(-50%) !important;
+    font-size: clamp(20px, 2.2vw, 30px) !important;
+}
 
-    .nav-links {
-        gap: 8px;
-    }
+.carousel-prev { left: 0 !important; }
+.carousel-next { right: 0 !important; }
 
-    .nav-links a {
-        font-size: 12px;
-    }
-
-    .nav-logo {
-        height: 42px;
-    }
-
-    .container {
-        padding-inline: 12px;
-        margin-top: 22px;
-    }
-
-    .menu-hamburger {
-        top: 72px;
-        left: 10px;
-    }
-
-    .carousel-container {
-        padding-inline: 34px;
-    }
-
-    .carousel-prev {
-        left: -1px !important;
-    }
-
-    .carousel-next {
-        right: -1px !important;
-    }
-
-    .menu-card {
-        flex-basis: min(78vw, 300px) !important;
-        width: min(78vw, 300px) !important;
-    }
-
-    .menu-category-heading {
+@container (max-width: 760px) {
+    .page-header {
         align-items: flex-start;
         flex-direction: column;
-        gap: 2px;
     }
 
-    .menu-add-form {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .quantity-wrapper {
+    .page-badge {
         align-self: flex-start;
     }
 
-    .menu-add-btn {
-        width: 100%;
+    .menu-add-form {
+        align-items: stretch !important;
+    }
+
+    .quantity-wrapper {
+        flex: 1 1 100% !important;
+        width: 100% !important;
+        max-width: none !important;
+    }
+
+    .menu-add-form .menu-add-btn {
+        align-self: center;
     }
 }
 
-/* ---------- Very small screens ---------- */
-@media (max-width: 380px) {
-    .nav-links a:not(.cart-link) {
-        display: none;
-    }
-
-    .carousel-container {
-        padding-inline: 30px;
-    }
-
-    .menu-card {
-        flex-basis: 78vw !important;
-        width: 78vw !important;
-    }
-}
-
-/* ---------- Accessibility ---------- */
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
     *::after {
-        scroll-behavior: auto !important;
-        animation-duration: 0.01ms !important;
+        animation-duration: .01ms !important;
         animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
+        transition-duration: .01ms !important;
+        scroll-behavior: auto !important;
     }
 }
