@@ -2,35 +2,69 @@
 
 {% block content %}
 
-<div class="page-shell">
-<!-- PAGE HEADER -->
-<div class="page-header">
+<style>
+/* MENU PAGE SHELL — cards are intentionally not styled here. */
+.menu-page{width:100%;min-width:0}
+.menu-page-header{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:clamp(18px,4vw,64px);padding:clamp(18px,3vw,40px) 0 clamp(22px,3vw,36px);border-bottom:1px solid rgba(42,43,62,.08)}
+.menu-page-header-copy{min-width:0}
+.menu-page-header h1{margin:6px 0 10px;font-size:clamp(38px,5vw,72px);line-height:1;letter-spacing:-.035em}
+.menu-page-header p{margin:0;max-width:68ch;font-size:clamp(15px,1.4vw,20px);line-height:1.55;color:#77777b}
+.menu-page-badge{align-self:center;white-space:nowrap}
 
-        <div>
+/* Compact fluid navbar for the menu page. */
+body:has(.menu-page) .navbar{position:relative!important;top:auto!important;height:auto!important;min-height:0!important;max-height:none!important;padding:clamp(10px,1.4vw,18px) clamp(16px,4vw,56px)!important;display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;justify-content:space-between!important;gap:clamp(12px,3vw,40px)!important}
+body:has(.menu-page) .nav-left{min-width:0!important;flex:1 1 auto!important;display:flex!important;align-items:center!important;gap:clamp(8px,1.2vw,14px)!important}
+body:has(.menu-page) .nav-logo{flex:0 0 auto!important;width:auto!important;height:clamp(38px,4.2vw,54px)!important}
+body:has(.menu-page) .nav-title{min-width:0!important;max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;font-size:clamp(17px,1.8vw,24px)!important}
+body:has(.menu-page) .nav-links{flex:0 1 auto!important;min-width:0!important;display:flex!important;flex-wrap:nowrap!important;align-items:center!important;gap:clamp(10px,1.8vw,24px)!important;white-space:nowrap!important}
+body:has(.menu-page) .nav-links a{flex:0 0 auto!important;white-space:nowrap!important;font-size:clamp(14px,1.4vw,19px)!important}
+
+/* Hamburger and opened sidebar. */
+body:has(.menu-page) .menu-hamburger{position:fixed!important;top:clamp(82px,9vh,108px)!important;left:clamp(12px,2vw,26px)!important;z-index:6101!important;width:clamp(42px,4vw,48px)!important;height:clamp(42px,4vw,48px)!important;margin:0!important;padding:0!important;border-radius:13px!important}
+body:has(.menu-page) .menu-sidebar.is-open{position:fixed!important;inset:0 auto 0 0!important;width:min(360px,86vw)!important;max-width:100vw!important;height:100dvh!important;padding:clamp(112px,13vh,138px) clamp(22px,4vw,34px) 30px!important;z-index:6100!important;overflow-y:auto!important;box-sizing:border-box!important}
+body:has(.menu-page) .menu-sidebar-heading{margin-bottom:18px}
+body:has(.menu-page) .menu-sidebar-section + .menu-sidebar-section{margin-top:10px}
+body:has(.menu-page) .menu-sidebar-dropdown,body:has(.menu-page) .menu-sidebar-item{min-height:46px}
+body:has(.menu-page) .menu-category-groups{width:100%;min-width:0}
+body:has(.menu-page) .menu-category-section{scroll-margin-top:24px}
+body:has(.menu-page) .menu-category-heading{display:flex;align-items:baseline;justify-content:space-between;gap:16px;min-width:0}
+body:has(.menu-page) .menu-category-heading h2{min-width:0;overflow-wrap:anywhere;font-size:clamp(24px,2.6vw,38px)}
+body:has(.menu-page) .carousel-arrow{opacity:1!important;visibility:visible!important}
+
+@media (max-width:700px){
+ .menu-page-header{grid-template-columns:1fr;align-items:start;gap:14px}
+ .menu-page-badge{justify-self:start}
+ body:has(.menu-page) .nav-links{gap:8px!important}
+}
+@media (max-width:500px){
+ body:has(.menu-page) .navbar{gap:8px!important;padding-inline:12px!important}
+ body:has(.menu-page) .nav-logo{height:40px!important}
+ body:has(.menu-page) .nav-title{font-size:16px!important}
+ body:has(.menu-page) .nav-links a{font-size:13px!important}
+ body:has(.menu-page) .menu-hamburger{top:78px!important;left:10px!important}
+}
+@media (max-width:380px){
+ body:has(.menu-page) .nav-title{max-width:42vw!important}
+ body:has(.menu-page) .nav-links a:not(.cart-link){display:none!important}
+}
+</style>
+
+<div class="page-shell menu-page">
+    <header class="menu-page-header">
+        <div class="menu-page-header-copy">
             <span class="page-eyebrow">CAFETERIA MENU</span>
-
             <h1>Today's Menu</h1>
-
-            <p>
-                Choose your favourites, select a quantity and add them to your order.
-            </p>
+            <p>Choose your favourites, select a quantity and add them to your order.</p>
         </div>
+        <div class="page-badge menu-page-badge">🍽️ Fresh &amp; Ready</div>
+    </header>
 
-        <div class="page-badge">
-            🍽️ Fresh & Ready
-        </div>
-
-    </div>
-
-    <button type="button" class="menu-hamburger" id="menuToggle" aria-label="Toggle menu" aria-expanded="false">
-        <span></span>
-        <span></span>
-        <span></span>
+    <button type="button" class="menu-hamburger" id="menuToggle" aria-label="Open menu categories" aria-controls="menuSidebar" aria-expanded="false">
+        <span></span><span></span><span></span>
     </button>
 
     <div class="menu-browse-layout">
-
-        <aside class="menu-sidebar" aria-label="Menu categories">
+        <aside class="menu-sidebar" id="menuSidebar" aria-label="Menu categories">
             <div class="menu-sidebar-heading">
                 <span class="page-eyebrow">BROWSE</span>
                 <h2>Menu</h2>
@@ -47,9 +81,8 @@
                     </button>
                     <div class="menu-sidebar-list">
                         {% for it in items if it.get('category', 'food') == category.slug %}
-                            <button type="button" class="menu-sidebar-item" onclick="focusMenuItem('{{ it.id }}')">
-                                <span>{{ it.name }}</span>
-                                <span aria-hidden="true">›</span>
+                            <button type="button" class="menu-sidebar-item" data-item-id="{{ it.id }}">
+                                <span>{{ it.name }}</span><span aria-hidden="true">›</span>
                             </button>
                         {% else %}
                             <p class="menu-sidebar-empty">No items</p>
@@ -59,392 +92,141 @@
             {% endfor %}
         </aside>
 
-        <div class="menu-category-groups">
-        {% for category in categories %}
-            <section class="menu-category-section" id="menu-category-{{ category.slug }}">
-                <div class="menu-category-heading">
-                    <h2>{{ category.name }}</h2>
-                    <span>{{ items|selectattr('category', 'equalto', category.slug)|list|length }} items</span>
-                </div>
-
-                <!-- MENU CAROUSEL CONTAINER -->
-                <div class="carousel-container">
-
-        <!-- Left Navigation Arrow -->
-        <button class="carousel-arrow carousel-prev" onclick="scrollCarousel('{{ category.slug }}', -1)" aria-label="Previous {{ category.name }} items">
-            &#10094;
-        </button>
-
-        <!-- MENU TRACK -->
-        <div class="carousel-track" id="menuCarousel-{{ category.slug }}">
-
-            {% for it in items if it.get('category', 'food') == category.slug %}
-
-            <div id="menu-item-{{ it.id }}" class="card menu-card{% if it.id in cart_item_ids %} in-cart{% endif %}">
-
-                <!-- IMAGE -->
-                <div class="menu-image-wrapper">
-
-                    {% if it.get('image') %}
-
-                        <img
-                            src="{{ url_for('static', filename='uploads/' + it.image) }}"
-                            class="menu-image"
-                            alt="{{ it.name }}"
-                        >
-
-                    {% else %}
-
-                        <img
-                            src="{{ url_for('static', filename='uploads/default.png') }}"
-                            class="menu-image"
-                            alt="Default food image"
-                        >
-
-                    {% endif %}
-
-                    <div class="image-badges">
-                        <div class="food-badge">
-                            {% if it.id in cart_item_ids %}
-                                In Cart
-                            {% else %}
-                                CAFETERIA
-                            {% endif %}
-                        </div>
-
-                        <div class="image-availability">
-                            <span>●</span> Available
-                        </div>
+        <main class="menu-category-groups" aria-label="Today's menu">
+            {% for category in categories %}
+                <section class="menu-category-section" id="menu-category-{{ category.slug }}">
+                    <div class="menu-category-heading">
+                        <h2>{{ category.name }}</h2>
+                        <span>{{ items|selectattr('category', 'equalto', category.slug)|list|length }} items</span>
                     </div>
 
-                </div>
+                    <div class="carousel-container">
+                        <button type="button" class="carousel-arrow carousel-prev" onclick="scrollCarousel('{{ category.slug }}', -1)" aria-label="Previous {{ category.name }} items">&#10094;</button>
+                        <div class="carousel-track" id="menuCarousel-{{ category.slug }}">
+                            {% for it in items if it.get('category', 'food') == category.slug %}
 
-
-                <!-- DETAILS -->
-                <div class="menu-card-content">
-
-                    <div class="menu-card-title-row">
-
-                        <h3>{{ it.name }}</h3>
-
-                        <div class="price">
-                                                    ₹{{ it.price }}
-                        </div>
-
-                    </div>
-
-
-                    <div class="menu-card-footer">
-
-                                                    <form
-                            method="POST"
-                            action="{{ url_for('main.add_to_cart') }}"
-                            class="menu-add-form"
-                        >
-
-                            <input
-                                type="hidden"
-                                name="item_id"
-                                value="{{ it.id }}"
-                            >
-
-
-                            <!-- QUANTITY SELECTOR -->
-                            <div class="quantity-wrapper">
-                            
-                                <button
-                                    type="button"
-                                    class="quantity-btn minus"
-                                    onclick="changeQuantity(this, -1)"
-                                    aria-label="Decrease quantity"
-                                >
-                                    −
-                                </button>
-
-
-                                <input
-                                    type="text"
-                                    class="quantity-value"
-                                    id="quantity-{{ it.id }}"
-                                    name="quantity"
-                                    value="{{ cart_quantities.get(it.id, 1) }}"
-                                    readonly
-                                >
-
-
-                                <button
-                                    type="button"
-                                    class="quantity-btn plus"
-                                    onclick="changeQuantity(this, 1)"
-                                    aria-label="Increase quantity"
-                                >
-                                    +
-                                </button>
-
+                            <!-- EXISTING CARD: deliberately preserved. -->
+                            <div id="menu-item-{{ it.id }}" class="card menu-card{% if it.id in cart_item_ids %} in-cart{% endif %}">
+                                <div class="menu-image-wrapper">
+                                    {% if it.get('image') %}
+                                        <img src="{{ url_for('static', filename='uploads/' + it.image) }}" class="menu-image" alt="{{ it.name }}">
+                                    {% else %}
+                                        <img src="{{ url_for('static', filename='uploads/default.png') }}" class="menu-image" alt="Default food image">
+                                    {% endif %}
+                                    <div class="image-badges">
+                                        <div class="food-badge">{% if it.id in cart_item_ids %}In Cart{% else %}CAFETERIA{% endif %}</div>
+                                        <div class="image-availability"><span>●</span> Available</div>
+                                    </div>
+                                </div>
+                                <div class="menu-card-content">
+                                    <div class="menu-card-title-row">
+                                        <h3>{{ it.name }}</h3>
+                                        <div class="price">₹{{ it.price }}</div>
+                                    </div>
+                                    <div class="menu-card-footer">
+                                        <form method="POST" action="{{ url_for('main.add_to_cart') }}" class="menu-add-form">
+                                            <input type="hidden" name="item_id" value="{{ it.id }}">
+                                            <div class="quantity-wrapper">
+                                                <button type="button" class="quantity-btn minus" onclick="changeQuantity(this, -1)" aria-label="Decrease quantity">−</button>
+                                                <input type="text" class="quantity-value" id="quantity-{{ it.id }}" name="quantity" value="{{ cart_quantities.get(it.id, 1) }}" readonly>
+                                                <button type="button" class="quantity-btn plus" onclick="changeQuantity(this, 1)" aria-label="Increase quantity">+</button>
+                                            </div>
+                                            <button class="btn menu-add-btn" type="submit"><span>＋</span> Add to Cart</button>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
-
-
-                            <!-- ADD BUTTON -->
-                            <button
-                                class="btn menu-add-btn"
-                                type="submit"
-                            >
-                                <span>＋</span>
-                                Add to Cart
-                            </button>
-
-                        </form>
-
+                            {% endfor %}
+                        </div>
+                        <button type="button" class="carousel-arrow carousel-next" onclick="scrollCarousel('{{ category.slug }}', 1)" aria-label="Next {{ category.name }} items">&#10095;</button>
                     </div>
-
-                </div>
-
-            </div>
-
+                </section>
             {% endfor %}
-
-        </div>
-
-        <!-- Right Navigation Arrow -->
-        <button class="carousel-arrow carousel-next" onclick="scrollCarousel('{{ category.slug }}', 1)" aria-label="Next {{ category.name }} items">
-            &#10095;
-        </button>
-
-        </div>
-            </section>
-        {% endfor %}
-        </div>
-
+        </main>
     </div>
 
-
-    <!-- EMPTY MENU -->
     {% if not items %}
-
-    <div class="empty-state">
-
-        <div class="empty-icon">
-            🍽️
+        <div class="empty-state">
+            <div class="empty-icon">🍽️</div>
+            <h3>Menu is currently empty</h3>
+            <p>Please check back later for available items.</p>
         </div>
-
-        <h3>Menu is currently empty</h3>
-
-        <p>
-            Please check back later for available items.
-        </p>
-
-    </div>
-
     {% endif %}
-
 </div>
 
-
 <script>
-function changeQuantity(button, amount) {
+(function () {
+    'use strict';
 
-    const form = button.closest('.menu-add-form');
-    const input = form ? form.querySelector('.quantity-value') : null;
+    window.changeQuantity = function (button, amount) {
+        const input = button.closest('.menu-add-form')?.querySelector('.quantity-value');
+        if (!input) return;
+        const quantity = Number.parseInt(input.value, 10) || 1;
+        input.value = Math.min(10, Math.max(1, quantity + amount));
+        input.classList.remove('pop');
+        void input.offsetWidth;
+        input.classList.add('pop');
+    };
 
-    if (!input) {
-        return;
+    window.scrollCarousel = function (categorySlug, direction) {
+        const track = document.getElementById('menuCarousel-' + categorySlug);
+        const card = track?.querySelector('.menu-card');
+        if (!track || !card) return;
+        const styles = getComputedStyle(track);
+        const gap = Number.parseFloat(styles.columnGap || styles.gap) || 16;
+        track.scrollBy({ left: direction * (card.getBoundingClientRect().width + gap), behavior: 'smooth' });
+    };
+
+    const toggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('menuSidebar');
+
+    function setSidebar(open) {
+        toggle?.setAttribute('aria-expanded', String(open));
+        toggle?.setAttribute('aria-label', open ? 'Close menu categories' : 'Open menu categories');
+        sidebar?.classList.toggle('is-open', open);
+        document.body.classList.toggle('menu-sidebar-open', open);
     }
 
-    let quantity = parseInt(input.value) || 1;
-
-    quantity += amount;
-
-    // Minimum quantity
-    if (quantity < 1) {
-        quantity = 1;
-    }
-
-    // Maximum quantity
-    if (quantity > 10) {
-        quantity = 10;
-    }
-
-    input.value = quantity;
-
-    // Small animation
-    input.classList.remove("pop");
-
-    void input.offsetWidth;
-
-    input.classList.add("pop");
-}
-
-document.querySelectorAll('.menu-sidebar-dropdown').forEach(button => {
-    button.addEventListener('click', function() {
-        const section = this.closest('.menu-sidebar-section');
-        const list = section.querySelector('.menu-sidebar-list');
-        const isExpanded = this.getAttribute('aria-expanded') === 'true';
-        
-        this.setAttribute('aria-expanded', !isExpanded);
-        section.classList.toggle('is-collapsed');
-        
-        if (list) {
-            list.style.maxHeight = isExpanded ? '0' : list.scrollHeight + 'px';
-        }
+    toggle?.addEventListener('click', function (event) {
+        event.stopPropagation();
+        setSidebar(toggle.getAttribute('aria-expanded') !== 'true');
     });
-});
 
-const menuToggle = document.getElementById('menuToggle');
-const menuSidebar = document.querySelector('.menu-sidebar');
-
-if (menuToggle) {
-    menuToggle.addEventListener('click', function() {
-        const isOpen = this.getAttribute('aria-expanded') === 'true';
-        this.setAttribute('aria-expanded', !isOpen);
-        menuSidebar.classList.toggle('is-open');
+    document.addEventListener('click', function (event) {
+        if (sidebar?.classList.contains('is-open') && !event.target.closest('#menuSidebar') && !event.target.closest('#menuToggle')) setSidebar(false);
     });
-}
 
-document.addEventListener('click', function(e) {
-    if (menuToggle && !e.target.closest('.menu-sidebar') && !e.target.closest('.menu-hamburger')) {
-        menuToggle.setAttribute('aria-expanded', 'false');
-        menuSidebar.classList.remove('is-open');
-    }
-});
-
-function scrollCarousel(categorySlug, direction) {
-    const track = document.getElementById('menuCarousel-' + categorySlug);
-
-    if (!track) {
-        return;
-    }
-
-    const scrollAmount = 280; // Approximate card width + gap
-    track.scrollBy({
-        left: direction * scrollAmount,
-        behavior: 'smooth'
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') setSidebar(false);
     });
-}
 
-function focusMenuItem(itemId) {
-    const card = document.getElementById('menu-item-' + itemId);
-
-    if (card) {
-        const section = card.closest('.menu-category-section');
-
-        if (section) {
-            section.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            section.classList.remove('is-focused');
-            void section.offsetWidth;
-            section.classList.add('is-focused');
-        }
-
-        card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-    }
-}
-
-// Only reveal an arrow when the cursor is near that side of the
-// carousel, and turn cards toward the edges as they scroll past.
-document.addEventListener('DOMContentLoaded', function () {
-
-    const carousels = document.querySelectorAll('.carousel-container');
-
-    if (!carousels.length) {
-        return;
-    }
-
-    const EDGE_ZONE = 130; // px from each side that triggers the arrow
-    const sections = Array.from(document.querySelectorAll('.menu-category-section'));
-    let wheelLocked = false;
-
-    function moveCategory(direction) {
-        if (wheelLocked || sections.length < 2) {
-            return false;
-        }
-
-        const currentPosition = window.scrollY + 120;
-        let currentIndex = sections.reduce(function (closestIndex, section, index) {
-            return section.offsetTop <= currentPosition ? index : closestIndex;
-        }, 0);
-        const targetIndex = Math.max(0, Math.min(sections.length - 1, currentIndex + direction));
-
-        if (targetIndex === currentIndex) {
-            return false;
-        }
-
-        wheelLocked = true;
-        sections[targetIndex].classList.remove('is-rolling');
-        void sections[targetIndex].offsetWidth;
-        sections[targetIndex].classList.add('is-rolling');
-        sections[targetIndex].scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-        setTimeout(function () {
-            wheelLocked = false;
-        }, 700);
-
-        return true;
-    }
-
-    document.addEventListener('wheel', function (event) {
-        if (event.target.closest('.carousel-track')) {
-            return;
-        }
-
-        if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
-            if (moveCategory(event.deltaY > 0 ? 1 : -1)) {
-                event.preventDefault();
-            }
-        }
-    }, { passive: false });
-
-    carousels.forEach(function (container) {
-        const track = container.querySelector('.carousel-track');
-        const cards = track ? track.querySelectorAll('.menu-card') : [];
-
-        container.addEventListener('mousemove', function (e) {
-            const rect = container.getBoundingClientRect();
-            const distFromLeft = e.clientX - rect.left;
-            const distFromRight = rect.right - e.clientX;
-
-            container.classList.toggle('near-left', distFromLeft <= EDGE_ZONE);
-            container.classList.toggle('near-right', distFromRight <= EDGE_ZONE);
+    document.querySelectorAll('.menu-sidebar-dropdown').forEach(function (button) {
+        button.addEventListener('click', function () {
+            const section = button.closest('.menu-sidebar-section');
+            const list = section?.querySelector('.menu-sidebar-list');
+            if (!section || !list) return;
+            const expanded = button.getAttribute('aria-expanded') === 'true';
+            button.setAttribute('aria-expanded', String(!expanded));
+            section.classList.toggle('is-collapsed', expanded);
+            list.style.maxHeight = expanded ? '0px' : list.scrollHeight + 'px';
         });
-
-        container.addEventListener('mouseleave', function () {
-            container.classList.remove('near-left', 'near-right');
-        });
-
-        container.addEventListener('touchstart', function (e) {
-            const rect = container.getBoundingClientRect();
-            const x = e.touches[0].clientX;
-
-            container.classList.toggle('near-left', (x - rect.left) <= EDGE_ZONE);
-            container.classList.toggle('near-right', (rect.right - x) <= EDGE_ZONE);
-        }, { passive: true });
-
-        function updateCardFlip() {
-            if (!track) {
-                return;
-            }
-
-            const trackRect = track.getBoundingClientRect();
-            const trackCenter = trackRect.left + trackRect.width / 2;
-            const maxDistance = trackRect.width / 2 + 180;
-
-            cards.forEach(function (card) {
-                const cardRect = card.getBoundingClientRect();
-                const cardCenter = cardRect.left + cardRect.width / 2;
-                const distance = Math.max(-1, Math.min(1, (cardCenter - trackCenter) / maxDistance));
-                card.style.setProperty('--flip-angle', `${(distance * 32).toFixed(2)}deg`);
-            });
-        }
-
-        let flipFrame;
-        if (track) {
-            track.addEventListener('scroll', function () {
-                cancelAnimationFrame(flipFrame);
-                flipFrame = requestAnimationFrame(updateCardFlip);
-            }, { passive: true });
-        }
-
-        updateCardFlip();
     });
-});
+
+    document.querySelectorAll('.menu-sidebar-item').forEach(function (button) {
+        button.addEventListener('click', function () {
+            const card = document.getElementById('menu-item-' + button.dataset.itemId);
+            if (!card) return;
+            const section = card.closest('.menu-category-section');
+            section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }), 150);
+            setSidebar(false);
+        });
+    });
+
+    document.querySelectorAll('.menu-sidebar-list').forEach(list => {
+        list.style.maxHeight = list.scrollHeight + 'px';
+    });
+})();
 </script>
 
 {% endblock %}
