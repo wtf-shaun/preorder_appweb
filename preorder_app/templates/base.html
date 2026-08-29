@@ -15,6 +15,9 @@
     <!-- Final menu fixes -->
     <link rel="stylesheet" href="{{ url_for('static', filename='menu-fixes.css') }}">
 
+    <!-- Fluid layout: loaded last so legacy fixed sizes cannot override it -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='fluid-layout.css') }}">
+
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
 </head>
