@@ -6,27 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='responsive.css') }}?v=4">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
-
-    <style>
-        /* Keep the menu button clear of the first category when the sidebar opens. */
-        .menu-sidebar.is-open {
-            padding-top: clamp(86px, 10vh, 112px) !important;
-        }
-
-        .menu-hamburger {
-            position: fixed !important;
-            top: clamp(14px, 2vw, 24px) !important;
-            left: clamp(14px, 2vw, 24px) !important;
-            margin: 0 !important;
-        }
-
-        /* When the sidebar is open, the close button stays above it. */
-        .menu-hamburger[aria-expanded="true"] {
-            z-index: 6101 !important;
-        }
-    </style>
 </head>
 
 <body>

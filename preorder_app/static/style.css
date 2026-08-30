@@ -1428,10 +1428,6 @@ table form button:hover {
    MENU
    ========================================================= */
 
-.menu-grid {
-    gap: 24px;
-}
-
 .menu-card {
     padding: 0;
 
@@ -5574,672 +5570,6 @@ body::after {
     }
 
 }
-/* =========================================================
-   CAFETERIA MENU CAROUSEL
-   ========================================================= */
-
-.menu-carousel-container {
-    position: relative;
-
-    width: 100%;
-
-    box-sizing: border-box;
-
-    display: flex;
-    align-items: center;
-}
-
-
-/* =========================================================
-   CAROUSEL
-   ========================================================= */
-
-.menu-carousel {
-    position: relative;
-
-    width: 100%;
-
-    min-width: 0;
-
-    overflow-x: auto;
-    overflow-y: visible;
-
-    padding: 15px 20px 40px;
-
-    box-sizing: border-box;
-
-    scroll-behavior: smooth;
-
-    scroll-snap-type: x mandatory;
-
-    scroll-padding-left: 20px;
-    scroll-padding-right: 20px;
-
-    -webkit-overflow-scrolling: touch;
-
-    scrollbar-width: none;
-}
-
-.menu-carousel::-webkit-scrollbar {
-    display: none;
-}
-
-
-/* =========================================================
-   TRACK
-   ========================================================= */
-
-.menu-track {
-    display: flex;
-
-    width: max-content;
-
-    gap: 36px;
-
-    padding: 0 20px;
-
-    box-sizing: border-box;
-}
-
-
-/* =========================================================
-   MENU CARDS
-   ========================================================= */
-
-.menu-carousel .menu-card {
-
-    position: relative;
-
-    flex: 0 0 510px;
-
-    width: 510px;
-
-    box-sizing: border-box;
-
-    overflow: hidden;
-
-    scroll-snap-align: start;
-
-    border-radius: 26px;
-
-    background: #ffffff;
-
-    box-shadow:
-        0 12px 35px rgba(0, 0, 0, 0.08);
-
-    transition:
-        transform 0.25s ease,
-        box-shadow 0.25s ease;
-}
-
-
-.menu-carousel .menu-card:hover {
-
-    transform: translateY(-6px);
-
-    box-shadow:
-        0 18px 45px rgba(0, 0, 0, 0.12);
-}
-
-
-/* =========================================================
-   IMAGE
-   ========================================================= */
-
-.menu-carousel .menu-image-wrapper {
-
-    position: relative;
-
-    width: 100%;
-
-    height: 330px;
-
-    overflow: hidden;
-
-    background: #f5f5f5;
-}
-
-
-.menu-carousel .menu-image {
-
-    width: 100%;
-    height: 100%;
-
-    display: block;
-
-    object-fit: cover;
-
-    transition:
-        transform 0.4s ease;
-}
-
-
-.menu-carousel .menu-card:hover .menu-image {
-
-    transform: scale(1.035);
-}
-
-
-/* =========================================================
-   FOOD BADGE
-   ========================================================= */
-
-.menu-carousel .food-badge {
-
-    position: absolute;
-
-    top: 20px;
-    left: 20px;
-
-    padding: 10px 18px;
-
-    border-radius: 999px;
-
-    background: rgba(255, 255, 255, 0.96);
-
-    color: #ff6b00;
-
-    font-size: 12px;
-
-    font-weight: 800;
-
-    letter-spacing: 1px;
-
-    box-shadow:
-        0 5px 18px rgba(0, 0, 0, 0.10);
-}
-
-
-/* =========================================================
-   CARD CONTENT
-   ========================================================= */
-
-.menu-carousel .menu-card-content {
-
-    padding: 32px 30px 30px;
-}
-
-
-.menu-carousel .menu-card-title-row {
-
-    display: flex;
-
-    align-items: flex-start;
-
-    justify-content: space-between;
-
-    gap: 20px;
-
-    min-height: 42px;
-}
-
-
-.menu-carousel .menu-card-title-row h3 {
-
-    margin: 0;
-
-    color: #252832;
-
-    font-size: 29px;
-
-    line-height: 1.15;
-
-    font-weight: 800;
-}
-
-
-.menu-carousel .price {
-
-    flex-shrink: 0;
-
-    color: #ff7518;
-
-    font-size: 29px;
-
-    line-height: 1.15;
-
-    font-weight: 800;
-
-    white-space: nowrap;
-}
-
-
-/* =========================================================
-   FOOTER
-   ========================================================= */
-
-.menu-carousel .menu-card-footer {
-
-    margin-top: 35px;
-}
-
-
-/* =========================================================
-   AVAILABILITY
-   ========================================================= */
-
-.menu-carousel .menu-availability {
-
-    display: flex;
-
-    justify-content: center;
-
-    align-items: center;
-
-    gap: 8px;
-
-    margin-bottom: 27px;
-
-    color: #299f50;
-
-    font-size: 16px;
-
-    font-weight: 700;
-}
-
-
-.menu-carousel .availability-dot {
-
-    width: 10px;
-    height: 10px;
-
-    flex-shrink: 0;
-
-    border-radius: 50%;
-
-    background: #35b85d;
-
-    box-shadow:
-        0 0 0 5px rgba(53, 184, 93, 0.12);
-}
-
-
-/* =========================================================
-   FORM
-   ========================================================= */
-
-.menu-carousel .menu-add-form {
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 14px;
-}
-
-
-/* =========================================================
-   QUANTITY CONTROL (Aesthetic Upgrades & End-Boundary Hiding)
-   ========================================================= */
-
-.menu-carousel .quantity-control {
-
-    display: flex;
-
-    align-items: center;
-
-    width: 255px;
-
-    height: 68px;
-
-    margin: 0 auto;
-
-    overflow: hidden;
-
-    border: 3px solid #ff7518;
-
-    border-radius: 20px;
-
-    background: #ffffff;
-
-    box-sizing: border-box;
-}
-
-
-.menu-carousel .quantity-btn {
-
-    width: 70px;
-
-    height: 100%;
-
-    flex-shrink: 0;
-
-    border: 0;
-
-    background: #ffffff;
-
-    color: #ff7518;
-
-    font-size: 28px;
-
-    font-weight: 800;
-
-    cursor: pointer;
-
-    transition:
-        background 0.15s ease,
-        color 0.15s ease,
-        transform 0.15s ease,
-        opacity 0.2s ease,
-        visibility 0.2s ease;
-}
-
-
-.menu-carousel .quantity-btn:hover {
-
-    background: #fff1e7;
-}
-
-
-.menu-carousel .quantity-btn:active {
-
-    transform: scale(0.92);
-}
-
-/* Hide buttons when the limit is reached */
-.menu-carousel .quantity-btn.is-disabled,
-.menu-carousel .quantity-btn[disabled],
-.menu-carousel .quantity-btn.hidden {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    width: 0;
-    padding: 0;
-    overflow: hidden;
-    border: none;
-}
-
-
-.menu-carousel .quantity-control input {
-
-    flex: 1;
-
-    width: 100%;
-
-    height: 100%;
-
-    margin: 0;
-
-    padding: 0;
-
-    border: 0;
-
-    border-left: 1px solid #eeeeee;
-
-    border-right: 1px solid #eeeeee;
-
-    outline: none;
-
-    background: #ffffff;
-
-    color: #252832;
-
-    text-align: center;
-
-    font-size: 20px;
-
-    font-weight: 700;
-
-    box-sizing: border-box;
-
-    appearance: textfield;
-
-    -moz-appearance: textfield;
-}
-
-
-.menu-carousel
-.quantity-control
-input::-webkit-inner-spin-button,
-.menu-carousel
-.quantity-control
-input::-webkit-outer-spin-button {
-
-    -webkit-appearance: none;
-
-    margin: 0;
-}
-
-
-/* =========================================================
-   ADD TO CART
-   ========================================================= */
-
-.menu-carousel .menu-add-btn {
-
-    width: 255px;
-
-    min-height: 70px;
-
-    margin: 0 auto;
-
-    border: 0;
-
-    border-radius: 18px;
-
-    background: #ff7518;
-
-    color: #ffffff;
-
-    font-size: 20px;
-
-    font-weight: 800;
-
-    cursor: pointer;
-
-    box-shadow:
-        0 10px 25px rgba(255, 117, 24, 0.25);
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        background 0.2s ease;
-}
-
-
-.menu-carousel .menu-add-btn:hover {
-
-    background: #ed650b;
-
-    transform: translateY(-3px);
-
-    box-shadow:
-        0 14px 30px rgba(255, 117, 24, 0.32);
-}
-
-
-.menu-carousel .menu-add-btn:active {
-
-    transform: translateY(0);
-}
-
-
-.menu-carousel .menu-add-btn span {
-
-    margin-right: 5px;
-
-    font-size: 22px;
-}
-
-
-/* =========================================================
-   NAVIGATION ARROWS (More Aesthetic & Boundary Hiding)
-   ========================================================= */
-
-.carousel-arrow {
-    position: absolute;
-    top: 50%;
-    z-index: 20;
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    border: 1px solid rgba(255, 117, 24, 0.12);
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.96);
-    color: #ff7518;
-    font-family: Arial, sans-serif;
-    font-size: 20px;
-    font-weight: 600;
-    line-height: 1;
-    cursor: pointer;
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    box-shadow:
-        0 4px 16px rgba(255, 117, 24, 0.1),
-        0 2px 4px rgba(0, 0, 0, 0.03);
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-50%) translateX(0) scale(1);
-    transition:
-        transform 0.25s cubic-bezier(.2, .8, .2, 1),
-        background 0.2s ease,
-        color 0.2s ease,
-        box-shadow 0.2s ease,
-        opacity 0.25s ease,
-        visibility 0.25s ease;
-}
-
-
-.carousel-arrow:hover {
-    background: #ff7518;
-    color: #ffffff;
-    box-shadow:
-        0 8px 20px rgba(255, 117, 24, 0.25);
-    transform:
-        translateY(-50%)
-        scale(1.06);
-}
-
-
-.carousel-arrow:active {
-
-    transform:
-        translateY(-50%)
-        scale(0.95);
-}
-
-/* Hide arrows when boundaries/ends are reached */
-.carousel-arrow.is-disabled,
-.carousel-arrow[disabled],
-.carousel-arrow.hidden {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transform: translateY(-50%) scale(0.8);
-}
-
-
-/* LEFT */
-
-.carousel-arrow-left {
-
-    left: -15px;
-}
-
-
-/* RIGHT */
-
-.carousel-arrow-right {
-
-    right: -15px;
-}
-
-
-/* =========================================================
-   SUBTLE EDGE FADE
-   ========================================================= */
-
-.menu-carousel-container::before,
-.menu-carousel-container::after {
-
-    content: "";
-
-    position: absolute;
-
-    top: 0;
-
-    z-index: 5;
-
-    width: 70px;
-
-    height: calc(100% - 40px);
-
-    pointer-events: none;
-}
-
-
-.menu-carousel-container::before {
-
-    left: 0;
-
-    background:
-        linear-gradient(
-            to right,
-            rgba(255, 255, 255, 0.95),
-            rgba(255, 255, 255, 0)
-        );
-}
-
-
-.menu-carousel-container::after {
-
-    right: 0;
-
-    background:
-        linear-gradient(
-            to left,
-            rgba(255, 255, 255, 0.95),
-            rgba(255, 255, 255, 0)
-        );
-}
-
-
-/* =========================================================
-   EMPTY STATE
-   ========================================================= */
-
-.menu-empty-state {
-
-    padding: 70px 20px;
-
-    text-align: center;
-
-    border: 1px dashed #dddddd;
-
-    border-radius: 20px;
-
-    background: #fafafa;
-}
-
-
-.menu-empty-icon {
-
-    margin-bottom: 12px;
-
-    font-size: 48px;
-}
-
-
-.menu-empty-state h3 {
-
-    margin: 0 0 8px;
-
-    color: #333;
-
-    font-size: 22px;
-}
-
-
-.menu-empty-state p {
-
-    margin: 0;
-
-    color: #888;
-}
-
 
 /* =========================================================
    CAROUSEL & REDUCED CARD STYLING
@@ -7104,5 +6434,229 @@ body {
 @media (max-width: 760px) {
     .page-header {
         padding-bottom: 18px;
+    }
+}
+
+/* =========================================================
+   MENU PAGE — CONSOLIDATED FLUID & RESPONSIVE RULES
+
+   This replaces fluid-layout.css, menu-fixes.css and
+   responsive.css. Those three files all targeted the same
+   selectors (hamburger position, quantity/add-to-cart controls,
+   card widths, navbar) with conflicting values and competing
+   !important flags, which is why the menu page rendered
+   inconsistently. This is now the single, final definition for
+   each of those rules — placed after the base rules above so it
+   wins on cascade order alone, without needing !important.
+   ========================================================= */
+
+:root {
+    --menu-gutter: clamp(16px, 4vw, 56px);
+    --menu-gap: clamp(12px, 2vw, 24px);
+    --menu-control-h: 46px;
+}
+
+/* The menu page uses the full available width rather than the
+   sitewide ~1100px container. Scoped to the menu page only. */
+body:has(.menu-page) .container {
+    max-width: none;
+    padding-inline: var(--menu-gutter);
+}
+
+.menu-page,
+.menu-browse-layout,
+.menu-category-groups,
+.menu-category-section,
+.carousel-container,
+.menu-card-content {
+    min-width: 0;
+}
+
+/* ---- Navbar: stays compact and never wraps oddly. ---- */
+body:has(.menu-page) .navbar {
+    flex-wrap: nowrap;
+    gap: clamp(10px, 2vw, 32px);
+    padding: clamp(10px, 1.4vw, 18px) clamp(16px, 4vw, 56px);
+}
+
+body:has(.menu-page) .nav-left {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+body:has(.menu-page) .nav-title {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+body:has(.menu-page) .nav-links {
+    flex: 0 1 auto;
+    min-width: 0;
+    flex-wrap: nowrap;
+    gap: clamp(8px, 1.8vw, 24px);
+}
+
+/* ---- Page header ---- */
+.menu-page-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: clamp(18px, 4vw, 64px);
+    padding: clamp(18px, 3vw, 40px) 0 clamp(22px, 3vw, 36px);
+    border-bottom: 1px solid rgba(42, 43, 62, 0.08);
+}
+
+.menu-page-header-copy {
+    min-width: 0;
+}
+
+.menu-page-header h1 {
+    margin: 6px 0 10px;
+    font-size: clamp(32px, 5vw, 72px);
+    line-height: 1;
+    letter-spacing: -0.035em;
+    overflow-wrap: anywhere;
+}
+
+.menu-page-header p {
+    margin: 0;
+    max-width: 68ch;
+    font-size: clamp(15px, 1.4vw, 20px);
+    line-height: 1.55;
+    color: var(--text-muted);
+}
+
+.menu-page-badge {
+    align-self: center;
+    white-space: nowrap;
+}
+
+/* ---- Hamburger: fixed near the top-left corner, above the
+   logo. This position (and the sidebar padding-top below) comes
+   from base.html's deliberate, commented override — kept as the
+   single source of truth instead of the various fix-file guesses. ---- */
+.menu-hamburger {
+    position: fixed;
+    top: clamp(14px, 2vw, 24px);
+    left: clamp(14px, 2vw, 24px);
+    margin: 0;
+    width: clamp(40px, 9vw, 44px);
+    height: clamp(40px, 9vw, 44px);
+}
+
+/* Keep the close button above the open sidebar. */
+.menu-hamburger[aria-expanded="true"] {
+    z-index: 6101;
+}
+
+/* ---- Sidebar overlay ---- */
+.menu-sidebar.is-open {
+    width: min(86vw, 360px);
+    max-width: 100vw;
+    padding-top: clamp(86px, 10vh, 112px);
+}
+
+.menu-category-heading h2 {
+    overflow-wrap: anywhere;
+}
+
+/* ---- Carousel & cards: fluid width instead of a fixed 260px
+   card that either wasted space or overflowed narrow screens. ---- */
+.carousel-container {
+    padding-inline: clamp(36px, 5vw, 56px);
+}
+
+.carousel-track {
+    gap: var(--menu-gap);
+}
+
+.carousel-track .menu-card {
+    flex: 0 0 clamp(230px, 30vw, 320px);
+    width: clamp(230px, 30vw, 320px);
+}
+
+.carousel-track .menu-image-wrapper {
+    height: auto;
+    aspect-ratio: 16 / 10;
+}
+
+.carousel-arrow {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ---- Add to cart controls: quantity stepper + button share the
+   row and wrap instead of overflowing the card. ---- */
+.menu-add-form {
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.quantity-wrapper {
+    flex: 1 1 130px;
+    width: auto;
+    max-width: 160px;
+    height: var(--menu-control-h);
+}
+
+.quantity-btn {
+    flex-basis: 40px;
+}
+
+.carousel-track .menu-add-btn {
+    width: auto;
+    flex: 1 1 120px;
+    min-width: 120px;
+    height: var(--menu-control-h);
+    min-height: var(--menu-control-h);
+    padding-inline: 16px;
+}
+
+@media (max-width: 700px) {
+    .menu-page-header {
+        grid-template-columns: 1fr;
+        align-items: start;
+        gap: 14px;
+    }
+
+    .menu-page-badge {
+        justify-self: start;
+    }
+
+    body:has(.menu-page) .nav-links {
+        gap: 8px;
+    }
+
+    .menu-add-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .quantity-wrapper {
+        max-width: none;
+        width: 100%;
+    }
+
+    .carousel-track .menu-add-btn {
+        width: 100%;
+        flex: none;
+    }
+
+    .carousel-track .menu-card {
+        flex-basis: min(82vw, 300px);
+        width: min(82vw, 300px);
+    }
+}
+
+@media (max-width: 380px) {
+    body:has(.menu-page) .nav-title {
+        max-width: 42vw;
+    }
+
+    body:has(.menu-page) .nav-links a:not(.cart-link) {
+        display: none;
     }
 }
