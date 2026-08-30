@@ -2,184 +2,157 @@
 
 {% block content %}
 
-<div class="page-shell menu-page">
-    <header class="menu-page-header">
-        <div class="menu-page-header-copy">
+<div class="page-shell">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+
+        <div>
             <span class="page-eyebrow">CAFETERIA MENU</span>
+
             <h1>Today's Menu</h1>
-            <p>Choose your favourites, select a quantity and add them to your order.</p>
+
+            <p>
+                Choose your favourites, select a quantity and add them to your order.
+            </p>
         </div>
-        <div class="page-badge menu-page-badge">🍽️ Fresh &amp; Ready</div>
-    </header>
 
-    <button type="button" class="menu-hamburger" id="menuToggle" aria-label="Open menu categories" aria-controls="menuSidebar" aria-expanded="false">
-        <span></span><span></span><span></span>
-    </button>
+        <div class="page-badge">
+            🍽️ Fresh & Ready
+        </div>
 
-    <div class="menu-browse-layout">
-        <aside class="menu-sidebar" id="menuSidebar" aria-label="Menu categories">
-            <div class="menu-sidebar-heading">
-                <span class="page-eyebrow">BROWSE</span>
-                <h2>Menu</h2>
-            </div>
-
-            {% for category in categories %}
-                <div class="menu-sidebar-section" data-category="{{ category.slug }}">
-                    <button type="button" class="menu-sidebar-dropdown" aria-expanded="true">
-                        <span class="dropdown-label">{{ category.name }}</span>
-                        <span class="dropdown-meta">
-                            <span class="dropdown-count">{{ items|selectattr('category', 'equalto', category.slug)|list|length }}</span>
-                            <span class="dropdown-arrow">▼</span>
-                        </span>
-                    </button>
-                    <div class="menu-sidebar-list">
-                        {% for it in items if it.get('category', 'food') == category.slug %}
-                            <button type="button" class="menu-sidebar-item" data-item-id="{{ it.id }}">
-                                <span>{{ it.name }}</span><span aria-hidden="true">›</span>
-                            </button>
-                        {% else %}
-                            <p class="menu-sidebar-empty">No items</p>
-                        {% endfor %}
-                    </div>
-                </div>
-            {% endfor %}
-        </aside>
-
-        <main class="menu-category-groups" aria-label="Today's menu">
-            {% for category in categories %}
-                <section class="menu-category-section" id="menu-category-{{ category.slug }}">
-                    <div class="menu-category-heading">
-                        <h2>{{ category.name }}</h2>
-                        <span>{{ items|selectattr('category', 'equalto', category.slug)|list|length }} items</span>
-                    </div>
-
-                    <div class="carousel-container">
-                        <button type="button" class="carousel-arrow carousel-prev" onclick="scrollCarousel('{{ category.slug }}', -1)" aria-label="Previous {{ category.name }} items">&#10094;</button>
-                        <div class="carousel-track" id="menuCarousel-{{ category.slug }}">
-                            {% for it in items if it.get('category', 'food') == category.slug %}
-
-                            <!-- EXISTING CARD: deliberately preserved. -->
-                            <div id="menu-item-{{ it.id }}" class="card menu-card{% if it.id in cart_item_ids %} in-cart{% endif %}">
-                                <div class="menu-image-wrapper">
-                                    {% if it.get('image') %}
-                                        <img src="{{ url_for('static', filename='uploads/' + it.image) }}" class="menu-image" alt="{{ it.name }}">
-                                    {% else %}
-                                        <img src="{{ url_for('static', filename='uploads/default.png') }}" class="menu-image" alt="Default food image">
-                                    {% endif %}
-                                    <div class="image-badges">
-                                        <div class="food-badge">{% if it.id in cart_item_ids %}In Cart{% else %}CAFETERIA{% endif %}</div>
-                                        <div class="image-availability"><span>●</span> Available</div>
-                                    </div>
-                                </div>
-                                <div class="menu-card-content">
-                                    <div class="menu-card-title-row">
-                                        <h3>{{ it.name }}</h3>
-                                        <div class="price">₹{{ it.price }}</div>
-                                    </div>
-                                    <div class="menu-card-footer">
-                                        <form method="POST" action="{{ url_for('main.add_to_cart') }}" class="menu-add-form">
-                                            <input type="hidden" name="item_id" value="{{ it.id }}">
-                                            <div class="quantity-wrapper">
-                                                <button type="button" class="quantity-btn minus" onclick="changeQuantity(this, -1)" aria-label="Decrease quantity">−</button>
-                                                <input type="text" class="quantity-value" id="quantity-{{ it.id }}" name="quantity" value="{{ cart_quantities.get(it.id, 1) }}" readonly>
-                                                <button type="button" class="quantity-btn plus" onclick="changeQuantity(this, 1)" aria-label="Increase quantity">+</button>
-                                            </div>
-                                            <button class="btn menu-add-btn" type="submit"><span>＋</span> Add to Cart</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                        <button type="button" class="carousel-arrow carousel-next" onclick="scrollCarousel('{{ category.slug }}', 1)" aria-label="Next {{ category.name }} items">&#10095;</button>
-                    </div>
-                </section>
-            {% endfor %}
-        </main>
     </div>
 
-    {% if not items %}
-        <div class="empty-state">
-            <div class="empty-icon">🍽️</div>
-            <h3>Menu is currently empty</h3>
-            <p>Please check back later for available items.</p>
+
+    <!-- MENU -->
+    <div class="grid menu-grid">
+
+        {% for it in items %}
+
+        <div class="card menu-card">
+
+            <!-- IMAGE -->
+            <div class="menu-image-wrapper">
+
+                {% if it.get('image') %}
+
+                    <img
+                        src="{{ url_for('static', filename='uploads/' + it.image) }}"
+                        class="menu-image"
+                        alt="{{ it.name }}"
+                    >
+
+                {% else %}
+
+                    <img
+                        src="{{ url_for('static', filename='uploads/default.png') }}"
+                        class="menu-image"
+                        alt="Default food image"
+                    >
+
+                {% endif %}
+
+                <div class="food-badge">
+                    CAFETERIA
+                </div>
+
+            </div>
+
+
+            <!-- DETAILS -->
+            <div class="menu-card-content">
+
+                <div class="menu-card-title-row">
+
+                    <h3>{{ it.name }}</h3>
+
+                    <div class="price">
+                        ₹{{ it.price }}
+                    </div>
+
+                </div>
+
+
+                <div class="menu-card-footer">
+
+                    <span class="menu-availability">
+                        ● Available
+                    </span>
+
+                    <form
+                        method="POST"
+                        action="{{ url_for('main.add_to_cart') }}"
+                        class="menu-add-form"
+                    >
+
+                        <input
+                            type="hidden"
+                            name="item_id"
+                            value="{{ it.id }}"
+                        >
+
+                        <!-- QUANTITY -->
+                        <div class="quantity-selector">
+
+                            <label for="quantity-{{ it.id }}">
+                                Qty
+                            </label>
+
+                            <select
+                                name="quantity"
+                                id="quantity-{{ it.id }}"
+                                class="quantity-select"
+                            >
+                                {% for qty in range(1, 11) %}
+                                    <option value="{{ qty }}">
+                                        {{ qty }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+
+                        </div>
+
+
+                        <!-- ADD BUTTON -->
+                        <button
+                            class="btn menu-add-btn"
+                            type="submit"
+                        >
+                            <span>＋</span>
+                            Add to Cart
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
         </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    {% if not items %}
+
+    <div class="empty-state">
+
+        <div class="empty-icon">
+            🍽️
+        </div>
+
+        <h3>Menu is currently empty</h3>
+
+        <p>
+            Please check back later for available items.
+        </p>
+
+    </div>
+
     {% endif %}
+
 </div>
-
-<script>
-(function () {
-    'use strict';
-
-    window.changeQuantity = function (button, amount) {
-        const input = button.closest('.menu-add-form')?.querySelector('.quantity-value');
-        if (!input) return;
-        const quantity = Number.parseInt(input.value, 10) || 1;
-        input.value = Math.min(10, Math.max(1, quantity + amount));
-        input.classList.remove('pop');
-        void input.offsetWidth;
-        input.classList.add('pop');
-    };
-
-    window.scrollCarousel = function (categorySlug, direction) {
-        const track = document.getElementById('menuCarousel-' + categorySlug);
-        const card = track?.querySelector('.menu-card');
-        if (!track || !card) return;
-        const styles = getComputedStyle(track);
-        const gap = Number.parseFloat(styles.columnGap || styles.gap) || 16;
-        track.scrollBy({ left: direction * (card.getBoundingClientRect().width + gap), behavior: 'smooth' });
-    };
-
-    const toggle = document.getElementById('menuToggle');
-    const sidebar = document.getElementById('menuSidebar');
-
-    function setSidebar(open) {
-        toggle?.setAttribute('aria-expanded', String(open));
-        toggle?.setAttribute('aria-label', open ? 'Close menu categories' : 'Open menu categories');
-        sidebar?.classList.toggle('is-open', open);
-        document.body.classList.toggle('menu-sidebar-open', open);
-    }
-
-    toggle?.addEventListener('click', function (event) {
-        event.stopPropagation();
-        setSidebar(toggle.getAttribute('aria-expanded') !== 'true');
-    });
-
-    document.addEventListener('click', function (event) {
-        if (sidebar?.classList.contains('is-open') && !event.target.closest('#menuSidebar') && !event.target.closest('#menuToggle')) setSidebar(false);
-    });
-
-    document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape') setSidebar(false);
-    });
-
-    document.querySelectorAll('.menu-sidebar-dropdown').forEach(function (button) {
-        button.addEventListener('click', function () {
-            const section = button.closest('.menu-sidebar-section');
-            const list = section?.querySelector('.menu-sidebar-list');
-            if (!section || !list) return;
-            const expanded = button.getAttribute('aria-expanded') === 'true';
-            button.setAttribute('aria-expanded', String(!expanded));
-            section.classList.toggle('is-collapsed', expanded);
-            list.style.maxHeight = expanded ? '0px' : list.scrollHeight + 'px';
-        });
-    });
-
-    document.querySelectorAll('.menu-sidebar-item').forEach(function (button) {
-        button.addEventListener('click', function () {
-            const card = document.getElementById('menu-item-' + button.dataset.itemId);
-            if (!card) return;
-            const section = card.closest('.menu-category-section');
-            section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }), 150);
-            setSidebar(false);
-        });
-    });
-
-    document.querySelectorAll('.menu-sidebar-list').forEach(list => {
-        list.style.maxHeight = list.scrollHeight + 'px';
-    });
-})();
-</script>
 
 {% endblock %}

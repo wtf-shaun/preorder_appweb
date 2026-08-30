@@ -1,48 +1,27 @@
 {% extends "base.html" %}
 
 {% block content %}
-<section class="user-edit-card">
-    <div class="user-edit-header">
-        <div class="user-edit-icon">👤</div>
-        <div>
-            <h2>Edit User</h2>
-            <p>Update account information and access level.</p>
-        </div>
-    </div>
+<h2>Edit User</h2>
 
-    <form method="POST" class="user-edit-form">
-        <div class="form-field">
-            <label for="userName">Name</label>
-            <input id="userName" type="text" name="name" value="{{ user.name or '' }}" required>
-        </div>
+<form method="POST">
+    <label>Username:</label><br>
+    <input type="text" name="username" value="{{ user.username }}" required>
+    <br><br>
 
-        <div class="form-field">
-            <label for="userEmail">Email</label>
-            <input id="userEmail" type="email" name="email" value="{{ user.email }}" required>
-        </div>
+    <label>Email:</label><br>
+    <input type="email" name="email" value="{{ user.email }}" required>
+    <br><br>
 
-        <div class="password-reset-box">
-            <h3>Reset Password</h3>
-            <div class="form-field">
-                <label for="newPassword">New Password</label>
-                <input id="newPassword" type="password" name="password" placeholder="Leave blank to keep current password">
-            </div>
+    <label>
+        <input type="checkbox" name="is_admin"
+               {% if user.is_admin %}checked{% endif %}>
+        Admin User
+    </label>
+    <br><br>
 
-            <div class="form-field">
-                <label for="confirmPassword">Confirm New Password</label>
-                <input id="confirmPassword" type="password" name="confirm_password" placeholder="Re-enter new password">
-            </div>
-        </div>
-
-        <label class="checkbox-row">
-            <input type="checkbox" name="is_admin" {% if user.is_admin %}checked{% endif %}>
-            <span>Admin User</span>
-        </label>
-
-        <div class="user-edit-actions">
-            <button type="submit">Save Changes</button>
-            <a href="{{ url_for('admin.index') }}" class="btn btn-secondary">Cancel</a>
-        </div>
-    </form>
-</section>
+    <button type="submit">Save Changes</button>
+    <a href="{{ url_for('admin.index') }}">
+        <button type="button">Cancel</button>
+    </a>
+</form>
 {% endblock %}

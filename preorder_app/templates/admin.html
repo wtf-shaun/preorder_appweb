@@ -4,9 +4,7 @@
 
 <div class="page-shell admin-page">
 
-    <!-- =====================================================
-         HEADER
-         ===================================================== -->
+    <!-- ================= HEADER ================= -->
 
     <div class="page-header">
 
@@ -30,9 +28,8 @@
 
     </div>
 
-    <!-- =====================================================
-         USERS
-         ===================================================== -->
+
+    <!-- ================= USERS ================= -->
 
     <section class="admin-section">
 
@@ -137,6 +134,7 @@
 
                                 </form>
 
+
                                 <form
                                     action="{{ url_for('admin.delete_user') }}"
                                     method="POST"
@@ -175,126 +173,7 @@
     </section>
 
 
-    <!-- =====================================================
-         COMMUNICATIONS
-         ===================================================== -->
-
-    <section class="admin-section">
-
-        <div class="admin-section-header">
-
-            <div class="admin-section-title">
-
-                <div class="admin-section-icon">
-                    📧
-                </div>
-
-                <div>
-                    <h2>Communications</h2>
-                    <p>Send an announcement email to every registered user.</p>
-                </div>
-
-            </div>
-
-            <span class="section-label">
-                EMAIL BROADCAST
-            </span>
-
-        </div>
-
-
-        <div class="add-item-card">
-
-            <div class="add-item-header">
-
-                <div class="admin-section-icon">
-                    📣
-                </div>
-
-                <div>
-
-                    <h3>
-                        Email All Users
-                    </h3>
-
-                    <p>
-                        Compose and send a message to every user with a
-                        registered email address ({{ users|length }} total).
-                    </p>
-
-                </div>
-
-            </div>
-
-            <a
-                href="{{ url_for('admin.send_email') }}"
-                class="btn admin-add-btn"
-            >
-                📧 Compose Email
-            </a>
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         ANALYTICS
-         ===================================================== -->
-
-    <section class="admin-section">
-
-        <div class="admin-section-header">
-
-            <div class="admin-section-title">
-
-                <div class="admin-section-icon">
-                    📊
-                </div>
-
-                <div>
-                    <h2>Analytics</h2>
-                    <p>Review monthly revenue, orders, and item popularity.</p>
-                </div>
-
-            </div>
-
-            <span class="section-label">
-                REPORTING
-            </span>
-
-        </div>
-
-        <div class="add-item-card">
-
-            <div class="add-item-header">
-
-                <div class="admin-section-icon">
-                    📈
-                </div>
-
-                <div>
-                    <h3>Statistics Dashboard</h3>
-                    <p>Open the dedicated page for monthly business and menu insights.</p>
-                </div>
-
-            </div>
-
-            <a
-                href="{{ url_for('admin.statistics') }}"
-                class="btn admin-add-btn"
-            >
-                📊 View Statistics
-            </a>
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         MENU ITEMS
-         ===================================================== -->
+    <!-- ================= ITEMS ================= -->
 
     <section class="admin-section">
 
@@ -366,9 +245,7 @@
                         </td>
 
                         <td>
-                            <strong>
-                                {{ it["name"] }}
-                            </strong>
+                            <strong>{{ it["name"] }}</strong>
                         </td>
 
                         <td>
@@ -408,58 +285,8 @@
 
         </div>
 
-        <div class="category-toolbar">
-            <div>
-                <h3>Categories</h3>
-                <p>Add categories, then drag menu items between the groups.</p>
-            </div>
-            <form method="POST" action="{{ url_for('admin.add_category') }}" class="category-add-form">
-                <input type="text" name="name" placeholder="New category" required>
-                <button type="submit" class="btn">＋ Add Category</button>
-            </form>
-        </div>
 
-        <div class="category-board">
-            {% for category in categories %}
-                <section class="category-column" data-category="{{ category.slug }}">
-                    <div class="category-header">
-                        <h3 class="category-title">{{ category.name }}</h3>
-
-                        <div class="category-menu-wrapper">
-                            <button type="button" class="category-menu-toggle" aria-label="Open category actions" aria-expanded="false">⋯</button>
-
-                            <div class="category-menu" role="menu">
-                                <form method="POST" action="{{ url_for('admin.edit_category', slug=category.slug) }}" class="category-edit-form">
-                                    <input type="text" name="name" value="{{ category.name }}" aria-label="Edit category name" required>
-                                    <button type="submit" class="action-btn edit-btn">Edit</button>
-                                </form>
-
-                                <form method="POST" action="{{ url_for('admin.delete_category_route', slug=category.slug) }}" class="category-delete-form">
-                                    <button type="submit" class="action-btn delete-btn" onclick="return confirm('Delete this category?');">
-                                        Delete
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="category-drop-zone" data-category="{{ category.slug }}">
-                        {% for it in items if it.get('category', 'food') == category.slug %}
-                            <div class="category-item" draggable="true" data-item-id="{{ it.id }}">
-                                <span class="category-drag-handle" aria-hidden="true">&#8942;&#8942;</span>
-                                <span>{{ it.name }}</span>
-                            </div>
-                        {% else %}
-                            <p class="category-empty">Drop items here</p>
-                        {% endfor %}
-                    </div>
-                </section>
-            {% endfor %}
-        </div>
-
-
-        <!-- =================================================
-             ADD ITEM
-             ================================================= -->
+        <!-- ADD ITEM -->
 
         <div class="add-item-card">
 
@@ -471,9 +298,7 @@
 
                 <div>
 
-                    <h3>
-                        Add New Item
-                    </h3>
+                    <h3>Add New Item</h3>
 
                     <p>
                         Add a new food or drink to the cafeteria menu.
@@ -491,22 +316,18 @@
                 class="admin-form"
             >
 
-                <!-- NAME + PRICE -->
-
                 <div class="form-row">
 
                     <div class="form-field">
 
-                        <label for="itemName">
+                        <label>
                             Item Name
                         </label>
 
                         <input
-                            id="itemName"
                             type="text"
                             name="name"
                             placeholder="e.g. Veg Sandwich"
-                            autocomplete="off"
                             required
                         >
 
@@ -515,42 +336,23 @@
 
                     <div class="form-field">
 
-                        <label for="itemPrice">
+                        <label>
                             Price (₹)
                         </label>
 
                         <input
-                            id="itemPrice"
                             type="number"
                             name="price"
                             placeholder="e.g. 80"
-                            min="0"
-                            step="1"
                             required
                         >
-
-                    </div>
-
-
-                    <div class="form-field">
-
-                        <label for="itemCategory">
-                            Category
-                        </label>
-
-                        <select id="itemCategory" name="category" required>
-                            <option value="food">Food</option>
-                            <option value="beverage">Beverage</option>
-                        </select>
 
                     </div>
 
                 </div>
 
 
-                <!-- IMAGE -->
-
-                <div class="admin-file-upload">
+                <div class="file-upload admin-file-upload">
 
                     <label
                         for="imageUpload"
@@ -574,8 +376,6 @@
                 </div>
 
 
-                <!-- SUBMIT -->
-
                 <button
                     type="submit"
                     class="btn admin-add-btn"
@@ -590,9 +390,7 @@
     </section>
 
 
-    <!-- =====================================================
-         ORDERS
-         ===================================================== -->
+    <!-- ================= ORDERS ================= -->
 
     <section class="admin-section">
 
@@ -632,7 +430,6 @@
                     <tr>
                         <th>Order ID</th>
                         <th>User</th>
-                        <th>Date</th>
                         <th>Items</th>
                         <th>Total</th>
                         <th>Status</th>
@@ -658,16 +455,6 @@
                             <strong>
                                 {{ o["user_name"] }}
                             </strong>
-                        </td>
-
-                        <td>
-                            <span class="muted-text">
-                                {% if o.get('ordered_at') %}
-                                    {{ o['ordered_at'].strftime('%Y-%m-%d %H:%M UTC') }}
-                                {% else %}
-                                    {{ o.get('created_at', 'N/A') }}
-                                {% endif %}
-                            </span>
                         </td>
 
                         <td>
@@ -719,70 +506,28 @@
 
 <script>
 
-/* =========================================================
-   FILE NAME DISPLAY
-   ========================================================= */
+const input = document.getElementById('imageUpload');
+const fileName = document.getElementById('file-name');
 
-const imageInput = document.getElementById("imageUpload");
-const fileName = document.getElementById("file-name");
+if (input && fileName) {
 
-if (imageInput && fileName) {
+    input.addEventListener('change', function() {
 
-    imageInput.addEventListener("change", function () {
+        if (this.files.length > 0) {
 
-        if (this.files && this.files.length > 0) {
-
-            fileName.textContent = this.files[0].name;
+            fileName.textContent =
+                this.files[0].name;
 
         } else {
 
-            fileName.textContent = "No file chosen";
+            fileName.textContent =
+                "No file chosen";
 
         }
 
     });
 
 }
-
-document.querySelectorAll('.category-item').forEach(function (item) {
-    item.addEventListener('dragstart', function (event) {
-        event.dataTransfer.setData('text/plain', item.dataset.itemId);
-        item.classList.add('is-dragging');
-    });
-
-    item.addEventListener('dragend', function () {
-        item.classList.remove('is-dragging');
-    });
-});
-
-document.querySelectorAll('.category-drop-zone').forEach(function (zone) {
-    zone.addEventListener('dragover', function (event) {
-        event.preventDefault();
-        zone.classList.add('is-drag-over');
-    });
-
-    zone.addEventListener('dragleave', function () {
-        zone.classList.remove('is-drag-over');
-    });
-
-    zone.addEventListener('drop', function (event) {
-        event.preventDefault();
-        zone.classList.remove('is-drag-over');
-
-        const itemId = event.dataTransfer.getData('text/plain');
-        const formData = new FormData();
-        formData.append('category', zone.dataset.category);
-
-        fetch('/admin/item/' + encodeURIComponent(itemId) + '/category', {
-            method: 'POST',
-            body: formData
-        }).then(function (response) {
-            if (response.ok) {
-                window.location.reload();
-            }
-        });
-    });
-});
 
 </script>
 

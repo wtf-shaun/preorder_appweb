@@ -1,25 +1,5 @@
-{% extends 'base.html' %}
+        {% extends 'base.html' %}
 {% block content %}
-
-<h1>Register</h1>
-
-<form method="post">
-
-    <label for="name">Name</label>
-    <input id="name" name="name" required placeholder="Your full name">
-
-    <label for="email">Email</label>
-    <input id="email" name="email" required type="email" placeholder="you@example.com">
-
-    <label for="password">Password</label>
-    <input id="password" name="password" required type="password" placeholder="••••••••">
-
-    <button type="submit">Register</button>
-
-</form>
-
-<p>
-    Already have an account? <a href="{{ url_for('auth.login') }}">Login</a>
-</p>
-
+<h2>Register</h2>
+<form method='post'>Name: <input name='name' required><br>Email: <input name='email' required type='email'><br>Password: <input name='password' required type='password'><br><button>Register</button></form>
 {% endblock %}

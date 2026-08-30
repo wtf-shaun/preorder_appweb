@@ -3,17 +3,22 @@
 <head>
     <meta charset="utf-8">
     <title>Cafeteria Kiosk</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
 </head>
 
 <body>
-<div id="interactive-background">
-    <div class="cursor-glow"></div>
-</div>
 
+ <div id="interactive-background">
+    <div class="cursor-glow"></div>
+</div>   
+    
+<!-- Flash Messages -->
 <div id="flash-messages">
     {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -24,6 +29,8 @@
     {% endwith %}
 </div>
 
+<!-- TOP NAVBAR (WORKING VERSION) -->
+<!-- Navbar -->
 <div class="navbar">
     <div class="nav-left">
         <img src="{{ url_for('static', filename='logo.png') }}" class="nav-logo" alt="Logo">
@@ -31,16 +38,11 @@
     </div>
 
     <div class="nav-links">
-        <a href="{{ url_for('main.view_cart') }}" class="cart-link">
-            My Cart
-            {% if cart_count > 0 %}
-                <span id="cart-counter" class="cart-badge">{{ cart_count }}</span>
-            {% endif %}
-        </a>
+        <a href="{{ url_for('main.menu') }}">Menu</a>
+        <a href="{{ url_for('main.view_cart') }}">My Cart</a>
 
         {% if user and user.is_admin %}
             <a href="{{ url_for('admin.index') }}">Admin</a>
-            <a href="{{ url_for('admin.statistics') }}">Statistics</a>
         {% endif %}
 
         {% if user %}
@@ -50,8 +52,13 @@
             <a href="{{ url_for('auth.register') }}">Register</a>
         {% endif %}
     </div>
+
 </div>
 
+
+
+
+<!-- Page Content -->
 <div class="container">
     {% block content %}{% endblock %}
 </div>
@@ -64,33 +71,13 @@
 setTimeout(() => {
     document.querySelectorAll('.auto-hide').forEach(msg => {
         msg.classList.add('hiding');
-        setTimeout(() => msg.remove(), 500);
+
+        setTimeout(() => {
+            msg.remove();
+        }, 500);
     });
 }, 5000);
-
-const categoryMenuButtons = document.querySelectorAll('.category-menu-toggle');
-categoryMenuButtons.forEach(button => {
-    button.addEventListener('click', event => {
-        event.stopPropagation();
-        const wrapper = button.closest('.category-menu-wrapper');
-        const menu = wrapper?.querySelector('.category-menu');
-        if (!menu) return;
-        const isOpen = menu.classList.contains('is-open');
-        document.querySelectorAll('.category-menu').forEach(item => item.classList.remove('is-open'));
-        document.querySelectorAll('.category-menu-toggle').forEach(item => item.setAttribute('aria-expanded', 'false'));
-        if (!isOpen) {
-            menu.classList.add('is-open');
-            button.setAttribute('aria-expanded', 'true');
-        }
-    });
-});
-
-document.addEventListener('click', event => {
-    if (!event.target.closest('.category-menu-wrapper')) {
-        document.querySelectorAll('.category-menu').forEach(menu => menu.classList.remove('is-open'));
-        document.querySelectorAll('.category-menu-toggle').forEach(button => button.setAttribute('aria-expanded', 'false'));
-    }
-});
 </script>
+
 </body>
 </html>

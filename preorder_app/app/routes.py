@@ -1,16 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, send_file
-from .db import (
-    users_col, items_col, carts_col, orders_col, categories_col,
-    get_user_by_id, get_all_items_for_menu, get_cart_by_user,
-    get_all_categories, ensure_categories, get_item_by_id,
-    create_cart, update_cart, clear_cart, get_order_by_id,
-    get_order_by_id_and_user, get_all_orders,
-    next_order_token, create_order, record_item_order_events,
-    update_order_status as save_order_status,
-    delete_order
-)
+from .db import users_col, items_col, carts_col, orders_col
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 import threading
 import os
 
@@ -18,39 +9,7 @@ from .utils.pdf_invoice import generate_invoice_pdf
 
 bp = Blueprint('main', __name__)
 
-# ===============================
-# CAFETERIA
-# ===============================
-@bp.route('/cafeteria')
-def cafeteria():
-    user = current_user()
-    orders = get_all_orders()
 
-    return render_template('cafeteria.html', orders=orders, user=user)
-
-from flask import session, redirect, url_for, current_app, flash
-
-# ===============================
-# Dev Tester
-# ===============================
-
-@bp.route('/demo-login')
-def demo_login():
-    # No environment or debug checks! It just works immediately.
-    
-    # Inject mock user data into the session
-    session['user_id'] = 9999
-    session['user_name'] = 'Demo Tester'
-    session['user_email'] = 'tester@example.com'
-    session['role'] = 'student' 
-
-    flash("Logged in as Demo Tester!", "success")
-    
-    return redirect(url_for('main.menu'))
-
-# ===============================
-# CURRENT USER
-# ===============================
 # ===============================
 # CURRENT USER
 # ===============================
@@ -58,45 +17,12 @@ def current_user():
     uid = session.get('user_id')
     if not uid:
         return None
-        
-    # Catch the Demo Tester BEFORE asking the database
-    if uid == 9999:
-        return {
-            'id': 9999,
-            'name': session.get('user_name', 'Demo Tester'),
-            'email': session.get('user_email', 'tester@example.com'),
-            'role': session.get('role', 'student')
-        }
+    return users_col.find_one({'id': uid})
 
-    # If it's a real user, look them up in the database normally
-    return get_user_by_id(uid)
-def get_cart_count():
-    user = current_user()
-
-    if not user:
-        return 0
-
-    cart = get_cart_by_user(user['id'])
-
-    if not cart or not cart.get('items'):
-        return 0
-
-    return sum(
-        int(item.get('qty', 0))
-        for item in cart['items']
-    )
-
-
-@bp.app_context_processor
-def inject_cart_count():
-    return {
-        'cart_count': get_cart_count()
-    }
-    
 def delete_order_after_delay(order_id, delay=60):
     import time
     time.sleep(delay)
-    delete_order(order_id)
+    orders_col.delete_one({'id': order_id})
 # ===============================
 # HOME
 # ===============================
@@ -110,33 +36,8 @@ def index():
 # ===============================
 @bp.route('/menu')
 def menu():
-    items = get_all_items_for_menu()
-    user = current_user()
-    cart = get_cart_by_user(user['id']) if user else None
-    defaults = [
-        {'slug': 'food', 'name': 'Food'},
-        {'slug': 'beverage', 'name': 'Beverages'}
-    ]
-    if not get_all_categories():
-        ensure_categories(defaults)
-    categories = get_all_categories()
-    cart_item_ids = {
-        cart_item['item_id']
-        for cart_item in (cart or {}).get('items', [])
-    }
-    cart_quantities = {
-        cart_item['item_id']: cart_item.get('qty', 0)
-        for cart_item in (cart or {}).get('items', [])
-    }
-
-    return render_template(
-        'menu.html',
-        items=items,
-        user=user,
-        cart_item_ids=cart_item_ids,
-        cart_quantities=cart_quantities,
-        categories=categories,
-    )
+    items = list(items_col.find({}, {'_id': 0}))
+    return render_template('menu.html', items=items, user=current_user())
 
 
 # ===============================
@@ -150,7 +51,7 @@ def view_cart():
         flash('Login first')
         return redirect(url_for('auth.login'))
 
-    cart = get_cart_by_user(user['id'])
+    cart = carts_col.find_one({'user_id': user['id']})
 
     if not cart or not cart.get('items'):
         return render_template('cart.html', cart_details=[], total=0, user=user)
@@ -159,7 +60,7 @@ def view_cart():
     total = 0
 
     for c in cart['items']:
-        item = get_item_by_id(c['item_id'])
+        item = items_col.find_one({'id': c['item_id']})
 
         if not item:
             continue
@@ -202,16 +103,24 @@ def add_to_cart():
     user_id = user['id']
 
     # Make sure the item actually exists
-    item = get_item_by_id(item_id)
+    item = items_col.find_one({'id': item_id})
 
     if not item:
         flash('Item not found')
         return redirect(url_for('main.menu'))
 
-    cart = get_cart_by_user(user_id)
+    cart = carts_col.find_one({'user_id': user_id})
 
     if not cart:
-        create_cart(user_id, [{'item_id': item_id, 'qty': quantity}])
+        carts_col.insert_one({
+            'user_id': user_id,
+            'items': [
+                {
+                    'item_id': item_id,
+                    'qty': quantity
+                }
+            ]
+        })
 
     else:
         found = False
@@ -233,12 +142,16 @@ def add_to_cart():
                 'qty': quantity
             })
 
-        update_cart(user_id, cart['items'])
+        carts_col.update_one(
+            {'user_id': user_id},
+            {'$set': {'items': cart['items']}}
+        )
 
     if quantity == 1:
         flash(f'{item["name"]} added to cart')
     else:
         flash(f'{quantity} × {item["name"]} added to cart')
+
     return redirect(url_for('main.menu'))
 
 # ===============================
@@ -252,7 +165,7 @@ def cart_increase():
 
     item_id = request.form.get('item_id')
 
-    cart = get_cart_by_user(user['id'])
+    cart = carts_col.find_one({'user_id': user['id']})
 
     if not cart:
         return redirect(url_for('main.view_cart'))
@@ -261,7 +174,10 @@ def cart_increase():
         if item['item_id'] == item_id:
             item['qty'] += 1
 
-    update_cart(user['id'], cart['items'])
+    carts_col.update_one(
+        {'user_id': user['id']},
+        {'$set': {'items': cart['items']}}
+    )
 
     return redirect(url_for('main.view_cart'))
 
@@ -277,7 +193,7 @@ def cart_decrease():
 
     item_id = request.form.get('item_id')
 
-    cart = get_cart_by_user(user['id'])
+    cart = carts_col.find_one({'user_id': user['id']})
 
     if not cart:
         return redirect(url_for('main.view_cart'))
@@ -292,7 +208,10 @@ def cart_decrease():
         else:
             new_items.append(item)
 
-    update_cart(user['id'], new_items)
+    carts_col.update_one(
+        {'user_id': user['id']},
+        {'$set': {'items': new_items}}
+    )
 
     return redirect(url_for('main.view_cart'))
 
@@ -308,7 +227,7 @@ def checkout():
         flash('Login required')
         return redirect(url_for('auth.login'))
 
-    cart = get_cart_by_user(user['id'])
+    cart = carts_col.find_one({'user_id': user['id']})
 
     if not cart or not cart.get('items'):
         flash('Cart is empty')
@@ -318,7 +237,7 @@ def checkout():
     total = 0
 
     for c in cart['items']:
-        item = get_item_by_id(c['item_id'])
+        item = items_col.find_one({'id': c['item_id']})
         if not item:
             continue
 
@@ -348,7 +267,7 @@ def pay_now():
     if not user:
         return redirect(url_for('auth.login'))
 
-    cart = get_cart_by_user(user['id'])
+    cart = carts_col.find_one({'user_id': user['id']})
 
     if not cart or not cart.get('items'):
         flash("Cart empty")
@@ -358,7 +277,7 @@ def pay_now():
     total = 0
 
     for c in cart['items']:
-        item = get_item_by_id(c['item_id'])
+        item = items_col.find_one({'id': c['item_id']})
 
         if not item:
             continue
@@ -367,7 +286,6 @@ def pay_now():
         total += subtotal
 
         order_items.append({
-            "item_id": item['id'],
             "name": item['name'],
             "qty": c['qty'],
             "price": item['price'],
@@ -376,26 +294,24 @@ def pay_now():
 
     order_id = str(uuid.uuid4())[:8].upper()
 
-    token = next_order_token()
-    ordered_at = datetime.now(timezone.utc)
+    last_order = orders_col.find_one(sort=[("token", -1)])
+    token = (last_order['token'] + 1) if last_order else 1
 
-    create_order({
+    orders_col.insert_one({
         "id": order_id,
-        "user_id": user['id'],
         "token": token,
         "user_name": user.get("name"),
         "items": order_items,
         "total": total,
-        "status": "Preparing",
-        "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "ordered_at": ordered_at
-
-
+        "status": "Paid",
+        "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     })
-    record_item_order_events(order_id, order_items, ordered_at)
 
     # Empty cart
-    clear_cart(user['id'])
+    carts_col.update_one(
+        {'user_id': user['id']},
+        {'$set': {'items': []}}
+    )
 
     # Generate invoice
     pdf_path = generate_invoice_pdf(
@@ -447,22 +363,16 @@ def order_progress(order_id):
     user = current_user()
 
     if not user:
-        flash("Please login first")
         return redirect(url_for('auth.login'))
 
-    # Find the order
-    order = get_order_by_id_and_user(order_id, user['id'])
+    order = orders_col.find_one(
+        {'id': order_id},
+        {'_id': 0}
+    )
 
     if not order:
         flash("Order not found")
         return redirect(url_for('main.menu'))
-
-    # Make sure older orders don't break the template
-    order.setdefault("items", [])
-    order.setdefault("token", "N/A")
-    order.setdefault("total", 0)
-    order.setdefault("status", "Paid")
-    order.setdefault("id", order_id)
 
     return render_template(
         'order_progress.html',
@@ -470,34 +380,22 @@ def order_progress(order_id):
         user=user
     )
 # ===============================
-# UPDATE ORDER STATUS
+# MARK DELIVERED
 # ===============================
-@bp.route('/update_order_status/<order_id>/<status>', methods=['POST'])
-def update_order_status(order_id, status):
+@bp.route('/mark_order_delivered/<order_id>', methods=['POST'])
+def mark_order_delivered(order_id):
 
-    allowed_statuses = {
-        "Preparing",
-        "Ready for Collection",
-        "Delivered"
-    }
+    orders_col.update_one(
+        {'id': order_id},
+        {'$set': {'status': 'Delivered'}}
+    )
 
-    if status not in allowed_statuses:
-        flash("Invalid order status")
-        return redirect(url_for('main.cafeteria'))
+    thread = threading.Thread(
+        target=delete_order_after_delay,
+        args=(order_id,)
+    )
 
-    order = get_order_by_id(order_id)
+    thread.start()
 
-    if not order:
-        flash("Order not found")
-        return redirect(url_for('main.cafeteria'))
-
-    # If the status is Delivered, delete the data instantly
-    if status == "Delivered":
-        delete_order(order_id)
-        flash("Order marked as delivered and successfully removed from the system.")
-    else:
-        # Otherwise, just update the status
-        save_order_status(order_id, status)
-        flash(f"Order status updated to: {status}")
-
+    flash("Order marked delivered (will auto-delete in 1 minute)")
     return redirect(url_for('main.cafeteria'))

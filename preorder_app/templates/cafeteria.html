@@ -1,254 +1,131 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<script>
-/**
- * Keeps the page reloading at a specified interval.
- * @param {number} seconds - The number of seconds before the page reloads.
- */
-function startAutoReload(seconds) {
-    const milliseconds = seconds * 1000;
-    
-    setTimeout(function () {
-        window.location.reload();
-    }, milliseconds);
-    
-    console.log(`Page will auto-reload in ${seconds} seconds.`);
-}
 
-// Call the function to reload the page every 60 seconds
-startAutoReload(60);
-</script>
-<div class="page-shell">
+<h2>Cafeteria - All Orders</h2>
 
-    <div class="page-header">
+<p style="color:gray; font-size:14px;">
+Dashboard auto-refreshes every minute.
+</p>
 
-        <div>
-            <span class="page-eyebrow">
-                CAFETERIA MANAGEMENT
-            </span>
+{% if orders and orders|length > 0 %}
 
-            <h1>Order Dashboard</h1>
+<div class="table-wrapper">
 
-            <p>
-                Manage active orders and update their collection status.
-            </p>
-        </div>
+<table border="1" cellpadding="8" style="width:100%; border-collapse: collapse;">
 
-        <div class="page-badge">
-            🍽️ Live Orders
-        </div>
+<thead>
+<tr style="background:#f2f2f2;">
+    <th>Token</th>
+    <th>Order ID</th>
+    <th>User</th>
+    <th>Items</th>
+    <th>Total</th>
+    <th>Status</th>
+    <th>Action</th>
+</tr>
+</thead>
 
-    </div>
+<tbody>
 
+{% for o in orders %}
 
-    {% if orders and orders|length > 0 %}
+<tr>
 
-    <div class="table-wrapper">
+<td>
+<strong style="font-size:20px; color:#2c7;">
+{{ o['token'] if 'token' in o else '-' }}
+</strong>
+</td>
 
-        <table class="orders-table">
+<td>
+<small>{{ o['id'] }}</small>
+</td>
 
-            <thead>
-                <tr>
-                    <th>Token</th>
-                    <th>Order ID</th>
-                    <th>User</th>
-                    <th>Items</th>
-                    <th>Total</th>
-                    <th>Status</th>
-                    <th>Update</th>
-                </tr>
-            </thead>
+<td>
+{{ o['user_name'] }}
+</td>
 
-            <tbody>
+<td>
+<ul style="margin:0; padding-left:18px;">
+{% for it in o['items'] %}
+<li>{{ it['qty'] }} × {{ it['name'] }}</li>
+{% endfor %}
+</ul>
+</td>
 
-            {% for o in orders %}
+<td>
+₹{{ o['total'] }}
+</td>
 
-            <tr>
+<td>
 
-                <!-- TOKEN -->
+{% if o['status'] == "Delivered" %}
+<span style="color:green; font-weight:bold;">
+Delivered
+</span>
 
-                <td>
+{% else %}
+<span style="color:orange; font-weight:bold;">
+Preparing
+</span>
+{% endif %}
 
-                    <div class="dashboard-token">
-                        {{ o.get('token', '-') }}
-                    </div>
+</td>
 
-                </td>
+<td>
 
+{% if o['status'] != "Delivered" %}
 
-                <!-- ORDER ID -->
+<form method="POST" action="{{ url_for('main.mark_order_paid', order_id=o['id']) }}">
 
-                <td>
+<button
+type="submit"
+style="
+background:#28a745;
+color:white;
+border:none;
+padding:6px 12px;
+cursor:pointer;
+border-radius:4px;
+"
+onclick="return confirm('Mark this order as delivered?')">
 
-                    <span class="order-id">
-                        #{{ o['id'] }}
-                    </span>
+Mark Delivered
 
-                </td>
+</button>
 
+</form>
 
-                <!-- USER -->
+{% else %}
 
-                <td>
+✔
 
-                    <strong>
-                        {{ o.get('user_name', 'Student') }}
-                    </strong>
+{% endif %}
 
-                </td>
+</td>
 
+</tr>
 
-                <!-- ITEMS -->
+{% endfor %}
 
-                <td>
+</tbody>
 
-                    <ul class="dashboard-items">
-
-                        {% for it in o.get('items', []) %}
-
-                        <li>
-                            <strong>{{ it['qty'] }}×</strong>
-                            {{ it['name'] }}
-                        </li>
-
-                        {% endfor %}
-
-                    </ul>
-
-                </td>
-
-
-                <!-- TOTAL -->
-
-                <td>
-
-                    <strong>
-                        ₹{{ o['total'] }}
-                    </strong>
-
-                </td>
-
-
-                <!-- STATUS -->
-
-                <td>
-
-                    {% if o['status'] == "Delivered" %}
-
-                        <span class="order-status delivered">
-                            ✓ Delivered
-                        </span>
-
-                    {% elif o['status'] == "Ready for Collection" %}
-
-                        <span class="order-status ready">
-                            🛍 Ready for Collection
-                        </span>
-
-                    {% else %}
-
-                        <span class="order-status preparing">
-                            🍳 Preparing
-                        </span>
-
-                    {% endif %}
-
-                </td>
-
-
-                <!-- ACTIONS -->
-
-                <td>
-
-                    {% if o['status'] == "Preparing" %}
-
-                        <form
-                            method="POST"
-                            action="{{ url_for(
-                                'main.update_order_status',
-                                order_id=o['id'],
-                                status='Ready for Collection'
-                            ) }}"
-                        >
-
-                            <button
-                                type="submit"
-                                class="status-btn ready-btn"
-                            >
-                                🛍 Ready for Collection
-                            </button>
-
-                        </form>
-
-
-                    {% elif o['status'] == "Ready for Collection" %}
-
-                        <form
-                            method="POST"
-                            action="{{ url_for(
-                                'main.update_order_status',
-                                order_id=o['id'],
-                                status='Delivered'
-                            ) }}"
-                        >
-
-                            <button
-                                type="submit"
-                                class="status-btn delivered-btn"
-                                onclick="return confirm('Mark this order as delivered?')"
-                            >
-                                ✓ Mark Delivered
-                            </button>
-
-                        </form>
-
-
-                    {% else %}
-
-                        <span class="completed-label">
-                            ✓ Complete
-                        </span>
-
-                    {% endif %}
-
-                </td>
-
-            </tr>
-
-            {% endfor %}
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-    {% else %}
-
-        <div class="empty-state">
-
-            <div class="empty-icon">
-                🍽️
-            </div>
-
-            <h3>No active orders</h3>
-
-            <p>
-                New cafeteria orders will appear here.
-            </p>
-
-        </div>
-
-    {% endif %}
+</table>
 
 </div>
 
+{% else %}
+
+<p>No orders yet.</p>
+
+{% endif %}
 
 <script>
-setTimeout(function () {
+setTimeout(function(){
     window.location.reload();
 }, 60000);
+    
 </script>
 
 {% endblock %}
