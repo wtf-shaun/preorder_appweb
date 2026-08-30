@@ -1,7 +1,6 @@
 from flask import Flask
 import os
-
-from .db import db
+from .db import db, initialize_order_token_counter, backfill_item_order_events
 
 
 def create_app():
@@ -14,15 +13,24 @@ def create_app():
     template_dir = os.path.abspath(os.path.join(base_dir, '..', 'templates'))
     static_dir = os.path.abspath(os.path.join(base_dir, '..', 'static'))
 
-    app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
+    app = Flask(
+        __name__,
+        template_folder=template_dir,
+        static_folder=static_dir
+    )
 
     # ===============================
     # SECRET KEY
     # ===============================
-    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret')
+    app.config['SECRET_KEY'] = os.environ.get(
+        'SECRET_KEY',
+        'dev-secret'
+    )
 
     # Attach DB to app
     app.db = db
+    initialize_order_token_counter()
+    backfill_item_order_events()
 
     # ===============================
     # CREATE DEFAULT ADMIN (ONLY ONCE)

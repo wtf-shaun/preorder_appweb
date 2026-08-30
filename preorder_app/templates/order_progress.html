@@ -1,7 +1,24 @@
 {% extends "base.html" %}
 
 {% block content %}
+<script>
+/**
+ * Keeps the page reloading at a specified interval.
+ * @param {number} seconds - The number of seconds before the page reloads.
+ */
+function startAutoReload(seconds) {
+    const milliseconds = seconds * 1000;
+    
+    setTimeout(function () {
+        window.location.reload();
+    }, milliseconds);
+    
+    console.log(`Page will auto-reload in ${seconds} seconds.`);
+}
 
+// Call the function to reload the page every 60 seconds
+startAutoReload(60);
+</script>
 <div class="order-progress-page">
 
     <div class="progress-card">
@@ -9,214 +26,214 @@
         <!-- HEADER -->
 
         <div class="progress-header">
-
             <div>
-
                 <span class="progress-eyebrow">
                     ORDER TRACKING
                 </span>
-
                 <h1>Your order is on its way</h1>
-
                 <p>
                     Follow the progress of your cafeteria order below.
                 </p>
-
             </div>
-
             <div class="order-token">
                 <span>PICKUP TOKEN</span>
                 <strong>{{ order.token }}</strong>
             </div>
-
         </div>
-
 
         <!-- ORDER SUMMARY -->
 
         <div class="order-summary">
-
             <div>
                 <span>Order ID</span>
                 <strong>#{{ order.id }}</strong>
             </div>
-
             <div>
                 <span>Total</span>
                 <strong>₹{{ order.total }}</strong>
             </div>
-
             <div>
                 <span>Status</span>
                 <strong class="status-paid">
                     {{ order.status }}
                 </strong>
             </div>
-
         </div>
-
 
         <!-- TIMELINE -->
 
         <div class="order-timeline">
 
             <!-- STEP 1 -->
-
             <div class="timeline-step completed">
-
                 <div class="timeline-icon">
                     ✓
                 </div>
-
                 <div class="timeline-content">
-
                     <h3>Order Placed</h3>
-
                     <p>
                         Your order has been received.
                     </p>
-
                 </div>
-
             </div>
-
-
-            <!-- CONNECTOR -->
 
             <div class="timeline-line active"></div>
 
-
             <!-- STEP 2 -->
-
-            <div class="timeline-step active">
-
-                <div class="timeline-icon pulse">
-                    🍳
+            <div class="timeline-step
+                {% if order.status == 'Preparing' %}
+                    active
+                {% elif order.status in ['Ready for Collection', 'Delivered'] %}
+                    completed
+                {% endif %}
+            ">
+                <div class="timeline-icon
+                    {% if order.status == 'Preparing' %}
+                        pulse
+                    {% endif %}
+                ">
+                    {% if order.status in ['Ready for Collection', 'Delivered'] %}
+                        ✓
+                    {% else %}
+                        🍳
+                    {% endif %}
                 </div>
-
                 <div class="timeline-content">
-
                     <h3>Preparing Your Order</h3>
-
-                    <p>
-                        The cafeteria is preparing your food.
-                    </p>
-
-                    <span class="live-status">
-                        ● IN PROGRESS
-                    </span>
-
+                    {% if order.status == 'Preparing' %}
+                        <p>
+                            The cafeteria is preparing your food.
+                        </p>
+                        <span class="live-status">
+                            ● IN PROGRESS
+                        </span>
+                    {% else %}
+                        <p>
+                            Your food has been prepared.
+                        </p>
+                    {% endif %}
                 </div>
-
             </div>
 
-
-            <!-- CONNECTOR -->
-
-            <div class="timeline-line"></div>
-
+            <div class="timeline-line
+                {% if order.status in ['Ready for Collection', 'Delivered'] %}
+                    active
+                {% endif %}
+            "></div>
 
             <!-- STEP 3 -->
-
-            <div class="timeline-step">
-
-                <div class="timeline-icon">
-                    🛍️
+            <div class="timeline-step
+                {% if order.status == 'Ready for Collection' %}
+                    active
+                {% elif order.status == 'Delivered' %}
+                    completed
+                {% endif %}
+            ">
+                <div class="timeline-icon
+                    {% if order.status == 'Ready for Collection' %}
+                        pulse
+                    {% endif %}
+                ">
+                    {% if order.status == 'Delivered' %}
+                        ✓
+                    {% else %}
+                        🛍️
+                    {% endif %}
                 </div>
-
                 <div class="timeline-content">
-
                     <h3>Ready for Pickup</h3>
-
-                    <p>
-                        Your order will appear here once ready.
-                    </p>
-
+                    {% if order.status == 'Ready for Collection' %}
+                        <p>
+                            Your order is ready! Please collect it using your pickup token.
+                        </p>
+                        <span class="live-status">
+                            ● READY FOR COLLECTION
+                        </span>
+                    {% elif order.status == 'Delivered' %}
+                        <p>
+                            Your order was ready for collection.
+                        </p>
+                    {% else %}
+                        <p>
+                            Your order will appear here once ready.
+                        </p>
+                    {% endif %}
                 </div>
-
             </div>
 
-
-            <!-- CONNECTOR -->
-
-            <div class="timeline-line"></div>
-
+            <div class="timeline-line
+                {% if order.status == 'Delivered' %}
+                    active
+                {% endif %}
+            "></div>
 
             <!-- STEP 4 -->
-
-            <div class="timeline-step">
-
+            <div class="timeline-step
+                {% if order.status == 'Delivered' %}
+                    completed
+                {% endif %}
+            ">
                 <div class="timeline-icon">
-                    ✓
+                    {% if order.status == 'Delivered' %}
+                        ✓
+                    {% else %}
+                        ✓
+                    {% endif %}
                 </div>
-
                 <div class="timeline-content">
-
                     <h3>Collected</h3>
-
-                    <p>
-                        Enjoy your meal!
-                    </p>
-
+                    {% if order.status == 'Delivered' %}
+                        <p>
+                            Your order has been collected. Enjoy your meal!
+                        </p>
+                        <span class="live-status">
+                            ● ORDER COMPLETE
+                        </span>
+                    {% else %}
+                        <p>
+                            Your order will be marked complete after collection.
+                        </p>
+                    {% endif %}
                 </div>
-
             </div>
 
-        </div>
-
+        </div> <!-- END OF TIMELINE -->
 
         <!-- ITEMS -->
 
         <div class="ordered-items">
-
             <div class="section-title">
                 <h2>Your Items</h2>
             </div>
-
-            {% for item in order.items %}
-
+            {% for item in order["items"] %}
             <div class="ordered-item">
-
                 <div>
                     <strong>
                         {{ item.name }}
                     </strong>
-
                     <span>
                         × {{ item.qty }}
                     </span>
                 </div>
-
                 <strong>
                     ₹{{ item.subtotal }}
                 </strong>
-
             </div>
-
             {% endfor %}
-
         </div>
-
 
         <!-- FOOTER -->
 
         <div class="progress-footer">
-
             <div>
                 <span>Your pickup token</span>
-
                 <strong>
                     {{ order.token }}
                 </strong>
             </div>
-
-            <a
-                href="{{ url_for('main.menu') }}"
-                class="btn"
-            >
+            <a href="{{ url_for('main.menu') }}" class="btn">
                 Back to Menu
             </a>
-
         </div>
 
     </div>

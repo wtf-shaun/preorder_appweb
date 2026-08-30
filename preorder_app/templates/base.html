@@ -17,7 +17,7 @@
  <div id="interactive-background">
     <div class="cursor-glow"></div>
 </div>   
-    
+
 <!-- Flash Messages -->
 <div id="flash-messages">
     {% with messages = get_flashed_messages() %}
@@ -38,11 +38,19 @@
     </div>
 
     <div class="nav-links">
-        <a href="{{ url_for('main.menu') }}">Menu</a>
-        <a href="{{ url_for('main.view_cart') }}">My Cart</a>
+        <a href="{{ url_for('main.view_cart') }}" class="cart-link">
+    My Cart
+
+    {% if cart_count > 0 %}
+        <span id="cart-counter" class="cart-badge">
+            {{ cart_count }}
+        </span>
+    {% endif %}
+</a>
 
         {% if user and user.is_admin %}
             <a href="{{ url_for('admin.index') }}">Admin</a>
+            <a href="{{ url_for('admin.statistics') }}">Statistics</a>
         {% endif %}
 
         {% if user %}
@@ -54,9 +62,6 @@
     </div>
 
 </div>
-
-
-
 
 <!-- Page Content -->
 <div class="container">
@@ -77,6 +82,33 @@ setTimeout(() => {
         }, 500);
     });
 }, 5000);
+
+const categoryMenuButtons = document.querySelectorAll('.category-menu-toggle');
+
+categoryMenuButtons.forEach(button => {
+    button.addEventListener('click', (event) => {
+        event.stopPropagation();
+
+        const wrapper = button.closest('.category-menu-wrapper');
+        const menu = wrapper.querySelector('.category-menu');
+        const isOpen = menu.classList.contains('is-open');
+
+        document.querySelectorAll('.category-menu').forEach(item => item.classList.remove('is-open'));
+        document.querySelectorAll('.category-menu-toggle').forEach(item => item.setAttribute('aria-expanded', 'false'));
+
+        if (!isOpen) {
+            menu.classList.add('is-open');
+            button.setAttribute('aria-expanded', 'true');
+        }
+    });
+});
+
+document.addEventListener('click', (event) => {
+    if (!event.target.closest('.category-menu-wrapper')) {
+        document.querySelectorAll('.category-menu').forEach(menu => menu.classList.remove('is-open'));
+        document.querySelectorAll('.category-menu-toggle').forEach(button => button.setAttribute('aria-expanded', 'false'));
+    }
+});
 </script>
 
 </body>

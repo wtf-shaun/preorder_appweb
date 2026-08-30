@@ -3,9 +3,8 @@
 {% block content %}
 
 <div class="page-shell">
-
-    <!-- PAGE HEADER -->
-    <div class="page-header">
+<!-- PAGE HEADER -->
+<div class="page-header">
 
         <div>
             <span class="page-eyebrow">CAFETERIA MENU</span>
@@ -19,122 +18,196 @@
 
         <div class="page-badge">
             🍽️ Fresh & Ready
-        </div>
+                </div>
 
     </div>
 
 
-    <!-- MENU -->
-    <div class="grid menu-grid">
+    <div class="menu-browse-layout">
 
-        {% for it in items %}
-
-        <div class="card menu-card">
-
-            <!-- IMAGE -->
-            <div class="menu-image-wrapper">
-
-                {% if it.get('image') %}
-
-                    <img
-                        src="{{ url_for('static', filename='uploads/' + it.image) }}"
-                        class="menu-image"
-                        alt="{{ it.name }}"
-                    >
-
-                {% else %}
-
-                    <img
-                        src="{{ url_for('static', filename='uploads/default.png') }}"
-                        class="menu-image"
-                        alt="Default food image"
-                    >
-
-                {% endif %}
-
-                <div class="food-badge">
-                    CAFETERIA
-                </div>
-
+        <aside class="menu-sidebar" aria-label="Menu categories">
+            <div class="menu-sidebar-heading">
+                <span class="page-eyebrow">BROWSE</span>
+                <h2>Menu</h2>
             </div>
 
+            {% for category in categories %}
+                <div class="menu-sidebar-section">
+                    <h3>{{ category.name }} <span>{{ items|selectattr('category', 'equalto', category.slug)|list|length }}</span></h3>
+                    <div class="menu-sidebar-list">
+                        {% for it in items if it.get('category', 'food') == category.slug %}
+                            <button type="button" class="menu-sidebar-item" onclick="focusMenuItem('{{ it.id }}')">
+                                <span>{{ it.name }}</span>
+                                <span aria-hidden="true">&#8250;</span>
+                            </button>
+                        {% else %}
+                            <p class="menu-sidebar-empty">No items</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </aside>
 
-            <!-- DETAILS -->
-            <div class="menu-card-content">
+        <div class="menu-category-groups">
+        {% for category in categories %}
+            <section class="menu-category-section" id="menu-category-{{ category.slug }}">
+                <div class="menu-category-heading">
+                    <h2>{{ category.name }}</h2>
+                    <span>{{ items|selectattr('category', 'equalto', category.slug)|list|length }} items</span>
+                </div>
 
-                <div class="menu-card-title-row">
+                <!-- MENU CAROUSEL CONTAINER -->
+                <div class="carousel-container">
 
-                    <h3>{{ it.name }}</h3>
+        <!-- Left Navigation Arrow -->
+        <button class="carousel-arrow carousel-prev" onclick="scrollCarousel('{{ category.slug }}', -1)" aria-label="Previous {{ category.name }} items">
+            &#10094;
+        </button>
 
-                    <div class="price">
-                        ₹{{ it.price }}
+        <!-- MENU TRACK -->
+        <div class="carousel-track" id="menuCarousel-{{ category.slug }}">
+
+            {% for it in items if it.get('category', 'food') == category.slug %}
+
+            <div id="menu-item-{{ it.id }}" class="card menu-card{% if it.id in cart_item_ids %} in-cart{% endif %}">
+
+                <!-- IMAGE -->
+                <div class="menu-image-wrapper">
+
+                    {% if it.get('image') %}
+
+                        <img
+                            src="{{ url_for('static', filename='uploads/' + it.image) }}"
+                            class="menu-image"
+                            alt="{{ it.name }}"
+                        >
+
+                    {% else %}
+
+                        <img
+                            src="{{ url_for('static', filename='uploads/default.png') }}"
+                            class="menu-image"
+                            alt="Default food image"
+                        >
+
+                    {% endif %}
+
+                    <div class="image-badges">
+                        <div class="food-badge">
+                            {% if it.id in cart_item_ids %}
+                                In Cart
+                            {% else %}
+                                CAFETERIA
+                            {% endif %}
+                        </div>
+
+                        <div class="image-availability">
+                            <span>●</span> Available
+                        </div>
                     </div>
 
                 </div>
 
 
-                <div class="menu-card-footer">
+                <!-- DETAILS -->
+                <div class="menu-card-content">
 
-                    <span class="menu-availability">
-                        ● Available
-                    </span>
+                    <div class="menu-card-title-row">
 
-                    <form
-                        method="POST"
-                        action="{{ url_for('main.add_to_cart') }}"
-                        class="menu-add-form"
-                    >
+                        <h3>{{ it.name }}</h3>
 
-                        <input
-                            type="hidden"
-                            name="item_id"
-                            value="{{ it.id }}"
-                        >
-
-                        <!-- QUANTITY -->
-                        <div class="quantity-selector">
-
-                            <label for="quantity-{{ it.id }}">
-                                Qty
-                            </label>
-
-                            <select
-                                name="quantity"
-                                id="quantity-{{ it.id }}"
-                                class="quantity-select"
-                            >
-                                {% for qty in range(1, 11) %}
-                                    <option value="{{ qty }}">
-                                        {{ qty }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-
+                        <div class="price">
+                                                    ₹{{ it.price }}
                         </div>
 
+                    </div>
 
-                        <!-- ADD BUTTON -->
-                        <button
-                            class="btn menu-add-btn"
-                            type="submit"
+
+                    <div class="menu-card-footer">
+
+                                                    <form
+                            method="POST"
+                            action="{{ url_for('main.add_to_cart') }}"
+                            class="menu-add-form"
                         >
-                            <span>＋</span>
-                            Add to Cart
-                        </button>
 
-                    </form>
+                            <input
+                                type="hidden"
+                                name="item_id"
+                                value="{{ it.id }}"
+                            >
+
+
+                            <!-- QUANTITY SELECTOR -->
+                            <div class="quantity-wrapper">
+                            
+                                <button
+                                    type="button"
+                                    class="quantity-btn minus"
+                                    onclick="changeQuantity(this, -1)"
+                                    aria-label="Decrease quantity"
+                                >
+                                    −
+                                </button>
+
+
+                                <input
+                                    type="text"
+                                    class="quantity-value"
+                                    id="quantity-{{ it.id }}"
+                                    name="quantity"
+                                    value="{{ cart_quantities.get(it.id, 1) }}"
+                                    readonly
+                                >
+
+
+                                <button
+                                    type="button"
+                                    class="quantity-btn plus"
+                                    onclick="changeQuantity(this, 1)"
+                                    aria-label="Increase quantity"
+                                >
+                                    +
+                                </button>
+
+                            </div>
+
+
+                            <!-- ADD BUTTON -->
+                            <button
+                                class="btn menu-add-btn"
+                                type="submit"
+                            >
+                                <span>＋</span>
+                                Add to Cart
+                            </button>
+
+                        </form>
+
+                    </div>
 
                 </div>
 
             </div>
 
+            {% endfor %}
+
         </div>
 
+        <!-- Right Navigation Arrow -->
+        <button class="carousel-arrow carousel-next" onclick="scrollCarousel('{{ category.slug }}', 1)" aria-label="Next {{ category.name }} items">
+            &#10095;
+        </button>
+
+        </div>
+            </section>
         {% endfor %}
+        </div>
 
     </div>
 
 
+    <!-- EMPTY MENU -->
     {% if not items %}
 
     <div class="empty-state">
@@ -154,5 +227,180 @@
     {% endif %}
 
 </div>
+
+
+<script>
+function changeQuantity(button, amount) {
+
+    const form = button.closest('.menu-add-form');
+    const input = form ? form.querySelector('.quantity-value') : null;
+
+    if (!input) {
+        return;
+    }
+
+    let quantity = parseInt(input.value) || 1;
+
+    quantity += amount;
+
+    // Minimum quantity
+    if (quantity < 1) {
+        quantity = 1;
+    }
+
+    // Maximum quantity
+    if (quantity > 10) {
+        quantity = 10;
+    }
+
+    input.value = quantity;
+
+    // Small animation
+    input.classList.remove("pop");
+
+    void input.offsetWidth;
+
+    input.classList.add("pop");
+}
+
+function scrollCarousel(categorySlug, direction) {
+    const track = document.getElementById('menuCarousel-' + categorySlug);
+
+    if (!track) {
+        return;
+    }
+
+    const scrollAmount = 280; // Approximate card width + gap
+    track.scrollBy({
+        left: direction * scrollAmount,
+        behavior: 'smooth'
+    });
+}
+
+function focusMenuItem(itemId) {
+    const card = document.getElementById('menu-item-' + itemId);
+
+    if (card) {
+        const section = card.closest('.menu-category-section');
+
+        if (section) {
+            section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            section.classList.remove('is-focused');
+            void section.offsetWidth;
+            section.classList.add('is-focused');
+        }
+
+        card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+}
+
+// Only reveal an arrow when the cursor is near that side of the
+// carousel, and turn cards toward the edges as they scroll past.
+document.addEventListener('DOMContentLoaded', function () {
+
+    const carousels = document.querySelectorAll('.carousel-container');
+
+    if (!carousels.length) {
+        return;
+    }
+
+    const EDGE_ZONE = 130; // px from each side that triggers the arrow
+    const sections = Array.from(document.querySelectorAll('.menu-category-section'));
+    let wheelLocked = false;
+
+    function moveCategory(direction) {
+        if (wheelLocked || sections.length < 2) {
+            return false;
+        }
+
+        const currentPosition = window.scrollY + 120;
+        let currentIndex = sections.reduce(function (closestIndex, section, index) {
+            return section.offsetTop <= currentPosition ? index : closestIndex;
+        }, 0);
+        const targetIndex = Math.max(0, Math.min(sections.length - 1, currentIndex + direction));
+
+        if (targetIndex === currentIndex) {
+            return false;
+        }
+
+        wheelLocked = true;
+        sections[targetIndex].classList.remove('is-rolling');
+        void sections[targetIndex].offsetWidth;
+        sections[targetIndex].classList.add('is-rolling');
+        sections[targetIndex].scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        setTimeout(function () {
+            wheelLocked = false;
+        }, 700);
+
+        return true;
+    }
+
+    document.addEventListener('wheel', function (event) {
+        if (event.target.closest('.carousel-track')) {
+            return;
+        }
+
+        if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
+            if (moveCategory(event.deltaY > 0 ? 1 : -1)) {
+                event.preventDefault();
+            }
+        }
+    }, { passive: false });
+
+    carousels.forEach(function (container) {
+        const track = container.querySelector('.carousel-track');
+        const cards = track ? track.querySelectorAll('.menu-card') : [];
+
+        container.addEventListener('mousemove', function (e) {
+            const rect = container.getBoundingClientRect();
+            const distFromLeft = e.clientX - rect.left;
+            const distFromRight = rect.right - e.clientX;
+
+            container.classList.toggle('near-left', distFromLeft <= EDGE_ZONE);
+            container.classList.toggle('near-right', distFromRight <= EDGE_ZONE);
+        });
+
+        container.addEventListener('mouseleave', function () {
+            container.classList.remove('near-left', 'near-right');
+        });
+
+        container.addEventListener('touchstart', function (e) {
+            const rect = container.getBoundingClientRect();
+            const x = e.touches[0].clientX;
+
+            container.classList.toggle('near-left', (x - rect.left) <= EDGE_ZONE);
+            container.classList.toggle('near-right', (rect.right - x) <= EDGE_ZONE);
+        }, { passive: true });
+
+        function updateCardFlip() {
+            if (!track) {
+                return;
+            }
+
+            const trackRect = track.getBoundingClientRect();
+            const trackCenter = trackRect.left + trackRect.width / 2;
+            const maxDistance = trackRect.width / 2 + 180;
+
+            cards.forEach(function (card) {
+                const cardRect = card.getBoundingClientRect();
+                const cardCenter = cardRect.left + cardRect.width / 2;
+                const distance = Math.max(-1, Math.min(1, (cardCenter - trackCenter) / maxDistance));
+                card.style.setProperty('--flip-angle', `${(distance * 32).toFixed(2)}deg`);
+            });
+        }
+
+        let flipFrame;
+        if (track) {
+            track.addEventListener('scroll', function () {
+                cancelAnimationFrame(flipFrame);
+                flipFrame = requestAnimationFrame(updateCardFlip);
+            }, { passive: true });
+        }
+
+        updateCardFlip();
+    });
+});
+</script>
 
 {% endblock %}
