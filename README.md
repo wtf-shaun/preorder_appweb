@@ -157,6 +157,27 @@ store it as `SENDGRID_API_KEY` in Render. Deploy this change and send a
 broadcast to a test registered user. Delivery failures are logged without
 exposing the API key.
 
+### Vercel configuration
+
+The repository includes a root-level Vercel function that loads the Flask app
+from `preorder_app/wsgi.py`. In the Vercel project settings, add these
+environment variables for the Production, Preview, and Development
+environments as needed:
+
+| Key | Value |
+| --- | --- |
+| `MONGO_URI` | Your MongoDB Atlas connection string |
+| `DB_NAME` | `cafeteria_app` (or your chosen database name) |
+| `SECRET_KEY` | A long, random private value |
+| `SENDGRID_API_KEY` | A SendGrid API key if email broadcasts are used |
+| `EMAIL_FROM` | A verified SendGrid sender if email broadcasts are used |
+
+Deploy from the repository root. Vercel will use `vercel.json`, `api/index.py`,
+and the root `requirements.txt` automatically. MongoDB Atlas must allow the
+Vercel deployment's outbound connections. Files written by the app, including
+uploaded images and generated invoices, are not durable on Vercel's serverless
+filesystem; use object storage for files that must persist between requests.
+
 ---
 
 ## 🧠 How It Works
