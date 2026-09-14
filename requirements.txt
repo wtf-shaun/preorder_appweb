@@ -1,1 +1,6 @@
--r preorder_app/requirements.txt
+Flask
+Werkzeug
+gunicorn
+reportlab
+pymongo
+dnspython

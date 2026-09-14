@@ -164,6 +164,10 @@ from `preorder_app/wsgi.py`. In the Vercel project settings, add these
 environment variables for the Production, Preview, and Development
 environments as needed:
 
+See [VERCEL_DEPLOYMENT.md](VERCEL_DEPLOYMENT.md) for the complete setup,
+MongoDB Atlas configuration, deployment steps, verification checklist, and
+serverless storage limitations.
+
 | Key | Value |
 | --- | --- |
 | `MONGO_URI` | Your MongoDB Atlas connection string |
