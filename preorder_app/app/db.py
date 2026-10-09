@@ -140,7 +140,8 @@ def get_order_by_id_and_user(order_id, user_id):
         {'id': order_id, 'user_id': user_id},
         {'_id': 0}
     )
-
+def get_orders_by_status(status):
+    return list(orders_col.find({'status': status}, {'_id': 0}).sort('token', -1))
 
 def get_all_orders():
     """Get all orders."""
