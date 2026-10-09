@@ -86,166 +86,75 @@ startAutoReload(60);
                     </span>
 
                 </td>
-
-
-                <!-- USER -->
-
-                <td>
-
-                    <strong>
-                        {{ o.get('user_name', 'Student') }}
-                    </strong>
-
-                </td>
-
-
-                <!-- ITEMS -->
-
-                <td>
-
-                    <ul class="dashboard-items">
-
-                        {% for it in o.get('items', []) %}
-
-                        <li>
-                            <strong>{{ it['qty'] }}×</strong>
-                            {{ it['name'] }}
-                        </li>
-
-                        {% endfor %}
-
-                    </ul>
-
-                </td>
-
-
-                <!-- TOTAL -->
-
-                <td>
-
-                    <strong>
-                        ₹{{ o['total'] }}
-                    </strong>
-
-                </td>
-
-
-                <!-- STATUS -->
-
-                <td>
-
-                    {% if o['status'] == "Delivered" %}
-
-                        <span class="order-status delivered">
-                            ✓ Delivered
-                        </span>
-
-                    {% elif o['status'] == "Ready for Collection" %}
-
-                        <span class="order-status ready">
-                            🛍 Ready for Collection
-                        </span>
-
-                    {% else %}
-
-                        <span class="order-status preparing">
-                            🍳 Preparing
-                        </span>
-
-                    {% endif %}
-
-                </td>
-
-
-                <!-- ACTIONS -->
-
-                <td>
-
-                    {% if o['status'] == "Preparing" %}
-
-                        <form
-                            method="POST"
-                            action="{{ url_for(
-                                'main.update_order_status',
-                                order_id=o['id'],
-                                status='Ready for Collection'
-                            ) }}"
-                        >
-
-                            <button
-                                type="submit"
-                                class="status-btn ready-btn"
-                            >
-                                🛍 Ready for Collection
-                            </button>
-
-                        </form>
-
-
-                    {% elif o['status'] == "Ready for Collection" %}
-
-                        <form
-                            method="POST"
-                            action="{{ url_for(
-                                'main.update_order_status',
-                                order_id=o['id'],
-                                status='Delivered'
-                            ) }}"
-                        >
-
-                            <button
-                                type="submit"
-                                class="status-btn delivered-btn"
-                                onclick="return confirm('Mark this order as delivered?')"
-                            >
-                                ✓ Mark Delivered
-                            </button>
-
-                        </form>
-
-
-                    {% else %}
-
-                        <span class="completed-label">
-                            ✓ Complete
-                        </span>
-
-                    {% endif %}
-
-                </td>
-
-            </tr>
-
-            {% endfor %}
-
-            </tbody>
-
-        </table>
-
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-shell">
+    <div class="page-header">
+        <div>
+            <span class="page-eyebrow">CAFETERIA MANAGEMENT</span>
+            <h1>Order Dashboard</h1>
+            <p>Manage active orders and update their collection status.</p>
+        </div>
+        <div class="page-badge">🍽️ Live Orders</div>
     </div>
 
-    {% else %}
-
-        <div class="empty-state">
-
-            <div class="empty-icon">
-                🍽️
-            </div>
-
-            <h3>No active orders</h3>
-
-            <p>
-                New cafeteria orders will appear here.
-            </p>
-
+    <div class="orders-section">
+        <div class="section-header">
+            <h2>🍳 Preparing Orders ({{ preparing_orders|length }})</h2>
+            <button type="button" class="toggle-btn" onclick="toggleSection('preparing')">▼ Show</button>
         </div>
+        <div id="preparing" class="orders-content" style="display: block;">
+            {% if preparing_orders %}
+            <table class="orders-table"> ... </table>
+            {% else %}
+            <p class="empty-message">No orders currently preparing</p>
+            {% endif %}
+        </div>
+    </div>
 
-    {% endif %}
+    <div class="orders-section">
+        <div class="section-header">
+            <h2>🛍️ Ready for Collection ({{ ready_orders|length }})</h2>
+            <button type="button" class="toggle-btn" onclick="toggleSection('ready')">▼ Show</button>
+        </div>
+        <div id="ready" class="orders-content" style="display: block;">
+            {% if ready_orders %}
+            <table class="orders-table"> ... </table>
+            {% else %}
+            <p class="empty-message">No orders ready yet</p>
+            {% endif %}
+        </div>
+    </div>
 
+    <div class="orders-section">
+        <div class="section-header">
+            <h2>✓ Delivered ({{ delivered_orders|length }})</h2>
+            <button type="button" class="toggle-btn" onclick="toggleSection('delivered')">▼ Show</button>
+        </div>
+        <div id="delivered" class="orders-content" style="display: none;">
+            {% if delivered_orders %}
+            <table class="orders-table"> ... </table>
+            {% else %}
+            <p class="empty-message">No delivered orders yet</p>
+            {% endif %}
+        </div>
+    </div>
 </div>
 
-
 <script>
+function toggleSection(sectionId) {
+    const section = document.getElementById(sectionId);
+    const btn = event.target;
+    if (section.style.display === 'none') {
+        section.style.display = 'block';
+        btn.textContent = '▼ Hide';
+    } else {
+        section.style.display = 'none';
+        btn.textContent = '▶ Show';
+    }
+}
+</script>
+{% endblock %}
 setTimeout(function () {
     window.location.reload();
 }, 60000);
