@@ -24,9 +24,16 @@ bp = Blueprint('main', __name__)
 @bp.route('/cafeteria')
 def cafeteria():
     user = current_user()
-    orders = get_all_orders()
-
-    return render_template('cafeteria.html', orders=orders, user=user)
+    preparing_orders = get_orders_by_status('Preparing')
+    ready_orders = get_orders_by_status('Ready for Collection')
+    delivered_orders = get_orders_by_status('Delivered')
+    return render_template(
+        'cafeteria.html',
+        preparing_orders=preparing_orders,
+        ready_orders=ready_orders,
+        delivered_orders=delivered_orders,
+        user=user
+    )
 
 from flask import session, redirect, url_for, current_app, flash
 
