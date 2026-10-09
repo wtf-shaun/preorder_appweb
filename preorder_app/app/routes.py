@@ -48,9 +48,7 @@ def demo_login():
     
     return redirect(url_for('main.menu'))
 
-# ===============================
-# CURRENT USER
-# ===============================
+
 # ===============================
 # CURRENT USER
 # ===============================
@@ -474,7 +472,6 @@ def order_progress(order_id):
 # ===============================
 @bp.route('/update_order_status/<order_id>/<status>', methods=['POST'])
 def update_order_status(order_id, status):
-
     allowed_statuses = {
         "Preparing",
         "Ready for Collection",
@@ -491,13 +488,6 @@ def update_order_status(order_id, status):
         flash("Order not found")
         return redirect(url_for('main.cafeteria'))
 
-    # If the status is Delivered, delete the data instantly
-    if status == "Delivered":
-        delete_order(order_id)
-        flash("Order marked as delivered and successfully removed from the system.")
-    else:
-        # Otherwise, just update the status
-        save_order_status(order_id, status)
-        flash(f"Order status updated to: {status}")
-
+    save_order_status(order_id, status)
+    flash(f"Order status updated to: {status}")
     return redirect(url_for('main.cafeteria'))
