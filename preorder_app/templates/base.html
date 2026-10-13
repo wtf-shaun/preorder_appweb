@@ -68,8 +68,23 @@
     {% block content %}{% endblock %}
 </div>
 
-<footer style="text-align:center; padding:20px; color:#7e808c; font-size:14px;">
-    Made by Shaunak Mohotra
+<footer class="site-footer">
+    <div class="site-footer-inner">
+        <img
+            src="{{ url_for('static', filename='logo.png') }}"
+            class="site-footer-logo"
+            alt=""
+            aria-hidden="true"
+        >
+        <div class="site-footer-brand">
+            <strong>Cafeteria Pre-Order</strong>
+            <span>Order ahead. Pick up fresh.</span>
+        </div>
+        <div class="site-footer-meta">
+            <span>Made by Shaunak Mohotra</span>
+            <span>© 2026 Cafeteria Pre-Order</span>
+        </div>
+    </div>
 </footer>
 
 <script>
