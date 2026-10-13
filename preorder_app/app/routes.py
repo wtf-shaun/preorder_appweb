@@ -99,6 +99,11 @@ def inject_cart_count():
 # ===============================
 # HOME
 # ===============================
+@bp.route('/healthz')
+def healthz():
+    return '', 204
+
+
 @bp.route('/')
 def index():
     return redirect(url_for('main.menu'))

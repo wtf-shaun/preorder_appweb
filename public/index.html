@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f5f3ef">
+    <title>Cafeteria Pre-Order</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --ink: #282c3f;
+            --muted: #77736e;
+            --orange: #fc8019;
+            --green: #39845b;
+            --paper: #f5f3ef;
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body { min-width: 320px; min-height: 100%; margin: 0; }
+
+        body {
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            border-top: 5px solid var(--orange);
+            background:
+                repeating-linear-gradient(135deg, rgba(40, 44, 63, 0.018) 0 1px, transparent 1px 18px),
+                var(--paper);
+            color: var(--ink);
+            font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+        }
+
+        main {
+            width: min(100% - 36px, 430px);
+            padding: 32px 24px 30px;
+            text-align: center;
+            animation: rise-in 420ms ease-out both;
+        }
+
+        .brand-mark {
+            width: 58px;
+            height: 58px;
+            margin: 0 auto 20px;
+            display: grid;
+            place-items: center;
+            border: 1px solid rgba(252, 128, 25, 0.45);
+            border-radius: 16px 16px 5px 16px;
+            background: #fff;
+            color: var(--orange);
+            font-family: Georgia, serif;
+            font-size: 21px;
+            font-weight: 700;
+            box-shadow: 0 7px 18px rgba(40, 44, 63, 0.08);
+        }
+
+        h1 {
+            margin: 0;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 29px;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        p {
+            min-height: 24px;
+            margin: 10px 0 25px;
+            color: var(--muted);
+            font-size: 15px;
+        }
+
+        .progress {
+            width: 176px;
+            height: 4px;
+            margin: 0 auto;
+            overflow: hidden;
+            border-radius: 4px;
+            background: rgba(40, 44, 63, 0.12);
+        }
+
+        .progress span {
+            display: block;
+            width: 38%;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, var(--orange), var(--green));
+            animation: loading 1.35s ease-in-out infinite;
+        }
+
+        .retry {
+            margin-top: 28px;
+            padding: 7px 12px;
+            border: 0;
+            background: transparent;
+            color: var(--green);
+            font: inherit;
+            font-size: 14px;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            cursor: pointer;
+        }
+
+        @keyframes loading {
+            from { transform: translateX(-110%); }
+            to { transform: translateX(290%); }
+        }
+
+        @keyframes rise-in {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main aria-live="polite">
+        <div class="brand-mark" aria-hidden="true">CP</div>
+        <h1>Cafeteria Pre-Order</h1>
+        <p id="status">Getting the menu ready…</p>
+        <div class="progress" role="progressbar" aria-label="Starting the app">
+            <span></span>
+        </div>
+        <button class="retry" type="button" onclick="window.location.reload()">Try again</button>
+    </main>
+    <script>
+        const statusText = document.getElementById('status');
+        let delay = 800;
+        let attempts = 0;
+
+        async function waitForApp() {
+            while (true) {
+                attempts += 1;
+                try {
+                    const response = await fetch('/healthz', { cache: 'no-store' });
+                    if (response.ok) {
+                        window.location.replace('/menu');
+                        return;
+                    }
+                } catch (error) {
+                    // The function is still starting or is temporarily unreachable.
+                }
+
+                if (attempts === 5) {
+                    statusText.textContent = 'This is taking a little longer than usual.';
+                }
+                await new Promise(resolve => setTimeout(resolve, delay));
+                delay = Math.min(Math.round(delay * 1.5), 3000);
+            }
+        }
+
+        waitForApp();
+    </script>
+</body>
+</html>
