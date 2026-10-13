@@ -107,6 +107,9 @@ export DB_NAME=cafeteria_app
 export SECRET_KEY=your_secret_key
 export SENDGRID_API_KEY=your_sendgrid_api_key
 export EMAIL_FROM=preorderapp.tis@gmail.com
+export CLOUDINARY_CLOUD_NAME=your_cloud_name
+export CLOUDINARY_API_KEY=your_api_key
+export CLOUDINARY_API_SECRET=your_api_secret
 ```
 
 (For Windows, use `set` instead of `export`)
@@ -147,6 +150,9 @@ Directory**. In the existing Render service, set the following under
 | `SECRET_KEY` | A long, random private value |
 | `SENDGRID_API_KEY` | A SendGrid API key with Mail Send permission |
 | `EMAIL_FROM` | `preorderapp.tis@gmail.com` |
+| `CLOUDINARY_CLOUD_NAME` | Your Cloudinary cloud name |
+| `CLOUDINARY_API_KEY` | Your Cloudinary API key |
+| `CLOUDINARY_API_SECRET` | Your Cloudinary API secret |
 | `PYTHON_VERSION` | `3.13.5` |
 
 Use `pip install -r requirements.txt` as the build command and

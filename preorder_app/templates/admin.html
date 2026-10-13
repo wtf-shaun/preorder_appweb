@@ -348,7 +348,7 @@
                                 {% if it.get('image') %}
 
                                     <img
-                                        src="{{ url_for('static', filename='uploads/' + it.image) }}"
+                                        src="{{ it.image if it.image.startswith('http') else url_for('static', filename='uploads/' + it.image) }}"
                                         alt="{{ it.name }}"
                                     >
 
@@ -380,6 +380,17 @@
                         </td>
 
                         <td>
+
+                            {% if it.get('image') %}
+                            <form
+                                method="POST"
+                                action="{{ url_for('admin.remove_item_image', item_id=it['id']) }}"
+                            >
+                                <button type="submit" class="action-btn delete-btn">
+                                    Remove image
+                                </button>
+                            </form>
+                            {% endif %}
 
                             <form
                                 method="POST"

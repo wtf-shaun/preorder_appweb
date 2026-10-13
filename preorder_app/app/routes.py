@@ -3,15 +3,15 @@ from .db import (
     users_col, items_col, carts_col, orders_col, categories_col,
     get_user_by_id, get_all_items_for_menu, get_cart_by_user,
     get_all_categories, ensure_categories, get_item_by_id,
+    get_orders_by_status,
     create_cart, update_cart, clear_cart, get_order_by_id,
     get_order_by_id_and_user, get_all_orders,
     next_order_token, create_order, record_item_order_events,
     update_order_status as save_order_status,
-    delete_order
+    archive_delivered_order, get_order_stamp_by_id_and_user
 )
 import uuid
 from datetime import datetime, timezone
-import threading
 import os
 
 from .utils.pdf_invoice import generate_invoice_pdf
@@ -98,10 +98,6 @@ def inject_cart_count():
         'cart_count': get_cart_count()
     }
     
-def delete_order_after_delay(order_id, delay=60):
-    import time
-    time.sleep(delay)
-    delete_order(order_id)
 # ===============================
 # HOME
 # ===============================
@@ -456,7 +452,10 @@ def order_progress(order_id):
         return redirect(url_for('auth.login'))
 
     # Find the order
-    order = get_order_by_id_and_user(order_id, user['id'])
+    order = (
+        get_order_by_id_and_user(order_id, user['id'])
+        or get_order_stamp_by_id_and_user(order_id, user['id'])
+    )
 
     if not order:
         flash("Order not found")
@@ -495,6 +494,13 @@ def update_order_status(order_id, status):
         flash("Order not found")
         return redirect(url_for('main.cafeteria'))
 
-    save_order_status(order_id, status)
+    if status == 'Delivered':
+        delivered_at = datetime.now(timezone.utc)
+        order = archive_delivered_order(order_id, delivered_at)
+        if not order:
+            flash("Order could not be archived")
+            return redirect(url_for('main.cafeteria'))
+    else:
+        save_order_status(order_id, status)
     flash(f"Order status updated to: {status}")
     return redirect(url_for('main.cafeteria'))

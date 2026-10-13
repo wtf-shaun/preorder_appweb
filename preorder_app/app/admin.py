@@ -3,9 +3,8 @@ from flask import (
     url_for, flash, session
 )
 from werkzeug.security import generate_password_hash
-from werkzeug.utils import secure_filename
 from .db import (
-    get_user_by_id, get_all_users, get_all_items_for_menu,
+    get_user_by_id, get_item_by_id, get_all_users, get_all_items_for_menu,
     get_all_orders_for_admin, get_monthly_item_popularity,
     get_monthly_revenue,
     get_item_revenue_rankings,
@@ -16,11 +15,11 @@ from .db import (
     update_user, delete_user as remove_user, get_all_categories,
     update_category, delete_category as delete_category_record
 )
+from .utils.image_storage import delete_item_image as remove_item_image_asset
+from .utils.image_storage import upload_item_image
 import uuid
-import os
 
 bp = Blueprint('admin', __name__)
-UPLOAD_FOLDER = os.path.join('app', 'static', 'uploads')
 DEFAULT_CATEGORIES = [
     {'slug': 'food', 'name': 'Food'},
     {'slug': 'beverage', 'name': 'Beverages'}
@@ -167,20 +166,23 @@ def add_item():
     category = request.form.get('category', 'food')
     image = request.files.get('image')
 
-    image_filename = None
+    image_url = None
+    image_public_id = None
 
     if image and image.filename:
-        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-        filename = secure_filename(image.filename)
-        image_filename = str(uuid.uuid4()) + "_" + filename
-        image.save(os.path.join(UPLOAD_FOLDER, image_filename))
+        try:
+            image_url, image_public_id = upload_item_image(image)
+        except Exception as error:
+            flash(f"Image upload failed: {error}")
+            return redirect(url_for('admin.index'))
 
     create_item({
         'id': str(uuid.uuid4())[:8],
         'name': name,
         'price': int(price),
         'category': category if get_category_by_slug(category) else 'food',
-        'image': image_filename
+        'image': image_url,
+        'image_public_id': image_public_id
     })
 
     flash("Item added")
@@ -204,8 +206,38 @@ def delete_item(item_id):
     if not is_admin():
         return redirect(url_for('auth.login'))
 
+    item = get_item_by_id(item_id)
+    if item and item.get('image_public_id'):
+        try:
+            remove_item_image_asset(item['image_public_id'])
+        except Exception as error:
+            flash(f"Image removal failed: {error}")
+            return redirect(url_for('admin.index'))
+
     delete_item_record(item_id)
     flash("Item deleted")
+    return redirect(url_for('admin.index'))
+
+
+@bp.route('/item/<item_id>/image', methods=['POST'])
+def remove_item_image(item_id):
+    if not is_admin():
+        return redirect(url_for('auth.login'))
+
+    item = get_item_by_id(item_id)
+    if not item or not item.get('image'):
+        flash('Item image not found')
+        return redirect(url_for('admin.index'))
+
+    if item.get('image_public_id'):
+        try:
+            remove_item_image_asset(item['image_public_id'])
+        except Exception as error:
+            flash(f"Image removal failed: {error}")
+            return redirect(url_for('admin.index'))
+
+    update_item(item_id, {'image': None, 'image_public_id': None})
+    flash('Item image removed')
     return redirect(url_for('admin.index'))
 
 

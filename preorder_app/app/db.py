@@ -22,6 +22,7 @@ users_col = db["users"]
 items_col = db["items"]
 carts_col = db["carts"]
 orders_col = db["orders"]
+order_stamps_col = db["order_stamps"]
 categories_col = db["categories"]
 counters_col = db["counters"]
 item_order_events_col = db["item_order_events"]
@@ -140,7 +141,19 @@ def get_order_by_id_and_user(order_id, user_id):
         {'id': order_id, 'user_id': user_id},
         {'_id': 0}
     )
+
+
+def get_order_stamp_by_id_and_user(order_id, user_id):
+    """Get the compact delivery record for an order owned by a user."""
+    return order_stamps_col.find_one(
+        {'id': order_id, 'user_id': user_id},
+        {'_id': 0}
+    )
+
+
 def get_orders_by_status(status):
+    if status == 'Delivered':
+        return list(order_stamps_col.find({}, {'_id': 0}).sort('token', -1))
     return list(orders_col.find({'status': status}, {'_id': 0}).sort('token', -1))
 
 def get_all_orders():
@@ -191,6 +204,35 @@ def update_order_status(order_id, status):
         {'id': order_id},
         {'$set': {'status': status}}
     )
+
+
+def archive_delivered_order(order_id, delivered_at):
+    """Retain a compact stamp, then remove the full delivered order."""
+    order = orders_col.find_one_and_update(
+        {'id': order_id},
+        {'$set': {'status': 'Delivered', 'delivered_at': delivered_at}},
+        return_document=ReturnDocument.AFTER
+    )
+    if not order:
+        return None
+
+    stamp = {
+        'id': order['id'],
+        'user_id': order.get('user_id'),
+        'token': order.get('token'),
+        'total': order.get('total', 0),
+        'ordered_at': order.get('ordered_at'),
+        'delivered_at': delivered_at,
+        'item_count': len(order.get('items', [])),
+        'status': 'Delivered'
+    }
+    order_stamps_col.update_one(
+        {'id': order_id},
+        {'$setOnInsert': stamp},
+        upsert=True
+    )
+    orders_col.delete_one({'id': order_id})
+    return stamp
 
 
 def delete_order(order_id):

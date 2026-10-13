@@ -49,6 +49,9 @@ In **Project Settings -> Environment Variables**, add these values. Select the e
 | `SECRET_KEY` | Long random private string | Yes for production security |
 | `SENDGRID_API_KEY` | SendGrid API key with Mail Send permission | Only for email broadcasts |
 | `EMAIL_FROM` | Verified SendGrid sender address | Only for email broadcasts |
+| `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name | Required for item image uploads |
+| `CLOUDINARY_API_KEY` | Cloudinary API key | Required for item image uploads |
+| `CLOUDINARY_API_SECRET` | Cloudinary API secret | Required for item image uploads |
 
 Use a different strong `SECRET_KEY` from any local development value. After adding or changing variables, redeploy the project because environment variables are applied to new deployments.
 
@@ -100,7 +103,7 @@ Vercel functions do not provide durable local storage. This application currentl
 - Uploaded item images under `preorder_app/app/static/uploads`
 - Generated invoices under `preorder_app/app/invoices`
 
-Those files may disappear between function instances or deployments. MongoDB data remains persistent, but files that must persist should be moved to object storage such as Vercel Blob, Cloudinary, Amazon S3, or another storage service.
+Invoice files may disappear between function instances or deployments. Item images are stored in Cloudinary; configure `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and `CLOUDINARY_API_SECRET` as deployment environment variables. MongoDB retains only a compact delivery stamp after an order is marked delivered; item-level order events remain available for reporting.
 
 ## 8. Updating the application
 

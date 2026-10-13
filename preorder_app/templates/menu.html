@@ -77,7 +77,7 @@
                     {% if it.get('image') %}
 
                         <img
-                            src="{{ url_for('static', filename='uploads/' + it.image) }}"
+                            src="{{ it.image if it.image.startswith('http') else url_for('static', filename='uploads/' + it.image) }}"
                             class="menu-image"
                             alt="{{ it.name }}"
                         >

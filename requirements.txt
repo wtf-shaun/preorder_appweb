@@ -4,3 +4,4 @@ gunicorn
 reportlab
 pymongo
 dnspython
+cloudinary
