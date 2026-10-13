@@ -15,8 +15,6 @@ from .db import (
     update_user, delete_user as remove_user, get_all_categories,
     update_category, delete_category as delete_category_record
 )
-from .utils.image_storage import delete_item_image as remove_item_image_asset
-from .utils.image_storage import upload_item_image
 import uuid
 
 bp = Blueprint('admin', __name__)
@@ -171,6 +169,8 @@ def add_item():
 
     if image and image.filename:
         try:
+            from .utils.image_storage import upload_item_image
+
             image_url, image_public_id = upload_item_image(image)
         except Exception as error:
             flash(f"Image upload failed: {error}")
@@ -209,7 +209,9 @@ def delete_item(item_id):
     item = get_item_by_id(item_id)
     if item and item.get('image_public_id'):
         try:
-            remove_item_image_asset(item['image_public_id'])
+            from .utils.image_storage import delete_item_image
+
+            delete_item_image(item['image_public_id'])
         except Exception as error:
             flash(f"Image removal failed: {error}")
             return redirect(url_for('admin.index'))
@@ -231,7 +233,9 @@ def remove_item_image(item_id):
 
     if item.get('image_public_id'):
         try:
-            remove_item_image_asset(item['image_public_id'])
+            from .utils.image_storage import delete_item_image
+
+            delete_item_image(item['image_public_id'])
         except Exception as error:
             flash(f"Image removal failed: {error}")
             return redirect(url_for('admin.index'))

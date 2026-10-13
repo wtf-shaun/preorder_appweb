@@ -14,8 +14,6 @@ import uuid
 from datetime import datetime, timezone
 import os
 
-from .utils.pdf_invoice import generate_invoice_pdf
-
 bp = Blueprint('main', __name__)
 
 # ===============================
@@ -399,6 +397,8 @@ def pay_now():
     clear_cart(user['id'])
 
     # Generate invoice
+    from .utils.pdf_invoice import generate_invoice_pdf
+
     pdf_path = generate_invoice_pdf(
         order_id=order_id,
         user=user,

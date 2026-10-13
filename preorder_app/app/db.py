@@ -532,6 +532,9 @@ def next_order_token():
 
 def initialize_order_token_counter():
     """Seed the counter from existing orders without lowering its value."""
+    if counters_col.find_one({'_id': 'order_token'}, {'_id': 1}):
+        return
+
     last_order = orders_col.find_one(sort=[('token', -1)])
     current_value = last_order.get('token', 0) if last_order else 0
     counters_col.update_one(

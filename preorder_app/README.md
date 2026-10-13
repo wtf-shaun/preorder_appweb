@@ -12,7 +12,7 @@ Structure:
 - templates/             : HTML templates (Jinja2)
 - static/                : static files (CSS)
 
-Default admin: admin@example.com / adminpass (created on first run)
+Default admin: admin@example.com / admin123 (created on the first login attempt)
 
 To run:
 1. pip install -r requirements.txt

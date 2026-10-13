@@ -1,6 +1,6 @@
 from flask import Flask
 import os
-from .db import db, initialize_order_token_counter, backfill_item_order_events
+from .db import db
 
 
 def create_app():
@@ -29,22 +29,6 @@ def create_app():
 
     # Attach DB to app
     app.db = db
-    initialize_order_token_counter()
-    backfill_item_order_events()
-
-    # ===============================
-    # CREATE DEFAULT ADMIN (ONLY ONCE)
-    # ===============================
-    from werkzeug.security import generate_password_hash
-
-    if not db.users.find_one({"email": "admin@example.com"}):
-        db.users.insert_one({
-            "id": "admin-1",
-            "name": "Admin",
-            "email": "admin@example.com",
-            "password_hash": generate_password_hash("admin123"),
-            "is_admin": True
-        })
 
     # ===============================
     # REGISTER BLUEPRINTS
