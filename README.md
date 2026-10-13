@@ -114,6 +114,20 @@ export CLOUDINARY_API_SECRET=your_api_secret
 
 (For Windows, use `set` instead of `export`)
 
+### Migrate existing menu images
+
+With `MONGO_URI` and the three `CLOUDINARY_*` variables set, run the migration
+from the `preorder_app` directory. The first command only previews the matching
+files; add `--apply` to upload them and update their MongoDB item records.
+
+```bash
+cd preorder_app
+python migrate_item_images.py
+python migrate_item_images.py --apply
+```
+
+Keep the local image files until the migrated menu images have been verified.
+
 ### Email broadcasts
 
 Administrators can send an announcement from **Admin Dashboard → Compose

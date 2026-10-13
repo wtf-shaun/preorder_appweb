@@ -15,13 +15,15 @@ def _configure_cloudinary():
     cloudinary.config(**settings, secure=True)
 
 
-def upload_item_image(image):
+def upload_item_image(image, public_id=None):
     _configure_cloudinary()
-    result = cloudinary.uploader.upload(
-        image,
-        folder='preorder_app/items',
-        resource_type='image'
-    )
+    upload_options = {
+        'folder': 'preorder_app/items',
+        'resource_type': 'image'
+    }
+    if public_id:
+        upload_options.update({'public_id': public_id, 'overwrite': True})
+    result = cloudinary.uploader.upload(image, **upload_options)
     return result['secure_url'], result['public_id']
 
 
