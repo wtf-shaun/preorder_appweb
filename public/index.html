@@ -8,16 +8,25 @@
     <style>
         :root {
             color-scheme: light;
-            --ink: #282c3f;
-            --muted: #77736e;
-            --orange: #fc8019;
-            --green: #39845b;
-            --paper: #f5f3ef;
+            --paper: #f3f0ea;
+            --paper-deep: #e7e0d7;
+            --ink: #273347;
+            --ink-soft: #4a5365;
+            --muted: #7f7871;
+            --orange: #f27a2b;
+            --orange-deep: #ea6e0f;
+            --green: #3b7d5f;
+            --line: rgba(39, 51, 71, 0.12);
+            --shadow: rgba(31, 40, 52, 0.09);
         }
 
         * { box-sizing: border-box; }
 
-        html, body { min-width: 320px; min-height: 100%; margin: 0; }
+        html, body {
+            min-width: 320px;
+            min-height: 100%;
+            margin: 0;
+        }
 
         body {
             min-height: 100vh;
@@ -27,88 +36,103 @@
             overflow: hidden;
             border-top: 5px solid var(--orange);
             background:
-                repeating-linear-gradient(135deg, rgba(40, 44, 63, 0.018) 0 1px, transparent 1px 18px),
+                repeating-linear-gradient(
+                    135deg,
+                    rgba(39, 51, 71, 0.016) 0 1px,
+                    transparent 1px 18px
+                ),
                 var(--paper);
             color: var(--ink);
-            font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+            font-family: "Segoe UI", "Trebuchet MS", sans-serif;
         }
 
         main {
-            width: min(100% - 36px, 430px);
-            padding: 32px 24px 30px;
+            width: min(100% - 36px, 440px);
+            padding: 12px 18px 0;
             text-align: center;
             animation: rise-in 420ms ease-out both;
         }
 
         .brand-mark {
-            width: 58px;
-            height: 58px;
-            margin: 0 auto 20px;
+            width: 62px;
+            height: 62px;
+            margin: 0 auto 18px;
             display: grid;
             place-items: center;
-            border: 1px solid rgba(252, 128, 25, 0.45);
-            border-radius: 16px 16px 5px 16px;
-            background: #fff;
+            border: 1px solid rgba(242, 122, 43, 0.55);
+            border-radius: 16px 16px 6px 16px;
+            background: rgba(255, 255, 255, 0.86);
             color: var(--orange);
-            font-family: Georgia, serif;
-            font-size: 21px;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 22px;
             font-weight: 700;
-            box-shadow: 0 7px 18px rgba(40, 44, 63, 0.08);
+            box-shadow: 0 10px 18px var(--shadow);
         }
 
         h1 {
             margin: 0;
+            color: var(--ink);
             font-family: Georgia, "Times New Roman", serif;
-            font-size: 29px;
+            font-size: clamp(34px, 3.6vw, 54px);
             font-weight: 600;
-            line-height: 1.2;
+            line-height: 1.12;
+            letter-spacing: -0.04em;
         }
 
         p {
-            min-height: 24px;
-            margin: 10px 0 25px;
+            min-height: 28px;
+            margin: 12px 0 26px;
             color: var(--muted);
             font-size: 15px;
+            font-style: italic;
+            letter-spacing: 0.01em;
         }
 
         .progress {
-            width: 176px;
-            height: 4px;
+            width: 180px;
+            height: 5px;
             margin: 0 auto;
             overflow: hidden;
-            border-radius: 4px;
-            background: rgba(40, 44, 63, 0.12);
+            border-radius: 999px;
+            background: rgba(39, 51, 71, 0.12);
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
         }
 
         .progress span {
             display: block;
-            width: 38%;
+            width: 36%;
             height: 100%;
             border-radius: inherit;
-            background: linear-gradient(90deg, var(--orange), var(--green));
-            animation: loading 1.35s ease-in-out infinite;
+            background: linear-gradient(90deg, var(--orange), #f1b04e, var(--green));
+            box-shadow: 0 0 10px rgba(242, 122, 43, 0.2);
+            animation: loading 1.45s ease-in-out infinite;
         }
 
         .retry {
-            margin-top: 28px;
-            padding: 7px 12px;
+            margin-top: 24px;
             border: 0;
             background: transparent;
             color: var(--green);
             font: inherit;
-            font-size: 14px;
-            text-decoration: underline;
-            text-underline-offset: 3px;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 0.01em;
             cursor: pointer;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+
+        .retry:hover {
+            transform: translateY(-1px);
+            opacity: 0.9;
         }
 
         @keyframes loading {
-            from { transform: translateX(-110%); }
-            to { transform: translateX(290%); }
+            0% { transform: translateX(-115%); }
+            100% { transform: translateX(335%); }
         }
 
         @keyframes rise-in {
-            from { opacity: 0; transform: translateY(8px); }
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
