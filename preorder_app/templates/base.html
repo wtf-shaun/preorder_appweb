@@ -14,9 +14,9 @@
 
 <body>
 
-<div id="interactive-background">
+ <div id="interactive-background">
     <div class="cursor-glow"></div>
-</div>
+</div>   
 
 <!-- Flash Messages -->
 <div id="flash-messages">
@@ -29,92 +29,63 @@
     {% endwith %}
 </div>
 
-<div class="page-shell">
-    <div class="navbar">
-        <div class="nav-left">
-            <img src="{{ url_for('static', filename='logo.png') }}" class="nav-logo" alt="Logo">
-            <a href="{{ url_for('main.menu') }}" class="nav-title">Cafeteria Pre-Order</a>
-        </div>
-
-        <div class="nav-links">
-            <a href="{{ url_for('main.view_cart') }}" class="cart-link">
-                My Cart
-                {% if cart_count > 0 %}
-                    <span id="cart-counter" class="cart-badge">
-                        {{ cart_count }}
-                    </span>
-                {% endif %}
-            </a>
-
-            {% if user and user.is_admin %}
-                <a href="{{ url_for('admin.index') }}">Admin</a>
-                <a href="{{ url_for('admin.statistics') }}">Statistics</a>
-            {% endif %}
-
-            {% if user %}
-                <a href="{{ url_for('auth.logout') }}">Logout</a>
-            {% else %}
-                <a href="{{ url_for('auth.login') }}">Login</a>
-                <a href="{{ url_for('auth.register') }}">Register</a>
-            {% endif %}
-        </div>
+<!-- TOP NAVBAR (WORKING VERSION) -->
+<!-- Navbar -->
+<div class="navbar">
+    <div class="nav-left">
+        <img src="{{ url_for('static', filename='logo.png') }}" class="nav-logo" alt="Logo">
+        <a href="{{ url_for('main.menu') }}" class="nav-title">Cafeteria Pre-Order</a>
     </div>
 
-    <div class="container">
-        {% block content %}{% endblock %}
+    <div class="nav-links">
+        <a href="{{ url_for('main.view_cart') }}" class="cart-link">
+    My Cart
+
+    {% if cart_count > 0 %}
+        <span id="cart-counter" class="cart-badge">
+            {{ cart_count }}
+        </span>
+    {% endif %}
+</a>
+
+        {% if user and user.is_admin %}
+            <a href="{{ url_for('admin.index') }}">Admin</a>
+            <a href="{{ url_for('admin.statistics') }}">Statistics</a>
+        {% endif %}
+
+        {% if user %}
+            <a href="{{ url_for('auth.logout') }}">Logout</a>
+        {% else %}
+            <a href="{{ url_for('auth.login') }}">Login</a>
+            <a href="{{ url_for('auth.register') }}">Register</a>
+        {% endif %}
     </div>
 
-    <footer class="site-footer">
-        <div class="site-footer-inner">
-            <div class="site-footer-top">
-                <div class="site-footer-brand">
-                    <img
-                        src="{{ url_for('static', filename='logo.png') }}"
-                        class="site-footer-logo"
-                        alt="Cafeteria Pre-Order logo"
-                    >
-                    <div>
-                        <strong>Cafeteria Pre-Order</strong>
-                        <span>Order ahead. Pick up fresh. Stay on your schedule.</span>
-                    </div>
-                </div>
-
-                <div class="site-footer-links">
-                    <div>
-                        <h4>Explore</h4>
-                        <a href="{{ url_for('main.menu') }}">Menu</a>
-                        <a href="{{ url_for('main.view_cart') }}">Cart</a>
-                        {% if user %}
-                            <a href="{{ url_for('auth.logout') }}">Logout</a>
-                        {% else %}
-                            <a href="{{ url_for('auth.login') }}">Login</a>
-                        {% endif %}
-                    </div>
-
-                    <div>
-                        <h4>Visit</h4>
-                        <span>Campus café counter</span>
-                        <span>Mon–Fri: 8:00 AM–6:00 PM</span>
-                        <span>Pickup in 15–20 mins</span>
-                    </div>
-
-                    <div>
-                        <h4>Service</h4>
-                        <span>Fresh daily prep</span>
-                        <span>Hot meals & drinks</span>
-                        <span>Allergen-friendly choices</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="site-footer-bottom">
-                <span>Made by Shaunak Mohotra</span>
-                <span>© 2026 Cafeteria Pre-Order</span>
-                <span>Freshly prepared for busy campus days</span>
-            </div>
-        </div>
-    </footer>
 </div>
+
+<!-- Page Content -->
+<div class="container">
+    {% block content %}{% endblock %}
+</div>
+
+<footer class="site-footer">
+    <div class="site-footer-inner">
+        <img
+            src="{{ url_for('static', filename='logo.png') }}"
+            class="site-footer-logo"
+            alt=""
+            aria-hidden="true"
+        >
+        <div class="site-footer-brand">
+            <strong>Cafeteria Pre-Order</strong>
+            <span>Order ahead. Pick up fresh.</span>
+        </div>
+        <div class="site-footer-meta">
+            <span>Made by Shaunak Mohotra</span>
+            <span>© 2026 Cafeteria Pre-Order</span>
+        </div>
+    </div>
+</footer>
 
 <script>
 setTimeout(() => {

@@ -8,11 +8,15 @@
     <style>
         :root {
             color-scheme: light;
-            --ink: #282c3f;
-            --muted: #77736e;
-            --orange: #fc8019;
-            --green: #39845b;
-            --paper: #f5f3ef;
+            --ink: #1f2d3d;
+            --ink-soft: #2f394b;
+            --muted: #7a736d;
+            --orange: #f27a2b;
+            --orange-soft: rgba(242, 122, 43, 0.12);
+            --green: #2f7d5a;
+            --paper: #f4f1eb;
+            --paper-deep: #eee7df;
+            --line: rgba(31, 45, 61, 0.12);
         }
 
         * { box-sizing: border-box; }
@@ -28,87 +32,122 @@
             border-top: 5px solid var(--orange);
             background:
                 repeating-linear-gradient(135deg, rgba(40, 44, 63, 0.018) 0 1px, transparent 1px 18px),
+                radial-gradient(circle at 20% 15%, rgba(242, 122, 43, 0.05), transparent 24%),
+                radial-gradient(circle at 80% 80%, rgba(47, 125, 90, 0.04), transparent 22%),
                 var(--paper);
             color: var(--ink);
-            font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+            font-family: "Segoe UI", "Trebuchet MS", sans-serif;
         }
 
         main {
+            position: relative;
             width: min(100% - 36px, 430px);
-            padding: 32px 24px 30px;
+            padding: 30px 26px 28px;
             text-align: center;
             animation: rise-in 420ms ease-out both;
         }
 
+        main::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.03));
+            pointer-events: none;
+        }
+
         .brand-mark {
+            position: relative;
+            z-index: 1;
             width: 58px;
             height: 58px;
-            margin: 0 auto 20px;
+            margin: 0 auto 18px;
             display: grid;
             place-items: center;
-            border: 1px solid rgba(252, 128, 25, 0.45);
+            border: 1px solid rgba(242, 122, 43, 0.5);
             border-radius: 16px 16px 5px 16px;
-            background: #fff;
+            background: rgba(255, 255, 255, 0.86);
             color: var(--orange);
             font-family: Georgia, serif;
             font-size: 21px;
             font-weight: 700;
-            box-shadow: 0 7px 18px rgba(40, 44, 63, 0.08);
+            box-shadow: 0 8px 22px rgba(40, 44, 63, 0.08);
         }
 
         h1 {
+            position: relative;
+            z-index: 1;
             margin: 0;
+            color: var(--ink-soft);
             font-family: Georgia, "Times New Roman", serif;
-            font-size: 29px;
+            font-size: clamp(28px, 3vw, 34px);
             font-weight: 600;
             line-height: 1.2;
+            letter-spacing: -0.02em;
         }
 
         p {
-            min-height: 24px;
-            margin: 10px 0 25px;
+            position: relative;
+            z-index: 1;
+            min-height: 28px;
+            margin: 12px 0 24px;
             color: var(--muted);
             font-size: 15px;
+            font-style: italic;
+            letter-spacing: 0.01em;
         }
 
         .progress {
-            width: 176px;
-            height: 4px;
+            position: relative;
+            z-index: 1;
+            width: 180px;
+            height: 5px;
             margin: 0 auto;
             overflow: hidden;
-            border-radius: 4px;
+            border-radius: 999px;
             background: rgba(40, 44, 63, 0.12);
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
         }
 
         .progress span {
             display: block;
-            width: 38%;
+            width: 36%;
             height: 100%;
             border-radius: inherit;
-            background: linear-gradient(90deg, var(--orange), var(--green));
-            animation: loading 1.35s ease-in-out infinite;
+            background: linear-gradient(90deg, var(--orange), #f0ad2f, var(--green));
+            box-shadow: 0 0 12px rgba(242, 122, 43, 0.25);
+            animation: loading 1.5s ease-in-out infinite;
         }
 
         .retry {
-            margin-top: 28px;
-            padding: 7px 12px;
+            position: relative;
+            z-index: 1;
+            margin-top: 26px;
+            padding: 8px 14px;
             border: 0;
+            border-radius: 999px;
             background: transparent;
             color: var(--green);
             font: inherit;
             font-size: 14px;
-            text-decoration: underline;
-            text-underline-offset: 3px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
             cursor: pointer;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+
+        .retry:hover {
+            transform: translateY(-1px);
+            opacity: 0.9;
         }
 
         @keyframes loading {
-            from { transform: translateX(-110%); }
-            to { transform: translateX(290%); }
+            0% { transform: translateX(-115%); }
+            100% { transform: translateX(315%); }
         }
 
         @keyframes rise-in {
-            from { opacity: 0; transform: translateY(8px); }
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
