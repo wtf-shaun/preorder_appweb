@@ -90,6 +90,14 @@
             font-family: Georgia, "Times New Roman", serif;
             font-size: 14px;
             font-style: italic;
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 220ms ease, transform 220ms ease;
+        }
+
+        p.is-changing {
+            opacity: 0;
+            transform: translateY(4px);
         }
 
         .progress {
@@ -161,6 +169,8 @@
             *, *::before, *::after {
                 animation-duration: 0.01ms !important;
                 animation-iteration-count: 1 !important;
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
             }
         }
 
@@ -184,9 +194,9 @@
         <img src="/static/logo.png" alt="">
         <span>Pre-order System</span>
     </header>
-    <main aria-live="polite">
+    <main>
         <h1>Cafeteria Pre-Order</h1>
-        <p id="status">Getting the menu ready…</p>
+        <p id="status" aria-live="polite" aria-atomic="true">Getting the menu ready…</p>
         <div class="progress" role="progressbar" aria-label="Starting the app" aria-valuetext="Loading">
             <span></span>
         </div>
@@ -194,8 +204,25 @@
     </main>
     <script>
         const statusText = document.getElementById('status');
+        const loadingPhrases = [
+            'Getting the menu ready…',
+            'A fresh café moment is just around the corner…',
+            'Preparing something delicious for your break…',
+            'Made fresh, ready when you are…',
+            'Setting the table for a better break…'
+        ];
+        let phraseIndex = 0;
         let delay = 800;
         let attempts = 0;
+
+        setInterval(() => {
+            statusText.classList.add('is-changing');
+            setTimeout(() => {
+                phraseIndex = (phraseIndex + 1) % loadingPhrases.length;
+                statusText.textContent = loadingPhrases[phraseIndex];
+                statusText.classList.remove('is-changing');
+            }, 220);
+        }, 2800);
 
         async function waitForApp() {
             while (true) {
@@ -211,7 +238,7 @@
                 }
 
                 if (attempts === 5) {
-                    statusText.textContent = 'This is taking a little longer than usual.';
+                    loadingPhrases.push('Still getting everything ready — thank you for your patience.');
                     document.querySelector('.retry').hidden = false;
                 }
                 await new Promise(resolve => setTimeout(resolve, delay));
