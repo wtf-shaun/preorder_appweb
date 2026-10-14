@@ -70,19 +70,51 @@
 
 <footer class="site-footer">
     <div class="site-footer-inner">
-        <img
-            src="{{ url_for('static', filename='logo.png') }}"
-            class="site-footer-logo"
-            alt=""
-            aria-hidden="true"
-        >
-        <div class="site-footer-brand">
-            <strong>Cafeteria Pre-Order</strong>
-            <span>Order ahead. Pick up fresh.</span>
+        <div class="site-footer-top">
+            <div class="site-footer-brand">
+                <img
+                    src="{{ url_for('static', filename='logo.png') }}"
+                    class="site-footer-logo"
+                    alt="Cafeteria Pre-Order logo"
+                >
+                <div>
+                    <strong>Cafeteria Pre-Order</strong>
+                    <span>Order ahead. Pick up fresh. Stay on schedule.</span>
+                </div>
+            </div>
+
+            <div class="site-footer-links">
+                <div>
+                    <h4>Explore</h4>
+                    <a href="{{ url_for('main.menu') }}">Menu</a>
+                    <a href="{{ url_for('main.view_cart') }}">Cart</a>
+                    {% if user %}
+                        <a href="{{ url_for('auth.logout') }}">Logout</a>
+                    {% else %}
+                        <a href="{{ url_for('auth.login') }}">Login</a>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <h4>Visit</h4>
+                    <span>Campus café counter</span>
+                    <span>Mon–Fri: 8:00 AM–6:00 PM</span>
+                    <span>Pickup in 15–20 mins</span>
+                </div>
+
+                <div>
+                    <h4>Service</h4>
+                    <span>Freshly prepared meals</span>
+                    <span>Hot drinks & snacks</span>
+                    <span>Allergen-aware choices</span>
+                </div>
+            </div>
         </div>
-        <div class="site-footer-meta">
+
+        <div class="site-footer-bottom">
             <span>Made by Shaunak Mohotra</span>
             <span>© 2026 Cafeteria Pre-Order</span>
+            <span>Fresh, fast, and campus-ready</span>
         </div>
     </div>
 </footer>
