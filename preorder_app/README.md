@@ -12,7 +12,9 @@ Structure:
 - templates/             : HTML templates (Jinja2)
 - static/                : static files (CSS)
 
-Default admin: admin@example.com / admin123 (created on the first login attempt)
+## Administrator setup
+
+There is no default administrator account or shared password. Register an account normally, then have the database owner promote that account in MongoDB by setting its `is_admin` field to `true` in the `users` collection. Do not expose database credentials or grant administrator access to untrusted users. Configure `SECRET_KEY` and `MONGO_URI` in the environment before starting the app.
 
 To run:
 1. pip install -r requirements.txt
