@@ -22,9 +22,17 @@ def create_app():
     # ===============================
     # SECRET KEY
     # ===============================
-    app.config['SECRET_KEY'] = os.environ.get(
-        'SECRET_KEY',
-        'dev-secret'
+    secret_key = os.environ.get('SECRET_KEY')
+    if not secret_key:
+        raise RuntimeError(
+            'SECRET_KEY must be set in the environment. '
+            'Generate a long random value and configure it in your deployment settings.'
+        )
+    app.config['SECRET_KEY'] = secret_key
+    app.config.update(
+        SESSION_COOKIE_HTTPONLY=True,
+        SESSION_COOKIE_SAMESITE='Lax',
+        SESSION_COOKIE_SECURE=os.environ.get('COOKIE_SECURE', 'true').lower() == 'true'
     )
 
     # Attach DB to app
