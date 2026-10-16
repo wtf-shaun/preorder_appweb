@@ -1,4 +1,5 @@
 import os
+import tempfile
 from flask import current_app
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
@@ -14,9 +15,12 @@ from datetime import datetime
 
 def generate_invoice_pdf(order_id, user, order_items, total, token=None):
 
+    # Vercel's deployed application directory is read-only.
+    # Use the writable temporary directory; the download route can regenerate
+    # the invoice from the persistent order record if this file is unavailable.
     invoices_dir = os.path.join(
-        current_app.root_path,
-        "invoices"
+        tempfile.gettempdir(),
+        "cafeteria_invoices"
     )
 
     os.makedirs(invoices_dir, exist_ok=True)

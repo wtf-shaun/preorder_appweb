@@ -401,7 +401,7 @@ def pay_now():
         token=token
     )
 
-    session['invoice_path'] = pdf_path
+    session['invoice_order_id'] = order_id
 
     clear_cart(user['id'])
 
@@ -423,16 +423,35 @@ def download_invoice():
     if not user:
         return redirect(url_for('auth.login'))
 
-    pdf_path = session.get('invoice_path')
-
-    if not pdf_path or not os.path.exists(pdf_path):
-        flash("Invoice is no longer available")
+    # Serverless instances may not retain temporary files between requests.
+    # Regenerate the invoice from the persistent order record instead.
+    order_id = session.get('invoice_order_id')
+    if not order_id:
+        flash("No recent invoice is available. Open your order progress page to access your order.")
         return redirect(url_for('main.menu'))
+
+    order = (
+        get_order_by_id_and_user(order_id, user['id'])
+        or get_order_stamp_by_id_and_user(order_id, user['id'])
+    )
+    if not order:
+        flash("Invoice order could not be found.")
+        return redirect(url_for('main.menu'))
+
+    from .utils.pdf_invoice import generate_invoice_pdf
+    pdf_path = generate_invoice_pdf(
+        order_id=order.get('id', order_id),
+        user=user,
+        order_items=order.get('items', []),
+        total=order.get('total', 0),
+        token=order.get('token')
+    )
 
     return send_file(
         pdf_path,
         as_attachment=True,
-        download_name=os.path.basename(pdf_path)
+        download_name=f"invoice_{order_id}.pdf",
+        mimetype="application/pdf"
     )
 # ===============================
 # ORDER PROGRESS
