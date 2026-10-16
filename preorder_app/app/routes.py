@@ -350,12 +350,13 @@ def pay_now():
     user = current_user()
 
     if not user:
+        flash("Please login first")
         return redirect(url_for('auth.login'))
 
     cart = get_cart_by_user(user['id'])
 
     if not cart or not cart.get('items'):
-        flash("Cart empty")
+        flash("Cart is empty")
         return redirect(url_for('main.menu'))
 
     order_items = []
@@ -367,19 +368,33 @@ def pay_now():
         if not item:
             continue
 
-        subtotal = item['price'] * c['qty']
+        try:
+            qty = int(c.get('qty', 0))
+            price = float(item['price'])
+        except (TypeError, ValueError):
+            flash("Invalid item quantity or price")
+            return redirect(url_for('main.view_cart'))
+
+        if qty < 1 or qty > 20 or price < 0:
+            flash("Invalid item quantity or price")
+            return redirect(url_for('main.view_cart'))
+
+        subtotal = price * qty
         total += subtotal
 
         order_items.append({
             "item_id": item['id'],
             "name": item['name'],
-            "qty": c['qty'],
-            "price": item['price'],
+            "qty": qty,
+            "price": price,
             "subtotal": subtotal
         })
 
-    order_id = str(uuid.uuid4())[:8].upper()
+    if not order_items:
+        flash("No valid items found in cart")
+        return redirect(url_for('main.menu'))
 
+    order_id = str(uuid.uuid4())[:8].upper()
     token = next_order_token()
     ordered_at = datetime.now(timezone.utc)
 
@@ -391,17 +406,12 @@ def pay_now():
         "items": order_items,
         "total": total,
         "status": "Preparing",
-        "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "created_at": ordered_at.strftime("%Y-%m-%d %H:%M:%S"),
         "ordered_at": ordered_at
-
-
     })
+
     record_item_order_events(order_id, order_items, ordered_at)
 
-    # Empty cart
-    clear_cart(user['id'])
-
-    # Generate invoice
     from .utils.pdf_invoice import generate_invoice_pdf
 
     pdf_path = generate_invoice_pdf(
@@ -412,8 +422,9 @@ def pay_now():
         token=token
     )
 
-    # Store invoice path temporarily for this session
     session['invoice_path'] = pdf_path
+
+    clear_cart(user['id'])
 
     return render_template(
         'payment_success.html',
