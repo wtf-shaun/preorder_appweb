@@ -28,16 +28,9 @@ def login():
         email = request.form.get('email')
         pwd = request.form.get('password')
 
+        # Administrators must be provisioned explicitly; never create a
+        # privileged account during an unauthenticated login attempt.
         user = get_user_by_email(email)
-        if not user and email == 'admin@example.com':
-            user = {
-                'id': 'admin-1',
-                'name': 'Admin',
-                'email': 'admin@example.com',
-                'password_hash': generate_password_hash('admin123'),
-                'is_admin': True
-            }
-            create_user(user)
 
         if user and check_password_hash(user.get('password_hash', ''), pwd):
             session.clear()

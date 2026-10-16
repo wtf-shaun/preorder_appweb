@@ -22,6 +22,13 @@ bp = Blueprint('main', __name__)
 @bp.route('/cafeteria')
 def cafeteria():
     user = current_user()
+    if not user:
+        flash('Please log in to continue.')
+        return redirect(url_for('auth.login'))
+    if user.get('is_admin') is not True:
+        flash('You are not authorized to access the cafeteria dashboard.')
+        return redirect(url_for('main.menu'))
+
     preparing_orders = get_orders_by_status('Preparing')
     ready_orders = get_orders_by_status('Ready for Collection')
     delivered_orders = get_orders_by_status('Delivered')
@@ -36,25 +43,6 @@ def cafeteria():
 from flask import session, redirect, url_for, current_app, flash
 
 # ===============================
-# Dev Tester
-# ===============================
-
-@bp.route('/demo-login')
-def demo_login():
-    # No environment or debug checks! It just works immediately.
-    
-    # Inject mock user data into the session
-    session['user_id'] = 9999
-    session['user_name'] = 'Demo Tester'
-    session['user_email'] = 'tester@example.com'
-    session['role'] = 'student' 
-
-    flash("Logged in as Demo Tester!", "success")
-    
-    return redirect(url_for('main.menu'))
-
-
-# ===============================
 # CURRENT USER
 # ===============================
 def current_user():
@@ -62,15 +50,6 @@ def current_user():
     if not uid:
         return None
         
-    # Catch the Demo Tester BEFORE asking the database
-    if uid == 9999:
-        return {
-            'id': 9999,
-            'name': session.get('user_name', 'Demo Tester'),
-            'email': session.get('user_email', 'tester@example.com'),
-            'role': session.get('role', 'student')
-        }
-
     # If it's a real user, look them up in the database normally
     return get_user_by_id(uid)
 def get_cart_count():
@@ -263,7 +242,7 @@ def cart_increase():
 
     for item in cart['items']:
         if item['item_id'] == item_id:
-            item['qty'] += 1
+            item['qty'] = min(20, int(item.get('qty', 1)) + 1)
 
     update_cart(user['id'], cart['items'])
 
@@ -494,6 +473,14 @@ def order_progress(order_id):
 # ===============================
 @bp.route('/update_order_status/<order_id>/<status>', methods=['POST'])
 def update_order_status(order_id, status):
+    user = current_user()
+    if not user:
+        flash('Please log in to continue.')
+        return redirect(url_for('auth.login'))
+    if user.get('is_admin') is not True:
+        flash('You are not authorized to update order statuses.')
+        return redirect(url_for('main.menu'))
+
     allowed_statuses = {
         "Preparing",
         "Ready for Collection",
