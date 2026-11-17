@@ -1,162 +1,245 @@
+
 {% extends 'base.html' %}
 
 {% block content %}
-<script>
-/**
- * Keeps the page reloading at a specified interval.
- * @param {number} seconds - The number of seconds before the page reloads.
- */
-function startAutoReload(seconds) {
-    const milliseconds = seconds * 1000;
-    
-    setTimeout(function () {
-        window.location.reload();
-    }, milliseconds);
-    
-    console.log(`Page will auto-reload in ${seconds} seconds.`);
-}
 
-// Call the function to reload the page every 60 seconds
-startAutoReload(60);
-</script>
 <div class="page-shell">
 
-    <div class="page-header">
-
-        <div>
-            <span class="page-eyebrow">
-                CAFETERIA MANAGEMENT
-            </span>
-
-            <h1>Order Dashboard</h1>
-
-            <p>
-                Manage active orders and update their collection status.
-            </p>
-        </div>
-
-        <div class="page-badge">
-            🍽️ Live Orders
-        </div>
-
-    </div>
-
-
-    {% if orders and orders|length > 0 %}
-
-    <div class="table-wrapper">
-
-        <table class="orders-table">
-
-            <thead>
-                <tr>
-                    <th>Token</th>
-                    <th>Order ID</th>
-                    <th>User</th>
-                    <th>Items</th>
-                    <th>Total</th>
-                    <th>Status</th>
-                    <th>Update</th>
-                </tr>
-            </thead>
-
-            <tbody>
-
-            {% for o in orders %}
-
-            <tr>
-
-                <!-- TOKEN -->
-
-                <td>
-
-                    <div class="dashboard-token">
-                        {{ o.get('token', '-') }}
-                    </div>
-
-                </td>
-
-
-                <!-- ORDER ID -->
-
-                <td>
-
-                    <span class="order-id">
-                        #{{ o['id'] }}
-                    </span>
-
-                </td>
-{% extends 'base.html' %}
-{% block content %}
-<div class="page-shell">
     <div class="page-header">
         <div>
             <span class="page-eyebrow">CAFETERIA MANAGEMENT</span>
             <h1>Order Dashboard</h1>
             <p>Manage active orders and update their collection status.</p>
         </div>
+
         <div class="page-badge">🍽️ Live Orders</div>
     </div>
 
+    <!-- PREPARING ORDERS -->
     <div class="orders-section">
+
         <div class="section-header">
             <h2>🍳 Preparing Orders ({{ preparing_orders|length }})</h2>
-            <button type="button" class="toggle-btn" onclick="toggleSection('preparing')">▼ Show</button>
+            <button type="button" class="toggle-btn"
+                    onclick="toggleSection('preparing', this)">
+                ▼ Hide
+            </button>
         </div>
-        <div id="preparing" class="orders-content" style="display: block;">
+
+        <div id="preparing" class="orders-content">
+
             {% if preparing_orders %}
-            <table class="orders-table"> ... </table>
+            <div class="table-wrapper">
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Token</th>
+                            <th>Order ID</th>
+                            <th>User</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Update</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for o in preparing_orders %}
+                        <tr>
+                            <td>{{ o.get('token', '-') }}</td>
+                            <td>#{{ o.get('id', '-') }}</td>
+                            <td>{{ o.get('user_name', '-') }}</td>
+
+                            <td>
+                                {% for item in o.get('items', []) %}
+                                    {{ item.get('name', 'Item') }}
+                                    × {{ item.get('qty', 1) }}
+                                    {% if not loop.last %}<br>{% endif %}
+                                {% else %}
+                                    -
+                                {% endfor %}
+                            </td>
+
+                            <td>₹{{ o.get('total', 0) }}</td>
+                            <td>{{ o.get('status', 'Preparing') }}</td>
+
+                            <td>
+                                <form method="POST"
+                                      action="{{ url_for('main.update_order_status',
+                                      order_id=o.get('id'),
+                                      status='Ready for Collection') }}">
+                                    <button type="submit">
+                                        Mark Ready
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
             {% else %}
-            <p class="empty-message">No orders currently preparing</p>
+                <p class="empty-message">No orders currently preparing.</p>
             {% endif %}
+
         </div>
     </div>
 
+
+    <!-- READY ORDERS -->
     <div class="orders-section">
+
         <div class="section-header">
             <h2>🛍️ Ready for Collection ({{ ready_orders|length }})</h2>
-            <button type="button" class="toggle-btn" onclick="toggleSection('ready')">▼ Show</button>
+            <button type="button" class="toggle-btn"
+                    onclick="toggleSection('ready', this)">
+                ▼ Hide
+            </button>
         </div>
-        <div id="ready" class="orders-content" style="display: block;">
+
+        <div id="ready" class="orders-content">
+
             {% if ready_orders %}
-            <table class="orders-table"> ... </table>
+            <div class="table-wrapper">
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Token</th>
+                            <th>Order ID</th>
+                            <th>User</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Update</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for o in ready_orders %}
+                        <tr>
+                            <td>{{ o.get('token', '-') }}</td>
+                            <td>#{{ o.get('id', '-') }}</td>
+                            <td>{{ o.get('user_name', '-') }}</td>
+
+                            <td>
+                                {% for item in o.get('items', []) %}
+                                    {{ item.get('name', 'Item') }}
+                                    × {{ item.get('qty', 1) }}
+                                    {% if not loop.last %}<br>{% endif %}
+                                {% else %}
+                                    -
+                                {% endfor %}
+                            </td>
+
+                            <td>₹{{ o.get('total', 0) }}</td>
+                            <td>{{ o.get('status', 'Ready for Collection') }}</td>
+
+                            <td>
+                                <form method="POST"
+                                      action="{{ url_for('main.update_order_status',
+                                      order_id=o.get('id'),
+                                      status='Delivered') }}">
+                                    <button type="submit">
+                                        Mark Delivered
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
             {% else %}
-            <p class="empty-message">No orders ready yet</p>
+                <p class="empty-message">No orders ready for collection.</p>
             {% endif %}
+
         </div>
     </div>
 
+
+    <!-- DELIVERED ORDERS -->
     <div class="orders-section">
+
         <div class="section-header">
             <h2>✓ Delivered ({{ delivered_orders|length }})</h2>
-            <button type="button" class="toggle-btn" onclick="toggleSection('delivered')">▼ Show</button>
+            <button type="button" class="toggle-btn"
+                    onclick="toggleSection('delivered', this)">
+                ▶ Show
+            </button>
         </div>
-        <div id="delivered" class="orders-content" style="display: none;">
+
+        <div id="delivered" class="orders-content"
+             style="display: none;">
+
             {% if delivered_orders %}
-            <table class="orders-table"> ... </table>
+            <div class="table-wrapper">
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Token</th>
+                            <th>Order ID</th>
+                            <th>User</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for o in delivered_orders %}
+                        <tr>
+                            <td>{{ o.get('token', '-') }}</td>
+                            <td>#{{ o.get('id', '-') }}</td>
+                            <td>{{ o.get('user_name', '-') }}</td>
+
+                            <td>
+                                {% for item in o.get('items', []) %}
+                                    {{ item.get('name', 'Item') }}
+                                    × {{ item.get('qty', 1) }}
+                                    {% if not loop.last %}<br>{% endif %}
+                                {% else %}
+                                    -
+                                {% endfor %}
+                            </td>
+
+                            <td>₹{{ o.get('total', 0) }}</td>
+                            <td>{{ o.get('status', 'Delivered') }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
             {% else %}
-            <p class="empty-message">No delivered orders yet</p>
+                <p class="empty-message">No delivered orders yet.</p>
             {% endif %}
+
         </div>
     </div>
+
 </div>
 
+
 <script>
-function toggleSection(sectionId) {
+function toggleSection(sectionId, button) {
     const section = document.getElementById(sectionId);
-    const btn = event.target;
+
     if (section.style.display === 'none') {
         section.style.display = 'block';
-        btn.textContent = '▼ Hide';
+        button.textContent = '▼ Hide';
     } else {
         section.style.display = 'none';
-        btn.textContent = '▶ Show';
+        button.textContent = '▶ Show';
     }
 }
-</script>
-{% endblock %}
+
+// Refresh dashboard every 60 seconds
 setTimeout(function () {
     window.location.reload();
+}, 60000);
+</script>
+
+{% endblock %}
+
 }, 60000);
 </script>
 
