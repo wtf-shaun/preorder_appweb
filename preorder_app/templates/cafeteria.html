@@ -99,6 +99,13 @@
     </div>
 </div>
 
+<div id="status-loading" class="status-loading" aria-live="polite" aria-hidden="true">
+    <div class="status-loading-panel">
+        <div class="status-loading-spinner" aria-hidden="true"></div>
+        <span>Updating order...</span>
+    </div>
+</div>
+
 <script>
 function toggleSection(sectionId, button) {
     const section = document.getElementById(sectionId);
@@ -111,6 +118,21 @@ function toggleSection(sectionId, button) {
     }
 }
 setTimeout(function () { window.location.reload(); }, 60000);
+
+document.querySelectorAll('.orders-table form').forEach(function (form) {
+    form.addEventListener('submit', function () {
+        const button = form.querySelector('button[type="submit"]');
+        const loading = document.getElementById('status-loading');
+        if (button) {
+            button.disabled = true;
+            button.textContent = 'Updating...';
+        }
+        if (loading) {
+            loading.classList.add('is-visible');
+            loading.setAttribute('aria-hidden', 'false');
+        }
+    });
+});
 </script>
 
 {# Legacy duplicated template content removed below from Jinja parsing.
