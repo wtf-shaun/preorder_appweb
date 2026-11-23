@@ -12,6 +12,7 @@ from .db import (
 )
 import uuid
 from datetime import datetime, timezone
+from urllib.parse import unquote, unquote_plus
 import os
 
 bp = Blueprint('main', __name__)
@@ -481,7 +482,7 @@ def order_progress(order_id):
 # ===============================
 # UPDATE ORDER STATUS
 # ===============================
-@bp.route('/update_order_status/<order_id>/<status>', methods=['POST'])
+@bp.route('/update_order_status/<order_id>/<path:status>', methods=['POST'])
 def update_order_status(order_id, status):
     allowed_statuses = {
         "Preparing",
@@ -489,9 +490,20 @@ def update_order_status(order_id, status):
         "Delivered"
     }
 
-    if status not in allowed_statuses:
+    decoded_status = unquote_plus(unquote(status))
+    normalized_status = decoded_status.replace('-', ' ').replace('_', ' ').strip()
+    status_aliases = {
+        "Ready for Collection": "Ready for Collection",
+        "Ready for collection": "Ready for Collection",
+        "ReadyforCollection": "Ready for Collection",
+    }
+    normalized_status = status_aliases.get(normalized_status, normalized_status)
+
+    if normalized_status not in allowed_statuses:
         flash("Invalid order status")
         return redirect(url_for('main.cafeteria'))
+
+    status = normalized_status
 
     order = get_order_by_id(order_id)
 
