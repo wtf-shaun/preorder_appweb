@@ -1,24 +1,119 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<script>
-/**
- * Keeps the page reloading at a specified interval.
- * @param {number} seconds - The number of seconds before the page reloads.
- */
-function startAutoReload(seconds) {
-    const milliseconds = seconds * 1000;
-    
-    setTimeout(function () {
-        window.location.reload();
-    }, milliseconds);
-    
-    console.log(`Page will auto-reload in ${seconds} seconds.`);
-}
+{% set preparing_orders = preparing_orders|default([]) %}
+{% set ready_orders = ready_orders|default([]) %}
+{% set delivered_orders = delivered_orders|default([]) %}
 
-// Call the function to reload the page every 60 seconds
-startAutoReload(60);
+<div class="page-shell">
+    <div class="page-header">
+        <div>
+            <span class="page-eyebrow">CAFETERIA MANAGEMENT</span>
+            <h1>Order Dashboard</h1>
+            <p>Manage active orders and update their collection status.</p>
+        </div>
+        <div class="page-badge">Live Orders</div>
+    </div>
+
+    <div class="orders-section">
+        <div class="section-header">
+            <h2>Preparing Orders ({{ preparing_orders|length }})</h2>
+            <button type="button" class="toggle-btn" onclick="toggleSection('preparing', this)">Show</button>
+        </div>
+        <div id="preparing" class="orders-content" style="display: block;">
+            {% if preparing_orders %}
+            <div class="table-wrapper">
+                <table class="orders-table">
+                    <thead><tr><th>Token</th><th>Order ID</th><th>User</th><th>Items</th><th>Total</th><th>Update</th></tr></thead>
+                    <tbody>
+                    {% for order in preparing_orders %}
+                    <tr>
+                        <td><div class="dashboard-token">{{ order.get('token', '-') }}</div></td>
+                        <td>#{{ order['id'] }}</td>
+                        <td>{{ order.get('user_name', '-') }}</td>
+                        <td>{% for item in order.get('items', []) %}{{ item.name }} x{{ item.qty }}{% if not loop.last %}, {% endif %}{% endfor %}</td>
+                        <td>R{{ '%.2f'|format(order.get('total', 0)) }}</td>
+                        <td><form action="{{ url_for('main.update_order_status', order_id=order['id'], status='Ready for Collection') }}" method="POST"><button type="submit" class="action-btn edit-btn">Mark Ready</button></form></td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}<p class="empty-message">No orders currently preparing</p>{% endif %}
+        </div>
+    </div>
+
+    <div class="orders-section">
+        <div class="section-header">
+            <h2>Ready for Collection ({{ ready_orders|length }})</h2>
+            <button type="button" class="toggle-btn" onclick="toggleSection('ready', this)">Show</button>
+        </div>
+        <div id="ready" class="orders-content" style="display: block;">
+            {% if ready_orders %}
+            <div class="table-wrapper">
+                <table class="orders-table">
+                    <thead><tr><th>Token</th><th>Order ID</th><th>User</th><th>Items</th><th>Total</th><th>Update</th></tr></thead>
+                    <tbody>
+                    {% for order in ready_orders %}
+                    <tr>
+                        <td><div class="dashboard-token">{{ order.get('token', '-') }}</div></td>
+                        <td>#{{ order['id'] }}</td>
+                        <td>{{ order.get('user_name', '-') }}</td>
+                        <td>{% for item in order.get('items', []) %}{{ item.name }} x{{ item.qty }}{% if not loop.last %}, {% endif %}{% endfor %}</td>
+                        <td>R{{ '%.2f'|format(order.get('total', 0)) }}</td>
+                        <td><form action="{{ url_for('main.update_order_status', order_id=order['id'], status='Delivered') }}" method="POST"><button type="submit" class="action-btn edit-btn">Mark Delivered</button></form></td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}<p class="empty-message">No orders ready yet</p>{% endif %}
+        </div>
+    </div>
+
+    <div class="orders-section">
+        <div class="section-header">
+            <h2>Delivered ({{ delivered_orders|length }})</h2>
+            <button type="button" class="toggle-btn" onclick="toggleSection('delivered', this)">Show</button>
+        </div>
+        <div id="delivered" class="orders-content" style="display: none;">
+            {% if delivered_orders %}
+            <div class="table-wrapper">
+                <table class="orders-table">
+                    <thead><tr><th>Token</th><th>Order ID</th><th>Items</th><th>Total</th><th>Status</th></tr></thead>
+                    <tbody>
+                    {% for order in delivered_orders %}
+                    <tr>
+                        <td><div class="dashboard-token">{{ order.get('token', '-') }}</div></td>
+                        <td>#{{ order['id'] }}</td>
+                        <td>{{ order.get('item_count', 0) }} item(s)</td>
+                        <td>R{{ '%.2f'|format(order.get('total', 0)) }}</td>
+                        <td>Delivered</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}<p class="empty-message">No delivered orders yet</p>{% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleSection(sectionId, button) {
+    const section = document.getElementById(sectionId);
+    if (section.style.display === 'none') {
+        section.style.display = 'block';
+        button.textContent = 'Hide';
+    } else {
+        section.style.display = 'none';
+        button.textContent = 'Show';
+    }
+}
+setTimeout(function () { window.location.reload(); }, 60000);
 </script>
+
+{% comment %}
 <div class="page-shell">
 
     <div class="page-header">
