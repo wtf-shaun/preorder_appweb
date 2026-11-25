@@ -94,6 +94,12 @@
             letter-spacing: -0.02em;
         }
 
+        .startup-subtitle {
+            margin-top: 8px;
+            color: #7A726D;
+            font-size: 14px;
+        }
+
         .startup-progress {
             width: 100%;
             height: 6px;
@@ -187,10 +193,11 @@
                 <img src="/static/logo.png" alt="Cafeteria Pre-Order Logo">
             </div>
             <h1>Cafeteria Pre-Order</h1>
+            <p class="startup-subtitle">Fresh meals. Quick pickups.</p>
             <div class="startup-progress" role="progressbar" aria-label="Loading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
                 <div class="startup-progress-fill"></div>
             </div>
-            <div class="startup-status">Starting up...</div>
+            <div class="startup-status">Preparing today's menu...</div>
             <button class="retry" type="button" onclick="window.location.reload()" hidden>Try again</button>
         </section>
     </div>
@@ -218,8 +225,8 @@
                 }, 180);
             }
 
-            requestAnimationFrame(() => setLoaderState(18, "Starting up..."));
-            setTimeout(() => setLoaderState(58, "Syncing workspace..."), 450);
+            requestAnimationFrame(() => setLoaderState(18, "Preparing today's menu..."));
+            setTimeout(() => setLoaderState(58, "Checking fresh items..."), 450);
 
             async function waitForApp() {
                 while (true) {
@@ -243,7 +250,7 @@
 
                     if (attempts === 5) {
                         retry.hidden = false;
-                        setLoaderState(88, "Syncing workspace...");
+                        setLoaderState(88, "Warming up the counter...");
                     }
 
                     if (attempts >= 40) {
