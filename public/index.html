@@ -3,154 +3,226 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#ffffff">
-    <title>Cafeteria Pre-Order</title>
+    <meta name="theme-color" content="#fffdfb">
+    <title>Cafeteria Pre-Order - Loading Menu</title>
     <style>
         :root {
-            color-scheme: light;
-            --paper: #f6f3ed;
-            --ink: #17243a;
-            --muted: #706c68;
-            --orange: #cf7138;
-            --orange-light: #e5a06f;
-            --line: rgba(35, 41, 53, 0.1);
+            --bg-top: #fffdfb;
+            --bg-bottom: #faefe6;
+            --bg-wash: rgba(255, 138, 31, 0.08);
+            --surface: #ffffff;
+            --surface-soft: #fff6ee;
+            --border: #efe3d8;
+            --text-primary: #1f2421;
+            --text-secondary: #686d6a;
+            --accent: #ff7a00;
+            --accent-soft: #fff1e4;
+            --success-bg: #eefaf2;
+            --success-text: #1f8a4c;
+            --shadow-card: 0 10px 28px rgba(45, 28, 12, 0.06);
+            --shadow-float: 0 18px 42px rgba(45, 28, 12, 0.09);
         }
 
-        * { box-sizing: border-box; }
-
-        html, body {
-            min-width: 320px;
-            min-height: 100%;
+        * {
+            box-sizing: border-box;
             margin: 0;
+            padding: 0;
         }
 
         body {
             min-height: 100vh;
             min-height: 100dvh;
-            display: grid;
-            grid-template-rows: 66px 1fr;
-            overflow: hidden;
-            border-top: 4px solid var(--orange);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+            color: var(--text-primary);
             background:
-                linear-gradient(166deg, transparent 0 18%, rgba(235, 194, 158, 0.13) 18.2% 35%, transparent 35.2%),
-                linear-gradient(166deg, transparent 0 44%, rgba(255, 255, 255, 0.4) 44.2% 61%, transparent 61.2%),
-                linear-gradient(166deg, transparent 0 72%, rgba(204, 216, 204, 0.11) 72.2% 90%, transparent 90.2%),
-                radial-gradient(ellipse at 16% 32%, rgba(244, 201, 165, 0.2), transparent 36%),
-                var(--paper);
-            color: var(--ink);
-            font-family: "Segoe UI", Arial, sans-serif;
+                radial-gradient(circle at 85% 80%, var(--bg-wash), transparent 45%),
+                linear-gradient(165deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+            overflow-x: hidden;
         }
 
-        .site-header {
+        #cafeteria-loader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            background:
+                radial-gradient(circle at 82% 78%, var(--bg-wash), transparent 48%),
+                linear-gradient(160deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+        }
+
+        .loader-topbar {
+            height: 64px;
+            padding: 0 28px;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(239, 227, 216, 0.75);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand-group {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 0 clamp(20px, 3vw, 36px);
-            background: rgba(255, 255, 255, 0.94);
-            border-bottom: 1px solid var(--line);
-            box-shadow: 0 5px 18px rgba(36, 40, 48, 0.06);
         }
 
-        .site-header img {
+        .brand-emblem {
             width: 36px;
             height: 36px;
-            object-fit: contain;
-        }
-
-        .site-header span {
-            color: #bc7540;
-            font-size: 20px;
-            font-weight: 750;
-            letter-spacing: 0.01em;
-        }
-
-        main {
-            width: min(100% - 36px, 520px);
-            align-self: center;
-            justify-self: center;
-            padding: 32px 18px 28px;
-            text-align: center;
-            animation: rise-in 420ms ease-out both;
-        }
-
-        .loading-mark {
-            width: 64px;
-            height: 64px;
+            border-radius: 50%;
+            border: 1.5px dashed var(--text-primary);
             display: grid;
             place-items: center;
-            margin: 0 auto 18px;
-            border: 1px solid rgba(207, 113, 56, 0.22);
-            border-radius: 18px;
-            background: rgba(255, 255, 255, 0.82);
-            box-shadow: 0 12px 30px rgba(89, 66, 43, 0.12);
-        }
-
-        .loading-mark img {
-            width: 42px;
-            height: 42px;
-            object-fit: contain;
-        }
-
-        h1 {
-            margin: 0;
-            color: var(--ink);
-            font-family: Georgia, "Times New Roman", serif;
-            font-size: clamp(36px, 5vw, 54px);
+            font-size: 9px;
             font-weight: 700;
-            line-height: 1.15;
-            letter-spacing: -0.025em;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            background: var(--surface);
+            animation: slowSpin 14s linear infinite;
         }
 
-        p {
-            min-height: 28px;
-            margin: 12px 0 25px;
-            color: var(--muted);
-            font-family: Georgia, "Times New Roman", serif;
-            font-size: 14px;
-            font-style: italic;
-            opacity: 1;
-            transform: translateY(0);
-            transition: opacity 220ms ease, transform 220ms ease;
+        .brand-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: -0.01em;
         }
 
-        p.is-changing {
-            opacity: 0;
-            transform: translateY(4px);
-        }
-
-        .progress {
-            position: relative;
-            width: min(295px, 76vw);
-            height: 7px;
-            margin: 0 auto;
-            overflow: hidden;
+        .topbar-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
             border-radius: 999px;
-            background: rgba(207, 113, 56, 0.24);
-            box-shadow: inset 0 1px 2px rgba(56, 43, 35, 0.08);
+            background: var(--accent-soft);
+            color: var(--accent);
+            font-size: 12px;
+            font-weight: 600;
         }
 
-        .progress span {
-            position: relative;
-            display: block;
-            width: 18%;
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: pulseDot 1.3s ease-in-out infinite;
+        }
+
+        .loader-main {
+            flex: 1;
+            max-width: 1040px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 36px 24px 48px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 28px;
+        }
+
+        .loader-hero {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .eyebrow {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 6px;
+        }
+
+        .loader-hero h1 {
+            font-size: clamp(28px, 4vw, 40px);
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            line-height: 1.1;
+        }
+
+        .loader-hero p {
+            margin-top: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .fresh-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-card);
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .progress-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 18px 22px;
+            box-shadow: var(--shadow-card);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .progress-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            font-size: 13px;
+        }
+
+        .progress-step {
+            font-weight: 600;
+        }
+
+        .progress-percent {
+            font-weight: 700;
+            color: var(--accent);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 8px;
+            border-radius: 999px;
+            background: var(--surface-soft);
+            overflow: hidden;
+            border: 1px solid #f5e4d4;
+        }
+
+        .progress-fill {
             height: 100%;
-            border-radius: inherit;
-            background: linear-gradient(90deg, var(--orange), #eea36f, var(--orange));
-            box-shadow: 0 0 9px rgba(207, 113, 56, 0.32);
-            transition: width 500ms ease;
+            width: 0;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #ff8d24 0%, var(--accent) 100%);
+            transition: width 280ms ease;
         }
-
 
         .retry {
-            margin-top: 20px;
+            align-self: flex-end;
+            margin-top: 2px;
             border: 0;
-            background: transparent;
-            color: #39775c;
+            border-radius: 999px;
+            padding: 8px 14px;
+            background: var(--accent-soft);
+            color: var(--accent);
             font: inherit;
-            font-size: 14px;
-            font-weight: 650;
-            text-decoration: underline;
-            text-underline-offset: 3px;
+            font-size: 13px;
+            font-weight: 700;
             cursor: pointer;
         }
 
@@ -158,117 +230,324 @@
             display: none;
         }
 
-        .retry:hover {
-            color: #285d47;
+        .skeleton-grid {
+            display: grid;
+            grid-template-columns: 240px repeat(2, minmax(0, 1fr));
+            gap: 20px;
+            align-items: stretch;
         }
 
-        @keyframes rise-in {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .skeleton-sidebar {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--accent);
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: var(--shadow-card);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .sk-line {
+            height: 12px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #f6ece3 25%, #fffaf5 50%, #f6ece3 75%);
+            background-size: 220% 100%;
+            animation: shimmer 1.4s infinite linear;
+        }
+
+        .sk-line.sm { width: 42%; height: 9px; }
+        .sk-line.md { width: 68%; }
+        .sk-line.lg { width: 88%; height: 18px; }
+
+        .sk-nav-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 8px;
+            border-top: 1px dashed #f0e3d8;
+        }
+
+        .sk-nav-row .sk-line {
+            width: 55%;
+            height: 11px;
+        }
+
+        .sk-nav-row .sk-badge {
+            width: 18px;
+            height: 11px;
+            border-radius: 6px;
+            background: var(--accent-soft);
+        }
+
+        .skeleton-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: var(--shadow-float);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sk-thumb {
+            height: 148px;
+            padding: 12px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            background: linear-gradient(120deg, #f7ede4 20%, #fffbf7 50%, #f7ede4 80%);
+            background-size: 220% 100%;
+            animation: shimmer 1.4s infinite linear;
+        }
+
+        .sk-tag {
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        .sk-tag-dark {
+            background: rgba(28, 30, 29, 0.78);
+            color: #ffffff;
+        }
+
+        .sk-tag-avail {
+            background: var(--success-bg);
+            color: var(--success-text);
+        }
+
+        .sk-card-body {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .sk-title-price {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sk-stepper {
+            height: 36px;
+            border-radius: 999px;
+            border: 1px solid #f2dfd0;
+            background: var(--surface-soft);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 14px;
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.35); opacity: 0.55; }
+        }
+
+        @keyframes slowSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 860px) {
+            .skeleton-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .skeleton-sidebar {
+                display: none;
+            }
+        }
+
+        @media (max-height: 700px) {
+            .loader-main {
+                gap: 16px;
+                padding-top: 20px;
+                padding-bottom: 20px;
+            }
+
+            .sk-thumb {
+                height: 118px;
+            }
         }
 
         @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                scroll-behavior: auto !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
-
-        @media (max-width: 520px) {
-            body {
-                grid-template-rows: 60px 1fr;
+            .brand-emblem,
+            .status-dot,
+            .sk-line,
+            .sk-thumb {
+                animation: none;
             }
 
-            .site-header span {
-                font-size: 17px;
-            }
-
-            main {
-                padding-bottom: 18px;
+            .progress-fill {
+                transition: none;
             }
         }
     </style>
 </head>
 <body>
-    <header class="site-header">
-        <img src="/static/logo.png" alt="">
-        <span>Pre-order System</span>
-    </header>
-    <main>
-        <div class="loading-mark"><img src="/static/logo.png" alt="Cafeteria Pre-Order"></div>
-        <h1>Cafeteria Pre-Order</h1>
-        <p id="status" aria-live="polite" aria-atomic="true">Getting the menu ready…</p>
-        <div class="progress" role="progressbar" aria-label="Starting the app" aria-valuemin="0" aria-valuemax="100" aria-valuenow="18">
-            <span id="progress-fill"></span>
-        </div>
-        <button class="retry" type="button" onclick="window.location.reload()" hidden>Try again</button>
-    </main>
+    <div id="cafeteria-loader" role="status" aria-live="polite" aria-label="Loading cafeteria menu">
+        <header class="loader-topbar">
+            <div class="brand-group">
+                <div class="brand-emblem" aria-hidden="true">PRE</div>
+                <span class="brand-title">Cafeteria Pre-Order</span>
+            </div>
+            <div class="topbar-status">
+                <span class="status-dot" aria-hidden="true"></span>
+                <span>Syncing Kitchen</span>
+            </div>
+        </header>
+
+        <main class="loader-main">
+            <div class="loader-hero">
+                <div>
+                    <div class="eyebrow">Cafeteria Menu</div>
+                    <h1>Preparing Today's Menu</h1>
+                    <p>Fetching fresh items, live availability, and your saved cart.</p>
+                </div>
+                <div class="fresh-pill">Fresh &amp; Ready</div>
+            </div>
+
+            <section class="progress-panel" aria-label="Loading progress">
+                <div class="progress-meta">
+                    <span class="progress-step" id="loader-status-text">Checking beverages &amp; counter stock...</span>
+                    <span class="progress-percent" id="loader-percent">0%</span>
+                </div>
+                <div class="progress-track" role="progressbar" aria-label="Starting the app" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                    <div class="progress-fill" id="loader-bar"></div>
+                </div>
+                <button class="retry" type="button" onclick="window.location.reload()" hidden>Try again</button>
+            </section>
+
+            <section class="skeleton-grid" aria-hidden="true">
+                <aside class="skeleton-sidebar">
+                    <div class="sk-line sm"></div>
+                    <div class="sk-line lg"></div>
+                    <div class="sk-nav-row"><div class="sk-line"></div><span class="sk-badge"></span></div>
+                    <div class="sk-nav-row"><div class="sk-line"></div><span class="sk-badge"></span></div>
+                    <div class="sk-nav-row"><div class="sk-line"></div><span class="sk-badge"></span></div>
+                </aside>
+
+                <article class="skeleton-card">
+                    <div class="sk-thumb">
+                        <span class="sk-tag sk-tag-dark">CAFETERIA</span>
+                        <span class="sk-tag sk-tag-avail">• Available</span>
+                    </div>
+                    <div class="sk-card-body">
+                        <div class="sk-title-price">
+                            <div class="sk-line md" style="width:48%;height:15px"></div>
+                            <div class="sk-line sm" style="width:18%;height:15px"></div>
+                        </div>
+                        <div class="sk-stepper">
+                            <span>−</span>
+                            <div class="sk-line sm" style="width:24px;height:10px"></div>
+                            <span>+</span>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="skeleton-card">
+                    <div class="sk-thumb">
+                        <span class="sk-tag sk-tag-dark">CAFETERIA</span>
+                        <span class="sk-tag sk-tag-avail">• Available</span>
+                    </div>
+                    <div class="sk-card-body">
+                        <div class="sk-title-price">
+                            <div class="sk-line md" style="width:44%;height:15px"></div>
+                            <div class="sk-line sm" style="width:18%;height:15px"></div>
+                        </div>
+                        <div class="sk-stepper">
+                            <span>−</span>
+                            <div class="sk-line sm" style="width:24px;height:10px"></div>
+                            <span>+</span>
+                        </div>
+                    </div>
+                </article>
+            </section>
+        </main>
+    </div>
+
     <script>
-        const statusText = document.getElementById('status');
-        const loadingPhrases = [
-            'Getting the menu ready…',
-            'A fresh café moment is just around the corner…',
-            'Preparing something delicious for your break…',
-            'Made fresh, ready when you are…',
-            'Setting the table for a better break…'
-        ];
-        let phraseIndex = 0;
-        let delay = 700;
-        let attempts = 0;
-        let phraseTimer;
-        const progressFill = document.getElementById('progress-fill');
-        const progress = document.querySelector('.progress');
+        (function () {
+            const steps = [
+                { pct: 28, text: "Connecting to cafeteria counter..." },
+                { pct: 62, text: "Loading today's menu & item availability..." },
+                { pct: 88, text: "Syncing your pre-order cart..." }
+            ];
 
-        function setProgress(value) {
-            progressFill.style.width = value + '%';
-            progress.setAttribute('aria-valuenow', String(value));
-        }
+            const bar = document.getElementById("loader-bar");
+            const pctLabel = document.getElementById("loader-percent");
+            const statusText = document.getElementById("loader-status-text");
+            const progressTrack = document.querySelector(".progress-track");
+            const retry = document.querySelector(".retry");
+            let stepIndex = 0;
+            let attempts = 0;
+            let delay = 700;
 
-        phraseTimer = setInterval(() => {
-            statusText.classList.add('is-changing');
-            setTimeout(() => {
-                phraseIndex = (phraseIndex + 1) % loadingPhrases.length;
-                statusText.textContent = loadingPhrases[phraseIndex];
-                statusText.classList.remove('is-changing');
-                setProgress(Math.min(18 + phraseIndex * 12, 66));
-            }, 220);
-        }, 2800);
+            function setProgress(pct, text) {
+                bar.style.width = pct + "%";
+                pctLabel.textContent = pct + "%";
+                progressTrack.setAttribute("aria-valuenow", String(pct));
+                if (text) statusText.textContent = text;
+            }
 
-        async function waitForApp() {
-            while (true) {
-                attempts += 1;
-                try {
-                    const response = await fetch('/healthz', { cache: 'no-store' });
-                    if (response.ok) {
-                        clearInterval(phraseTimer);
-                        statusText.textContent = 'Ready — opening the menu…';
-                        setProgress(100);
-                        setTimeout(() => window.location.replace('/menu'), 280);
+            function advanceStep() {
+                if (stepIndex >= steps.length) return;
+                const current = steps[stepIndex++];
+                setProgress(current.pct, current.text);
+                if (stepIndex < steps.length) {
+                    setTimeout(advanceStep, 420);
+                }
+            }
+
+            setTimeout(advanceStep, 140);
+
+            async function waitForApp() {
+                while (true) {
+                    attempts += 1;
+                    try {
+                        const response = await fetch("/healthz", { cache: "no-store" });
+                        if (response.ok) {
+                            setProgress(100, "Menu ready.");
+                            setTimeout(() => window.location.replace("/menu"), 280);
+                            return;
+                        }
+                    } catch (error) {
+                        // The app is still starting or temporarily unreachable.
+                    }
+
+                    if (attempts === 5) {
+                        setProgress(88, "The app is warming up - this usually takes a moment.");
+                        retry.hidden = false;
+                    }
+
+                    if (attempts >= 40) {
+                        setProgress(88, "The app is taking longer than expected.");
+                        retry.hidden = false;
                         return;
                     }
-                } catch (error) {
-                    // The function is still starting or is temporarily unreachable.
-                }
 
-                if (attempts === 5) {
-                    statusText.textContent = 'The app is warming up — this usually takes a moment.';
-                    document.querySelector('.retry').hidden = false;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay = Math.min(Math.round(delay * 1.5), 3000);
                 }
-
-                if (attempts >= 40) {
-                    clearInterval(phraseTimer);
-                    statusText.textContent = 'The app is taking longer than expected.';
-                    document.querySelector('.retry').hidden = false;
-                    return;
-                }
-                await new Promise(resolve => setTimeout(resolve, delay));
-                delay = Math.min(Math.round(delay * 1.5), 3000);
             }
-        }
 
-        waitForApp();
+            waitForApp();
+        })();
     </script>
 </body>
 </html>
