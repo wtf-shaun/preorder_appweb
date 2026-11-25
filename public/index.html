@@ -3,518 +3,223 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#fffdfb">
-    <title>Cafeteria Pre-Order - Loading Menu</title>
+    <meta name="theme-color" content="#FDF8F4">
+    <title>Cafeteria Pre-Order</title>
     <style>
-        :root {
-            --bg-top: #fffdfb;
-            --bg-bottom: #faefe6;
-            --bg-wash: rgba(255, 138, 31, 0.08);
-            --surface: #ffffff;
-            --surface-soft: #fff6ee;
-            --border: #efe3d8;
-            --text-primary: #1f2421;
-            --text-secondary: #686d6a;
-            --accent: #ff7a00;
-            --accent-soft: #fff1e4;
-            --success-bg: #eefaf2;
-            --success-text: #1f8a4c;
-            --shadow-card: 0 10px 28px rgba(45, 28, 12, 0.06);
-            --shadow-float: 0 18px 42px rgba(45, 28, 12, 0.09);
-        }
+        * { box-sizing: border-box; }
 
-        * {
-            box-sizing: border-box;
+        html, body {
+            width: 100%;
+            min-height: 100%;
             margin: 0;
-            padding: 0;
         }
 
         body {
             min-height: 100vh;
             min-height: 100dvh;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
-            color: var(--text-primary);
-            background:
-                radial-gradient(circle at 85% 80%, var(--bg-wash), transparent 45%),
-                linear-gradient(165deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
-            overflow-x: hidden;
+            color: #231F20;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(135deg, #FDF8F4 0%, #F9EFE6 55%, #F5E6D8 100%);
         }
 
-        #cafeteria-loader {
+        #startup-loader {
             position: fixed;
             inset: 0;
             z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            background:
-                radial-gradient(circle at 82% 78%, var(--bg-wash), transparent 48%),
-                linear-gradient(160deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
-        }
-
-        .loader-topbar {
-            height: 64px;
-            padding: 0 28px;
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(8px);
-            border-bottom: 1px solid rgba(239, 227, 216, 0.75);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .brand-group {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .brand-emblem {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border: 1.5px dashed var(--text-primary);
             display: grid;
             place-items: center;
-            font-size: 9px;
-            font-weight: 700;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            background: var(--surface);
-            animation: slowSpin 14s linear infinite;
+            padding: 24px;
+            background:
+                linear-gradient(135deg, rgba(255, 255, 255, 0.45) 0%, transparent 22%, rgba(255, 255, 255, 0.45) 48%, transparent 72%),
+                linear-gradient(135deg, #FDF8F4 0%, #F9EFE6 55%, #F5E6D8 100%);
+            opacity: 1;
+            transform: scale(1);
+            transition: opacity 420ms ease, transform 420ms ease;
         }
 
-        .brand-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--accent);
-            letter-spacing: -0.01em;
+        #startup-loader.is-hidden {
+            opacity: 0;
+            transform: scale(1.02);
+            pointer-events: none;
         }
 
-        .topbar-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 12px;
-            border-radius: 999px;
-            background: var(--accent-soft);
-            color: var(--accent);
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .status-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: var(--accent);
-            animation: pulseDot 1.3s ease-in-out infinite;
-        }
-
-        .loader-main {
-            flex: 1;
-            max-width: 1040px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 36px 24px 48px;
+        .startup-loader-card {
+            width: min(420px, calc(100vw - 32px));
+            min-height: 360px;
             display: flex;
             flex-direction: column;
+            align-items: center;
             justify-content: center;
-            gap: 28px;
+            padding: 42px 36px 36px;
+            border-radius: 20px;
+            border-top: 5px solid #F39223;
+            background: #FFFFFF;
+            box-shadow: 0 20px 50px rgba(45, 36, 30, 0.08);
+            text-align: center;
         }
 
-        .loader-hero {
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        .eyebrow {
+        .startup-eyebrow {
+            margin-bottom: 22px;
+            color: #F39223;
             font-size: 11px;
             font-weight: 700;
             letter-spacing: 0.14em;
             text-transform: uppercase;
-            color: var(--accent);
-            margin-bottom: 6px;
         }
 
-        .loader-hero h1 {
-            font-size: clamp(28px, 4vw, 40px);
-            font-weight: 800;
-            letter-spacing: -0.025em;
-            line-height: 1.1;
+        .startup-logo-ring {
+            width: 82px;
+            height: 82px;
+            display: grid;
+            place-items: center;
+            margin-bottom: 22px;
+            border-radius: 50%;
+            background: #FFFFFF;
+            border: 2px solid rgba(243, 146, 35, 0.15);
+            box-shadow: 0 0 0 10px rgba(243, 146, 35, 0.08);
+            animation: startup-breathe 1.8s ease-in-out infinite;
         }
 
-        .loader-hero p {
-            margin-top: 8px;
-            font-size: 14px;
-            color: var(--text-secondary);
+        .startup-logo-ring img {
+            width: 58px;
+            height: 58px;
+            object-fit: contain;
         }
 
-        .fresh-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 14px;
-            border-radius: 999px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow-card);
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--accent);
+        .startup-loader-card h1 {
+            margin: 0;
+            color: #231F20;
+            font-size: clamp(26px, 6vw, 34px);
+            line-height: 1.15;
+            letter-spacing: -0.02em;
         }
 
-        .progress-panel {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 18px;
-            padding: 18px 22px;
-            box-shadow: var(--shadow-card);
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .progress-meta {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            font-size: 13px;
-        }
-
-        .progress-step {
-            font-weight: 600;
-        }
-
-        .progress-percent {
-            font-weight: 700;
-            color: var(--accent);
-            font-variant-numeric: tabular-nums;
-        }
-
-        .progress-track {
+        .startup-progress {
             width: 100%;
-            height: 8px;
-            border-radius: 999px;
-            background: var(--surface-soft);
+            height: 6px;
+            margin-top: 28px;
             overflow: hidden;
-            border: 1px solid #f5e4d4;
+            border-radius: 999px;
+            background: #F4EBE3;
         }
 
-        .progress-fill {
-            height: 100%;
+        .startup-progress-fill {
+            position: relative;
             width: 0;
-            border-radius: 999px;
-            background: linear-gradient(90deg, #ff8d24 0%, var(--accent) 100%);
-            transition: width 280ms ease;
+            height: 100%;
+            border-radius: inherit;
+            background: #F39223;
+            transition: width 420ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .startup-progress-fill::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.55) 50%, transparent 100%);
+            transform: translateX(-100%);
+            animation: startup-shimmer 1.2s ease-in-out infinite;
+        }
+
+        .startup-status {
+            min-height: 18px;
+            margin-top: 14px;
+            color: #7A726D;
+            font-size: 13px;
+            transition: opacity 180ms ease, transform 180ms ease;
+        }
+
+        .startup-status.is-changing {
+            opacity: 0;
+            transform: translateY(3px);
         }
 
         .retry {
-            align-self: flex-end;
-            margin-top: 2px;
+            margin-top: 12px;
             border: 0;
             border-radius: 999px;
             padding: 8px 14px;
-            background: var(--accent-soft);
-            color: var(--accent);
+            background: #FFF1E4;
+            color: #F39223;
             font: inherit;
             font-size: 13px;
             font-weight: 700;
             cursor: pointer;
         }
 
-        .retry[hidden] {
-            display: none;
+        .retry[hidden] { display: none; }
+
+        @keyframes startup-breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.06); }
         }
 
-        .skeleton-grid {
-            display: grid;
-            grid-template-columns: 240px repeat(2, minmax(0, 1fr));
-            gap: 20px;
-            align-items: stretch;
+        @keyframes startup-shimmer {
+            to { transform: translateX(100%); }
         }
 
-        .skeleton-sidebar {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-left: 4px solid var(--accent);
-            border-radius: 16px;
-            padding: 18px;
-            box-shadow: var(--shadow-card);
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        .sk-line {
-            height: 12px;
-            border-radius: 999px;
-            background: linear-gradient(90deg, #f6ece3 25%, #fffaf5 50%, #f6ece3 75%);
-            background-size: 220% 100%;
-            animation: shimmer 1.4s infinite linear;
-        }
-
-        .sk-line.sm { width: 42%; height: 9px; }
-        .sk-line.md { width: 68%; }
-        .sk-line.lg { width: 88%; height: 18px; }
-
-        .sk-nav-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 8px;
-            border-top: 1px dashed #f0e3d8;
-        }
-
-        .sk-nav-row .sk-line {
-            width: 55%;
-            height: 11px;
-        }
-
-        .sk-nav-row .sk-badge {
-            width: 18px;
-            height: 11px;
-            border-radius: 6px;
-            background: var(--accent-soft);
-        }
-
-        .skeleton-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 18px;
-            overflow: hidden;
-            box-shadow: var(--shadow-float);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .sk-thumb {
-            height: 148px;
-            padding: 12px;
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            background: linear-gradient(120deg, #f7ede4 20%, #fffbf7 50%, #f7ede4 80%);
-            background-size: 220% 100%;
-            animation: shimmer 1.4s infinite linear;
-        }
-
-        .sk-tag {
-            padding: 4px 10px;
-            border-radius: 999px;
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 0.05em;
-        }
-
-        .sk-tag-dark {
-            background: rgba(28, 30, 29, 0.78);
-            color: #ffffff;
-        }
-
-        .sk-tag-avail {
-            background: var(--success-bg);
-            color: var(--success-text);
-        }
-
-        .sk-card-body {
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        .sk-title-price {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .sk-stepper {
-            height: 36px;
-            border-radius: 999px;
-            border: 1px solid #f2dfd0;
-            background: var(--surface-soft);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 14px;
-            color: var(--accent);
-            font-weight: 700;
-            font-size: 14px;
-        }
-
-        @keyframes shimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
-        @keyframes pulseDot {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.35); opacity: 0.55; }
-        }
-
-        @keyframes slowSpin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        @media (max-width: 860px) {
-            .skeleton-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .skeleton-sidebar {
-                display: none;
-            }
-        }
-
-        @media (max-height: 700px) {
-            .loader-main {
-                gap: 16px;
-                padding-top: 20px;
-                padding-bottom: 20px;
-            }
-
-            .sk-thumb {
-                height: 118px;
+        @media (max-width: 480px) {
+            .startup-loader-card {
+                min-height: 330px;
+                padding: 36px 24px 30px;
             }
         }
 
         @media (prefers-reduced-motion: reduce) {
-            .brand-emblem,
-            .status-dot,
-            .sk-line,
-            .sk-thumb {
-                animation: none;
+            #startup-loader,
+            .startup-progress-fill,
+            .startup-status {
+                transition-duration: 0.01ms;
             }
 
-            .progress-fill {
-                transition: none;
+            .startup-logo-ring,
+            .startup-progress-fill::after {
+                animation: none;
             }
         }
     </style>
 </head>
 <body>
-    <div id="cafeteria-loader" role="status" aria-live="polite" aria-label="Loading cafeteria menu">
-        <header class="loader-topbar">
-            <div class="brand-group">
-                <div class="brand-emblem" aria-hidden="true">PRE</div>
-                <span class="brand-title">Cafeteria Pre-Order</span>
+    <div id="startup-loader" role="status" aria-live="polite" aria-label="Loading Cafeteria Pre-Order">
+        <section class="startup-loader-card" aria-label="Startup status">
+            <div class="startup-eyebrow">INITIALIZING SYSTEM</div>
+            <div class="startup-logo-ring">
+                <img src="/static/logo.png" alt="Cafeteria Pre-Order Logo">
             </div>
-            <div class="topbar-status">
-                <span class="status-dot" aria-hidden="true"></span>
-                <span>Syncing Kitchen</span>
+            <h1>Cafeteria Pre-Order</h1>
+            <div class="startup-progress" role="progressbar" aria-label="Loading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                <div class="startup-progress-fill"></div>
             </div>
-        </header>
-
-        <main class="loader-main">
-            <div class="loader-hero">
-                <div>
-                    <div class="eyebrow">Cafeteria Menu</div>
-                    <h1>Preparing Today's Menu</h1>
-                    <p>Fetching fresh items, live availability, and your saved cart.</p>
-                </div>
-                <div class="fresh-pill">Fresh &amp; Ready</div>
-            </div>
-
-            <section class="progress-panel" aria-label="Loading progress">
-                <div class="progress-meta">
-                    <span class="progress-step" id="loader-status-text">Checking beverages &amp; counter stock...</span>
-                    <span class="progress-percent" id="loader-percent">0%</span>
-                </div>
-                <div class="progress-track" role="progressbar" aria-label="Starting the app" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-                    <div class="progress-fill" id="loader-bar"></div>
-                </div>
-                <button class="retry" type="button" onclick="window.location.reload()" hidden>Try again</button>
-            </section>
-
-            <section class="skeleton-grid" aria-hidden="true">
-                <aside class="skeleton-sidebar">
-                    <div class="sk-line sm"></div>
-                    <div class="sk-line lg"></div>
-                    <div class="sk-nav-row"><div class="sk-line"></div><span class="sk-badge"></span></div>
-                    <div class="sk-nav-row"><div class="sk-line"></div><span class="sk-badge"></span></div>
-                    <div class="sk-nav-row"><div class="sk-line"></div><span class="sk-badge"></span></div>
-                </aside>
-
-                <article class="skeleton-card">
-                    <div class="sk-thumb">
-                        <span class="sk-tag sk-tag-dark">CAFETERIA</span>
-                        <span class="sk-tag sk-tag-avail">• Available</span>
-                    </div>
-                    <div class="sk-card-body">
-                        <div class="sk-title-price">
-                            <div class="sk-line md" style="width:48%;height:15px"></div>
-                            <div class="sk-line sm" style="width:18%;height:15px"></div>
-                        </div>
-                        <div class="sk-stepper">
-                            <span>−</span>
-                            <div class="sk-line sm" style="width:24px;height:10px"></div>
-                            <span>+</span>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="skeleton-card">
-                    <div class="sk-thumb">
-                        <span class="sk-tag sk-tag-dark">CAFETERIA</span>
-                        <span class="sk-tag sk-tag-avail">• Available</span>
-                    </div>
-                    <div class="sk-card-body">
-                        <div class="sk-title-price">
-                            <div class="sk-line md" style="width:44%;height:15px"></div>
-                            <div class="sk-line sm" style="width:18%;height:15px"></div>
-                        </div>
-                        <div class="sk-stepper">
-                            <span>−</span>
-                            <div class="sk-line sm" style="width:24px;height:10px"></div>
-                            <span>+</span>
-                        </div>
-                    </div>
-                </article>
-            </section>
-        </main>
+            <div class="startup-status">Starting up...</div>
+            <button class="retry" type="button" onclick="window.location.reload()" hidden>Try again</button>
+        </section>
     </div>
 
     <script>
         (function () {
-            const steps = [
-                { pct: 28, text: "Connecting to cafeteria counter..." },
-                { pct: 62, text: "Loading today's menu & item availability..." },
-                { pct: 88, text: "Syncing your pre-order cart..." }
-            ];
-
-            const bar = document.getElementById("loader-bar");
-            const pctLabel = document.getElementById("loader-percent");
-            const statusText = document.getElementById("loader-status-text");
-            const progressTrack = document.querySelector(".progress-track");
-            const retry = document.querySelector(".retry");
-            let stepIndex = 0;
+            const loader = document.getElementById("startup-loader");
+            const progress = loader.querySelector(".startup-progress");
+            const progressFill = loader.querySelector(".startup-progress-fill");
+            const status = loader.querySelector(".startup-status");
+            const retry = loader.querySelector(".retry");
+            const startedAt = performance.now();
             let attempts = 0;
             let delay = 700;
 
-            function setProgress(pct, text) {
-                bar.style.width = pct + "%";
-                pctLabel.textContent = pct + "%";
-                progressTrack.setAttribute("aria-valuenow", String(pct));
-                if (text) statusText.textContent = text;
+            function setLoaderState(percent, label) {
+                progressFill.style.width = percent + "%";
+                progress.setAttribute("aria-valuenow", String(percent));
+                if (!label) return;
+
+                status.classList.add("is-changing");
+                setTimeout(() => {
+                    status.textContent = label;
+                    status.classList.remove("is-changing");
+                }, 180);
             }
 
-            function advanceStep() {
-                if (stepIndex >= steps.length) return;
-                const current = steps[stepIndex++];
-                setProgress(current.pct, current.text);
-                if (stepIndex < steps.length) {
-                    setTimeout(advanceStep, 420);
-                }
-            }
-
-            setTimeout(advanceStep, 140);
+            requestAnimationFrame(() => setLoaderState(18, "Starting up..."));
+            setTimeout(() => setLoaderState(58, "Syncing workspace..."), 450);
 
             async function waitForApp() {
                 while (true) {
@@ -522,8 +227,14 @@
                     try {
                         const response = await fetch("/healthz", { cache: "no-store" });
                         if (response.ok) {
-                            setProgress(100, "Menu ready.");
-                            setTimeout(() => window.location.replace("/menu"), 280);
+                            setLoaderState(100, "Ready");
+
+                            const elapsed = performance.now() - startedAt;
+                            const remaining = Math.max(0, 1400 - elapsed);
+                            setTimeout(() => {
+                                loader.classList.add("is-hidden");
+                                setTimeout(() => window.location.replace("/menu"), 420);
+                            }, remaining);
                             return;
                         }
                     } catch (error) {
@@ -531,13 +242,13 @@
                     }
 
                     if (attempts === 5) {
-                        setProgress(88, "The app is warming up - this usually takes a moment.");
                         retry.hidden = false;
+                        setLoaderState(88, "Syncing workspace...");
                     }
 
                     if (attempts >= 40) {
-                        setProgress(88, "The app is taking longer than expected.");
                         retry.hidden = false;
+                        setLoaderState(88, "Startup is taking longer than expected.");
                         return;
                     }
 

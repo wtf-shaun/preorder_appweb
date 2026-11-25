@@ -10,9 +10,165 @@
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
+    <style>
+        #startup-loader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+            background:
+                linear-gradient(135deg, rgba(255, 255, 255, 0.45) 0%, transparent 22%, rgba(255, 255, 255, 0.45) 48%, transparent 72%),
+                linear-gradient(135deg, #FDF8F4 0%, #F9EFE6 55%, #F5E6D8 100%);
+            opacity: 1;
+            transform: scale(1);
+            transition: opacity 420ms ease, transform 420ms ease;
+        }
+
+        #startup-loader.is-hidden {
+            opacity: 0;
+            transform: scale(1.02);
+            pointer-events: none;
+        }
+
+        .startup-loader-card {
+            width: min(420px, calc(100vw - 32px));
+            min-height: 360px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 42px 36px 36px;
+            border-radius: 20px;
+            border-top: 5px solid #F39223;
+            background: #FFFFFF;
+            box-shadow: 0 20px 50px rgba(45, 36, 30, 0.08);
+            text-align: center;
+        }
+
+        .startup-eyebrow {
+            margin-bottom: 22px;
+            color: #F39223;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .startup-logo-ring {
+            position: relative;
+            width: 82px;
+            height: 82px;
+            display: grid;
+            place-items: center;
+            margin-bottom: 22px;
+            border-radius: 50%;
+            background: #FFFFFF;
+            border: 2px solid rgba(243, 146, 35, 0.15);
+            box-shadow: 0 0 0 10px rgba(243, 146, 35, 0.08);
+            animation: startup-breathe 1.8s ease-in-out infinite;
+        }
+
+        .startup-logo-ring img {
+            width: 58px;
+            height: 58px;
+            object-fit: contain;
+        }
+
+        .startup-loader-card h1 {
+            margin: 0;
+            color: #231F20;
+            font-size: clamp(26px, 6vw, 34px);
+            line-height: 1.15;
+            letter-spacing: -0.02em;
+        }
+
+        .startup-progress {
+            width: 100%;
+            height: 6px;
+            margin-top: 28px;
+            overflow: hidden;
+            border-radius: 999px;
+            background: #F4EBE3;
+        }
+
+        .startup-progress-fill {
+            position: relative;
+            width: 0;
+            height: 100%;
+            border-radius: inherit;
+            background: #F39223;
+            transition: width 420ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .startup-progress-fill::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.55) 50%, transparent 100%);
+            transform: translateX(-100%);
+            animation: startup-shimmer 1.2s ease-in-out infinite;
+        }
+
+        .startup-status {
+            min-height: 18px;
+            margin-top: 14px;
+            color: #7A726D;
+            font-size: 13px;
+            transition: opacity 180ms ease, transform 180ms ease;
+        }
+
+        .startup-status.is-changing {
+            opacity: 0;
+            transform: translateY(3px);
+        }
+
+        @keyframes startup-breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.06); }
+        }
+
+        @keyframes startup-shimmer {
+            to { transform: translateX(100%); }
+        }
+
+        @media (max-width: 480px) {
+            .startup-loader-card {
+                min-height: 330px;
+                padding: 36px 24px 30px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            #startup-loader,
+            .startup-progress-fill,
+            .startup-status {
+                transition-duration: 0.01ms;
+            }
+
+            .startup-logo-ring,
+            .startup-progress-fill::after {
+                animation: none;
+            }
+        }
+    </style>
 </head>
 
 <body>
+<div id="startup-loader" role="status" aria-live="polite" aria-label="Loading Cafeteria Pre-Order">
+    <section class="startup-loader-card" aria-label="Startup status">
+        <div class="startup-eyebrow">INITIALIZING SYSTEM</div>
+        <div class="startup-logo-ring">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Cafeteria Pre-Order Logo">
+        </div>
+        <h1>Cafeteria Pre-Order</h1>
+        <div class="startup-progress" role="progressbar" aria-label="Loading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div class="startup-progress-fill"></div>
+        </div>
+        <div class="startup-status">Starting up...</div>
+    </section>
+</div>
 
  <div id="interactive-background">
     <div class="cursor-glow"></div>
@@ -120,6 +276,51 @@
 </footer>
 
 <script>
+(function initializeStartupLoader() {
+    const loader = document.getElementById("startup-loader");
+    if (!loader) return;
+
+    const progress = loader.querySelector(".startup-progress");
+    const progressFill = loader.querySelector(".startup-progress-fill");
+    const status = loader.querySelector(".startup-status");
+    const startedAt = performance.now();
+    let statusTimer;
+
+    const setLoaderState = (percent, label) => {
+        progressFill.style.width = percent + "%";
+        progress.setAttribute("aria-valuenow", String(percent));
+        if (!label) return;
+
+        status.classList.add("is-changing");
+        clearTimeout(statusTimer);
+        statusTimer = setTimeout(() => {
+            status.textContent = label;
+            status.classList.remove("is-changing");
+        }, 180);
+    };
+
+    requestAnimationFrame(() => setLoaderState(18, "Starting up..."));
+    setTimeout(() => setLoaderState(58, "Syncing workspace..."), 450);
+    setTimeout(() => setLoaderState(100, "Ready"), 1050);
+
+    const hideLoader = () => {
+        const elapsed = performance.now() - startedAt;
+        const remaining = Math.max(0, 1400 - elapsed);
+
+        setTimeout(() => {
+            setLoaderState(100, "Ready");
+            loader.classList.add("is-hidden");
+            setTimeout(() => loader.remove(), 450);
+        }, remaining);
+    };
+
+    if (document.readyState === "complete") {
+        hideLoader();
+    } else {
+        window.addEventListener("load", hideLoader, { once: true });
+    }
+})();
+
 setTimeout(() => {
     document.querySelectorAll('.auto-hide').forEach(msg => {
         msg.classList.add('hiding');
